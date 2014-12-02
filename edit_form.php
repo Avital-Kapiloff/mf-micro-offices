@@ -69,7 +69,7 @@
 		mf_do_query($query,$params,$dbh);
 		
 
-		$query = "INSERT INTO `".MF_TABLE_PREFIX."forms` (
+		$query = "INSERT INTO ".MF_TABLE_PREFIX."forms (
 							form_id,
 							form_name,
 							form_description,
@@ -195,7 +195,7 @@
 		}
 
 		//if this is an existing form, delete the previous unsaved form fields
-		$query = "DELETE FROM `".MF_TABLE_PREFIX."form_elements` where form_id = ? AND element_status='2'";
+		$query = "DELETE FROM ".MF_TABLE_PREFIX."form_elements where form_id = ? AND element_status='2'";
 		$params = array($form_id);
 		mf_do_query($query,$params,$dbh);
 		
@@ -203,7 +203,7 @@
 		// 0 - the option is being deleted
 		// 1 - the option is active
 		// 2 - the option is currently being drafted, not being saved yet and will be deleted by edit_form.php if the form is being edited the next time
-		$query = "DELETE FROM `".MF_TABLE_PREFIX."element_options` where form_id = ? AND live='2'";
+		$query = "DELETE FROM ".MF_TABLE_PREFIX."element_options where form_id = ? AND live='2'";
 		$params = array($form_id);
 		mf_do_query($query,$params,$dbh);
 
@@ -332,15 +332,15 @@
 	$query = "select 
 					element_id,
 					option_id,
-					`position`,
-					`option`,
+					[position],
+					[option],
 					option_is_default 
 			    from 
 			    	".MF_TABLE_PREFIX."element_options 
 			   where 
 			   		form_id = ? and live=1 
 			order by 
-					element_id asc,`position` asc";
+					element_id asc,[position] asc";
 	$params = array($form_id);
 	$sth 	= mf_do_query($query,$params,$dbh);
 	

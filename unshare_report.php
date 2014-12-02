@@ -33,7 +33,7 @@
 	
 	
 	//delete from ap_reports table
-	$query = "delete from `".MF_TABLE_PREFIX."reports` where form_id = ?";
+	$query = "delete from ".MF_TABLE_PREFIX."reports where form_id = ?";
 	$params = array($form_id);
 	mf_do_query($query,$params,$dbh);
 

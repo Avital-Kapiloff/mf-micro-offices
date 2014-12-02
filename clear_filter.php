@@ -31,7 +31,7 @@
 	$dbh = mf_connect_db();
 	
 	//first delete all previous filter
-	$query = "delete from `".MF_TABLE_PREFIX."form_filters` where form_id=? and user_id=? and incomplete_entries=?";
+	$query = "delete from ".MF_TABLE_PREFIX."form_filters where form_id=? and user_id=? and incomplete_entries=?";
 	$params = array($form_id,$user_id,$incomplete_entries);
 	mf_do_query($query,$params,$dbh);
 

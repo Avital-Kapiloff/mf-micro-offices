@@ -39,7 +39,7 @@
 	
 	if($action == 'add'){ //add a new tag name
 		//get existing tags for current form
-		$query = "SELECT `form_tags` from ".MF_TABLE_PREFIX."forms WHERE form_id=?";
+		$query = "SELECT [form_tags] from ".MF_TABLE_PREFIX."forms WHERE form_id=?";
 		$params = array($form_id);
 		
 		$sth = mf_do_query($query,$params,$dbh);
@@ -80,7 +80,7 @@
 		$deleted_tagname = trim($tags);
 		
 		//get existing tags for current form
-		$query = "SELECT `form_tags` from ".MF_TABLE_PREFIX."forms WHERE form_id=?";
+		$query = "SELECT [form_tags] from ".MF_TABLE_PREFIX."forms WHERE form_id=?";
 		$params = array($form_id);
 		
 		$sth = mf_do_query($query,$params,$dbh);

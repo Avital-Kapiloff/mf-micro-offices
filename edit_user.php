@@ -117,7 +117,7 @@
 				$error_messages['user_email'] = 'Please enter a valid email address.';
 			}else{
 				//check for duplicate
-				$query = "select count(user_email) total_user from `".MF_TABLE_PREFIX."users` where user_email = ? and user_id <> ? and `status` > 0";
+				$query = "select count(user_email) total_user from ".MF_TABLE_PREFIX."users where user_email = ? and user_id <> ? and [status] > 0";
 				
 				$params = array($user_input['user_email'],$user_input['user_id']);
 				$sth = mf_do_query($query,$params,$dbh);
@@ -137,14 +137,14 @@
 
 			//update ap_users table
 			$query = "UPDATE 
-							`".MF_TABLE_PREFIX."users` 
+							".MF_TABLE_PREFIX."users 
 						SET	
-							`user_email`=?,  
-							`user_fullname`=?, 
-							`priv_administer`=?, 
-							`priv_new_forms`=?, 
-							`priv_new_themes`=?
-					 WHERE  `user_id` = ?";
+							user_email=?,  
+							user_fullname=?, 
+							priv_administer=?, 
+							priv_new_forms=?, 
+							priv_new_themes=?
+					 WHERE  user_id = ?";
 			$params = array(
 							$user_input['user_email'],
 							$user_input['user_name'],
@@ -180,12 +180,12 @@
 								$user_input['perm_viewentries_'.$form_id]);
 
 				$query = "INSERT INTO 
-									`".MF_TABLE_PREFIX."permissions` (
-															`form_id`, 
-															`user_id`, 
-															`edit_form`, 
-															`edit_entries`, 
-															`view_entries`) 
+									".MF_TABLE_PREFIX."permissions (
+															form_id, 
+															user_id, 
+															edit_form, 
+															edit_entries, 
+															view_entries) 
 								VALUES (?, ?, ?, ?, ?);";
 				mf_do_query($query,$params,$dbh);
 			}
@@ -227,11 +227,11 @@
 						priv_new_themes,
 						last_login_date,
 						last_ip_address,
-						`status` 
+						[status] 
 				    FROM 
 						".MF_TABLE_PREFIX."users 
 				   WHERE 
-				   		user_id=? and `status` > 0";
+				   		user_id=? and [status] > 0";
 		$params = array($user_id);
 				
 		$sth = mf_do_query($query,$params,$dbh);

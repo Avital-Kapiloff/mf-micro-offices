@@ -65,9 +65,9 @@
 
 	//get entry status information 
 	$query = "select 
-					`status` 
+					[status]
 				from 
-					`".MF_TABLE_PREFIX."form_{$form_id}` 
+					".MF_TABLE_PREFIX."form_{$form_id} 
 			where id=?";
 	$params = array($entry_id);
 

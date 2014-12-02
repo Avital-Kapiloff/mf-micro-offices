@@ -41,14 +41,14 @@
 	}
 
 	//update or insert to ap_form_payments table
-	$query = "select count(afp_id) record_exist from ".MF_TABLE_PREFIX."form_payments where form_id = ? and record_id = ? and `status` = 1";
+	$query = "select count(afp_id) record_exist from ".MF_TABLE_PREFIX."form_payments where form_id = ? and record_id = ? and [status] = 1";
 	$params = array($form_id,$entry_id);
 	$sth = mf_do_query($query,$params,$dbh);
 	$row = mf_do_fetch_result($sth);
 	
 	if(!empty($row['record_exist'])){
 		//do update to ap_form_payments table
-		$query = "update ".MF_TABLE_PREFIX."form_payments set payment_status = ? where form_id = ? and record_id = ? and `status` = 1";
+		$query = "update ".MF_TABLE_PREFIX."form_payments set payment_status = ? where form_id = ? and record_id = ? and [status] = 1";
 		$params = array($payment_status,$form_id,$entry_id);
 		mf_do_query($query,$params,$dbh);
 	}else{
@@ -84,7 +84,7 @@
 
 		//if the discount element for the current entry_id having any value, we can be certain that the discount code has been validated and applicable
 		if(!empty($payment_enable_discount)){
-			$query = "select element_{$payment_discount_element_id} coupon_element from ".MF_TABLE_PREFIX."form_{$form_id} where `id` = ? and `status` = 1";
+			$query = "select element_{$payment_discount_element_id} coupon_element from ".MF_TABLE_PREFIX."form_{$form_id} where id = ? and [status] = 1";
 			$params = array($entry_id);
 			
 			$sth = mf_do_query($query,$params,$dbh);

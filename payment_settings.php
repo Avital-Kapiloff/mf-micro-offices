@@ -42,7 +42,7 @@
 					 form_name,
 					 payment_enable_merchant,
 					 payment_merchant_type,
-					 ifnull(payment_paypal_email,'') payment_paypal_email,
+					 isnull(payment_paypal_email,'') payment_paypal_email,
 					 payment_paypal_language,
 					 payment_currency,
 					 payment_show_total,
@@ -261,7 +261,7 @@
 							ON 
 							  (A.form_id = B.form_id and A.element_id = B.element_id and A.option_id = B.option_id) 
 						 WHERE 
-						   	  A.form_id = ? and A.`live` = 1
+						   	  A.form_id = ? and A.[live] = 1
 					 ) C 
 			   WHERE 
 			   		C.price IS NULL 
@@ -281,7 +281,7 @@
 
 	//get existing price-enabled elements from ap_element_prices
 	$existing_price_elements_id = array();
-	$query = "select element_id from ".MF_TABLE_PREFIX."element_prices where form_id = ? group by element_id asc";
+	$query = "select element_id from ".MF_TABLE_PREFIX."element_prices where form_id = ? group by element_id ORDER BY element_id asc";
 	$params = array($form_id);
 
 	$sth = mf_do_query($query,$params,$dbh);
@@ -300,7 +300,7 @@
 				continue;
 			}
 
-			$query = "INSERT INTO ".MF_TABLE_PREFIX."element_prices(form_id,element_id,option_id,`price`) VALUES(?,?,?,?)";
+			$query = "INSERT INTO ".MF_TABLE_PREFIX."element_prices(form_id,element_id,option_id,[price]) VALUES(?,?,?,?)";
 			
 			$params = array($form_id,$value['element_id'],$value['option_id'],0);
 			mf_do_query($query,$params,$dbh);
@@ -342,7 +342,7 @@
 			//get the choices for the field
 			$sub_query = "select 
 								option_id,
-								`option` 
+								[option] 
 							from 
 								".MF_TABLE_PREFIX."element_options 
 						   where 
@@ -350,7 +350,7 @@
 						   		live=1 and 
 						   		element_id=? 
 						order by 
-								`position` asc";
+								[position] asc";
 			$sub_params = array($form_id,$element_id);
 			$sub_sth = mf_do_query($sub_query,$sub_params,$dbh);
 			$i=0;
@@ -373,8 +373,8 @@
 	$query = "select 
 					A.element_id,
 					A.option_id,
-					A.`price`,
-					B.`position` 
+					A.[price],
+					B.[position] 
 				from 
 					".MF_TABLE_PREFIX."element_prices A left join ".MF_TABLE_PREFIX."element_options B 
 				  on 
@@ -432,7 +432,7 @@
 					element_id,
 					element_title 
 				from 
-					`".MF_TABLE_PREFIX."form_elements` 
+					[".MF_TABLE_PREFIX."form_elements] 
 			   where 
 			   		form_id=? and element_type='email' and element_is_private=0 and element_status=1
 			order by 
@@ -453,7 +453,7 @@
 					element_id,
 					element_title 
 				from 
-					`".MF_TABLE_PREFIX."form_elements` 
+					[".MF_TABLE_PREFIX."form_elements] 
 			   where 
 			   		form_id=? and element_type='text' and element_is_private=0 and element_status=1
 			order by 

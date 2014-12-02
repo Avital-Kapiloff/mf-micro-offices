@@ -47,10 +47,10 @@
 			
 			if(!empty($disabled_message)){
 				$params = array($form_active,$disabled_message,$form_id);
-				$query = "UPDATE `".MF_TABLE_PREFIX."forms` SET form_active=?,form_disabled_message=? WHERE form_id=?";
+				$query = "UPDATE [".MF_TABLE_PREFIX."forms] SET form_active=?,form_disabled_message=? WHERE form_id=?";
 			}else{
 				$params = array($form_active,$form_id);
-				$query = "UPDATE `".MF_TABLE_PREFIX."forms` SET form_active=? WHERE form_id=?";
+				$query = "UPDATE [".MF_TABLE_PREFIX."forms] SET form_active=? WHERE form_id=?";
 			}
 			
 			mf_do_query($query,$params,$dbh);

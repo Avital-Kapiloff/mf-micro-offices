@@ -55,7 +55,7 @@
 	mf_do_query($query,$params,$dbh);
 
 	if(!empty($field_rule_properties)){
-		$query = "insert into `".MF_TABLE_PREFIX."field_logic_elements`(form_id,element_id,rule_show_hide,rule_all_any) values(?,?,?,?)";
+		$query = "insert into [".MF_TABLE_PREFIX."field_logic_elements](form_id,element_id,rule_show_hide,rule_all_any) values(?,?,?,?)";
 		foreach ($field_rule_properties as $data) {
 			$params = array($form_id,$data['element_id'],strtolower($data['rule_show_hide']),strtolower($data['rule_all_any']));
 			mf_do_query($query,$params,$dbh);
@@ -68,7 +68,7 @@
 	mf_do_query($query,$params,$dbh);
 
 	if(!empty($field_rule_conditions)){
-		$query = "insert into `".MF_TABLE_PREFIX."field_logic_conditions`(form_id,target_element_id,element_name,rule_condition,rule_keyword) values(?,?,?,?,?)";
+		$query = "insert into [".MF_TABLE_PREFIX."field_logic_conditions](form_id,target_element_id,element_name,rule_condition,rule_keyword) values(?,?,?,?,?)";
 		foreach ($field_rule_conditions as $data) {
 			$target_element_id = (int) $data['target_element_id'];
 			$element_name	   = strtolower(trim($data['element_name']));
@@ -87,7 +87,7 @@
 	mf_do_query($query,$params,$dbh);
 
 	if(!empty($page_rule_properties)){
-		$query = "insert into `".MF_TABLE_PREFIX."page_logic`(form_id,page_id,rule_all_any) values(?,?,?)";
+		$query = "insert into [".MF_TABLE_PREFIX."page_logic](form_id,page_id,rule_all_any) values(?,?,?)";
 		foreach ($page_rule_properties as $data) {
 			$page_id = substr($data['page_id'],4); //remove 'page' prefix
 			
@@ -102,7 +102,7 @@
 	mf_do_query($query,$params,$dbh);
 
 	if(!empty($page_rule_conditions)){
-		$query = "insert into `".MF_TABLE_PREFIX."page_logic_conditions`(form_id,target_page_id,element_name,rule_condition,rule_keyword) values(?,?,?,?,?)";
+		$query = "insert into [".MF_TABLE_PREFIX."page_logic_conditions](form_id,target_page_id,element_name,rule_condition,rule_keyword) values(?,?,?,?,?)";
 		foreach ($page_rule_conditions as $data) {
 			$target_page_id  = substr($data['target_page_id'],4); //remove 'page' prefix
 			$element_name	 = strtolower(trim($data['element_name']));
@@ -122,7 +122,7 @@
 
 	if(!empty($email_rule_properties)){
 		$query = "insert into 
-							`".MF_TABLE_PREFIX."email_logic`
+							[".MF_TABLE_PREFIX."email_logic]
 							(form_id,
 							rule_id,
 							rule_all_any,
@@ -166,7 +166,7 @@
 	mf_do_query($query,$params,$dbh);
 
 	if(!empty($email_rule_conditions)){
-		$query = "insert into `".MF_TABLE_PREFIX."email_logic_conditions`(form_id,target_rule_id,element_name,rule_condition,rule_keyword) values(?,?,?,?,?)";
+		$query = "insert into [".MF_TABLE_PREFIX."email_logic_conditions](form_id,target_rule_id,element_name,rule_condition,rule_keyword) values(?,?,?,?,?)";
 		foreach ($email_rule_conditions as $data) {
 			$target_rule_id  = substr($data['target_rule_id'],5); //remove 'email' prefix
 			$element_name	 = strtolower(trim($data['element_name']));

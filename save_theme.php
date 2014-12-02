@@ -53,7 +53,7 @@
    		//dynamically create the field list and field values, based on the input given
 		$params = array();
 		foreach ($theme_properties as $key=>$value){
-			$field_list    .= "`{$key}`,";
+			$field_list    .= "[{$key}],";
 			$field_values  .= ":{$key},";
 			$params[':'.$key] = $value;
 		}
@@ -62,7 +62,7 @@
 		$field_values = rtrim($field_values,',');
 		
 		//insert into ap_form_themes  table
-		$query = "INSERT INTO `".MF_TABLE_PREFIX."form_themes` ($field_list) VALUES ($field_values);"; 
+		$query = "INSERT INTO [".MF_TABLE_PREFIX."form_themes] ($field_list) VALUES ($field_values);"; 
 		mf_do_query($query,$params,$dbh);
 		
 		$theme_id = (int) $dbh->lastInsertId();

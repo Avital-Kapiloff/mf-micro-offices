@@ -74,9 +74,9 @@
 			if(MF_CONF_TRUE_DELETE == true){
 				//delete the entries from the form_x table
 				if(!empty($incomplete_entries)){
-					$query = "delete from `".MF_TABLE_PREFIX."form_{$form_id}` where `status` = 2";
+					$query = "delete from ".MF_TABLE_PREFIX."form_{$form_id} where [status] = 2";
 				}else{
-					$query = "delete from `".MF_TABLE_PREFIX."form_{$form_id}` where `status` <> 2";
+					$query = "delete from ".MF_TABLE_PREFIX."form_{$form_id} where [status] <> 2";
 				}
 
 				$params = array();
@@ -128,9 +128,9 @@
 			}else{
 				//update ap_form_x table
 				if(!empty($incomplete_entries)){
-					$query = "update ".MF_TABLE_PREFIX."form_{$form_id} set `status`=0 where `status`=2";
+					$query = "update ".MF_TABLE_PREFIX."form_{$form_id} set [status]=0 where [status]=2";
 				}else{
-					$query = "update ".MF_TABLE_PREFIX."form_{$form_id} set `status`=0 where `status`=1";
+					$query = "update ".MF_TABLE_PREFIX."form_{$form_id} set [status]=0 where [status]=1";
 				}
 
 				$params = array();
@@ -138,7 +138,7 @@
 
 				//update ap_form_payments table
 				if(empty($incomplete_entries)){
-					$query = "update ".MF_TABLE_PREFIX."form_payments set `status`=0 where form_id = ?";
+					$query = "update ".MF_TABLE_PREFIX."form_payments set [status]=0 where form_id = ?";
 					$params = array($form_id);
 					mf_do_query($query,$params,$dbh);
 				}
@@ -160,12 +160,12 @@
 
 				if(MF_CONF_TRUE_DELETE == true){
 					//delete the records from a_form_x table
-					$query = "delete from `".MF_TABLE_PREFIX."form_{$form_id}` where `id` in('{$target_entry_id_joined}')";
+					$query = "delete from ".MF_TABLE_PREFIX."form_{$form_id} where id in('{$target_entry_id_joined}')";
 					$params = array();
 					mf_do_query($query,$params,$dbh);
 
 					//delete records from ap_form_payments table
-					$query = "delete from `".MF_TABLE_PREFIX."form_payments` where form_id = ? and `record_id` in('{$target_entry_id_joined}')";
+					$query = "delete from ".MF_TABLE_PREFIX."form_payments where form_id = ? and record_id in('{$target_entry_id_joined}')";
 					$params = array($form_id);
 					mf_do_query($query,$params,$dbh);
 
@@ -197,12 +197,12 @@
 
 				}else{
 					//simply set the status of the record on ap_form_x to 0
-					$query = "update `".MF_TABLE_PREFIX."form_{$form_id}` set `status`=0 where `id` in('{$target_entry_id_joined}')";
+					$query = "update ".MF_TABLE_PREFIX."form_{$form_id} set [status]=0 where id in('{$target_entry_id_joined}')";
 					$params = array();
 					mf_do_query($query,$params,$dbh);
 
 					//set the status of the record on ap_form_payments as well
-					$query = "update `".MF_TABLE_PREFIX."form_payments` set `status`=0 where form_id = ? and `record_id` in('{$target_entry_id_joined}')";
+					$query = "update ".MF_TABLE_PREFIX."form_payments set [status]=0 where form_id = ? and record_id in('{$target_entry_id_joined}')";
 					$params = array($form_id);
 					mf_do_query($query,$params,$dbh);
 				}
@@ -254,12 +254,12 @@
 				
 				if(MF_CONF_TRUE_DELETE == true){
 					//delete the records from a_form_x table
-					$query = "delete from `".MF_TABLE_PREFIX."form_{$form_id}` where `id` in('{$target_entry_id_joined}')";
+					$query = "delete from ".MF_TABLE_PREFIX."form_{$form_id} where id in('{$target_entry_id_joined}')";
 					$params = array();
 					mf_do_query($query,$params,$dbh);
 
 					//delete records from ap_form_payments table
-					$query = "delete from `".MF_TABLE_PREFIX."form_payments` where form_id = ? and `record_id` in('{$target_entry_id_joined}')";
+					$query = "delete from ".MF_TABLE_PREFIX."form_payments where form_id = ? and record_id in('{$target_entry_id_joined}')";
 					$params = array($form_id);
 					mf_do_query($query,$params,$dbh);
 
@@ -291,12 +291,12 @@
 
 				}else{
 					//simply set the status of the record to 0
-					$query = "update `".MF_TABLE_PREFIX."form_{$form_id}` set `status`=0 where `id` in('{$target_entry_id_joined}')";
+					$query = "update ".MF_TABLE_PREFIX."form_{$form_id} set [status]=0 where id in('{$target_entry_id_joined}')";
 					$params = array();
 					mf_do_query($query,$params,$dbh);
 
 					//set the status of the record on ap_form_payments as well
-					$query = "update `".MF_TABLE_PREFIX."form_payments` set `status`=0 where form_id = ? and `record_id` in('{$target_entry_id_joined}')";
+					$query = "update ".MF_TABLE_PREFIX."form_payments set [status]=0 where form_id = ? and record_id in('{$target_entry_id_joined}')";
 					$params = array($form_id);
 					mf_do_query($query,$params,$dbh);
 				}

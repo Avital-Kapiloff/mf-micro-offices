@@ -46,13 +46,13 @@
 
 	//get entry information (date created/updated/ip address/resume key)
 	$query = "select 
-					date_format(date_created,'%e %b %Y - %r') date_created,
-					date_format(date_updated,'%e %b %Y - %r') date_updated,
+					CONVERT(VARCHAR(19),date_created, 106) + ' ' + CONVERT(VARCHAR(19),date_created, 8) date_created,
+					CONVERT(VARCHAR(19),date_updated, 106) + ' ' + CONVERT(VARCHAR(19),date_updated, 8) date_updated,
 					ip_address,
 					resume_key,
-					`status` 
+					[status] 
 				from 
-					`".MF_TABLE_PREFIX."form_{$form_id}` 
+					".MF_TABLE_PREFIX."form_{$form_id} 
 			where id=?";
 	$params = array($entry_id);
 
@@ -162,7 +162,7 @@
 
 	//if the discount element for the current entry_id having any value, we can be certain that the discount code has been validated and applicable
 	if(!empty($payment_enable_discount)){
-		$query = "select element_{$payment_discount_element_id} coupon_element from ".MF_TABLE_PREFIX."form_{$form_id} where `id` = ? and `status` = 1";
+		$query = "select element_{$payment_discount_element_id} coupon_element from ".MF_TABLE_PREFIX."form_{$form_id} where id = ? and [status] = 1";
 		$params = array($entry_id);
 			
 		$sth = mf_do_query($query,$params,$dbh);
@@ -175,33 +175,32 @@
 
 	//if payment enabled, get the details
 	if(!empty($payment_enable_merchant)){
-		$query = "SELECT 
-						`payment_id`,
-						 date_format(payment_date,'%e %b %Y - %r') payment_date, 
-						`payment_status`, 
-						`payment_fullname`, 
-						`payment_amount`, 
-						`payment_currency`, 
-						`payment_test_mode`,
-						`status`, 
-						`billing_street`, 
-						`billing_city`, 
-						`billing_state`, 
-						`billing_zipcode`, 
-						`billing_country`, 
-						`same_shipping_address`, 
-						`shipping_street`, 
-						`shipping_city`, 
-						`shipping_state`, 
-						`shipping_zipcode`, 
-						`shipping_country`
+		$query = "SELECT top 1
+						payment_id,
+						CONVERT(VARCHAR(19),payment_date, 106) + ' ' + CONVERT(VARCHAR(19),payment_date, 8) payment_date, 
+						payment_status, 
+						payment_fullname, 
+						payment_amount, 
+						payment_currency, 
+						payment_test_mode,
+						[status], 
+						billing_street, 
+						billing_city, 
+						billing_state, 
+						billing_zipcode, 
+						billing_country, 
+						same_shipping_address, 
+						shipping_street, 
+						shipping_city, 
+						shipping_state, 
+						shipping_zipcode, 
+						shipping_country
 					FROM
 						".MF_TABLE_PREFIX."form_payments
 				   WHERE
-				   		form_id = ? and record_id = ? and `status` = 1
+				   		form_id = ? and record_id = ? and [status] = 1
 				ORDER BY
-						payment_date DESC
-				   LIMIT 1";
+						payment_date DESC";
 		$params = array($form_id,$entry_id);
 		
 		$sth = mf_do_query($query,$params,$dbh);

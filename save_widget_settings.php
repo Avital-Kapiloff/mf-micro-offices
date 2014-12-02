@@ -52,12 +52,12 @@
 	$chart_title_position    = mf_sanitize($_POST['chart_title_position']);
 	$chart_title_align		 = mf_sanitize($_POST['chart_title_align']);
 
-	$chart_labels_template	 = mf_sanitize($_POST['chart_labels_template']);
+	$chart_labels_template	 = (!empty($_POST['chart_labels_template']))? mf_sanitize($_POST['chart_labels_template']):"";
 	$chart_labels_position   = mf_sanitize($_POST['chart_labels_position']);
 	$chart_labels_align   	 = mf_sanitize($_POST['chart_labels_align']);
 
 	$chart_legend_position   = mf_sanitize($_POST['chart_legend_position']);
-	$chart_tooltip_template	 = mf_sanitize($_POST['chart_tooltip_template']);
+	$chart_tooltip_template	 = (!empty($_POST['chart_tooltip_template']))? mf_sanitize($_POST['chart_tooltip_template']):"";
 
 	$chart_bar_color		 = mf_sanitize($_POST['chart_bar_color']);
 
@@ -82,14 +82,14 @@
 	if(!empty($chart_date_range_start)){
 		$exploded = array();
 		$exploded = explode('/', $chart_date_range_start);
-		$chart_date_range_start = $exploded[2].'-'.$exploded[0].'-'.$exploded[1];
+		$chart_date_range_start = date("Y-m-d", strtotime($exploded[2].'-'.$exploded[0].'-'.$exploded[1]));
 	}
 
 	//convert into yyyy-mm-dd
 	if(!empty($chart_date_range_end)){
 		$exploded = array();
 		$exploded = explode('/', $chart_date_range_end);
-		$chart_date_range_end = $exploded[2].'-'.$exploded[0].'-'.$exploded[1];
+		$chart_date_range_end = date("Y-m-d", strtotime($exploded[2].'-'.$exploded[0].'-'.$exploded[1]));
 	}
 	
 	if(empty($form_id)){
@@ -116,12 +116,12 @@
 	//save filters
 	if(!empty($chart_enable_filter)){
 		//first delete all previous filter
-		$query = "delete from `".MF_TABLE_PREFIX."report_filters` where form_id=? and chart_id=?";
+		$query = "delete from [".MF_TABLE_PREFIX."report_filters] where form_id=? and chart_id=?";
 		$params = array($form_id,$chart_id);
 		mf_do_query($query,$params,$dbh);
 		
 		//save the new filters
-		$query = "insert into `".MF_TABLE_PREFIX."report_filters`(form_id,chart_id,element_name,filter_condition,filter_keyword) values(?,?,?,?,?)";
+		$query = "insert into [".MF_TABLE_PREFIX."report_filters](form_id,chart_id,element_name,filter_condition,filter_keyword) values(?,?,?,?,?)";
 
 		foreach($filter_properties_array as $data){
 			$params = array($form_id,$chart_id,$data['element_name'],$data['condition'],$data['keyword']);
@@ -193,6 +193,7 @@
 					$chart_height,
 
 					$form_id,$chart_id);
+
 	mf_do_query($query,$params,$dbh);
 
 	//if this is grid, save column preferences
@@ -211,12 +212,12 @@
 	
 	if($chart_type == 'grid'){
 		//first delete all previous preferences
-		$query = "delete from `".MF_TABLE_PREFIX."grid_columns` where form_id=? and chart_id=?";
+		$query = "delete from [".MF_TABLE_PREFIX."grid_columns] where form_id=? and chart_id=?";
 		$params = array($form_id,$chart_id);
 		mf_do_query($query,$params,$dbh);
 
 		//save the new preference
-		$query = "insert into `".MF_TABLE_PREFIX."grid_columns`(form_id,chart_id,element_name,position) values(?,?,?,?)";
+		$query = "insert into [".MF_TABLE_PREFIX."grid_columns](form_id,chart_id,element_name,position) values(?,?,?,?)";
 
 		$position = 1;
 		if(!empty($grid_column_preferences)){

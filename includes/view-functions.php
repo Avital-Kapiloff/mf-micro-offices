@@ -4052,13 +4052,13 @@ EOT;
 				$resume_key = $_SESSION['mf_form_resume_key'][$form_id];
 				
 				//first delete existing record within review table
-				$query = "DELETE from `".MF_TABLE_PREFIX."form_{$form_id}_review` where session_id=? or resume_key=?";
+				$query = "DELETE from [".MF_TABLE_PREFIX."form_{$form_id}_review] where session_id=? or resume_key=?";
 				$params = array($session_id, $resume_key);
 				
 				mf_do_query($query,$params,$dbh);
 				
 				//copy data from ap_form_x table to ap_form_x_review table
-				$query  = "SELECT * FROM `".MF_TABLE_PREFIX."form_{$form_id}` WHERE resume_key=?";
+				$query  = "SELECT * FROM [".MF_TABLE_PREFIX."form_{$form_id}] WHERE resume_key=?";
 				$params = array($resume_key);
 				
 				$sth = mf_do_query($query,$params,$dbh);
@@ -4078,16 +4078,16 @@ EOT;
 					$custom_error = 'Invalid Link! <br/>Please open the complete URL to resume your saved progress.';
 				}else{	
 				
-					$columns_joined = implode("`,`",$columns);
-					$columns_joined = '`'.$columns_joined.'`';
+					$columns_joined = implode("],[",$columns);
+					$columns_joined = '['.$columns_joined.']';
 					
 					//copy data from main table
-					$query = "INSERT INTO `".MF_TABLE_PREFIX."form_{$form_id}_review`($columns_joined) SELECT {$columns_joined} from `".MF_TABLE_PREFIX."form_{$form_id}` WHERE resume_key=?";
+					$query = "INSERT INTO [".MF_TABLE_PREFIX."form_{$form_id}_review]($columns_joined) SELECT {$columns_joined} from [".MF_TABLE_PREFIX."form_{$form_id}] WHERE resume_key=?";
 					$params = array($resume_key);
 					
 					mf_do_query($query,$params,$dbh);
 					
-					$query = "UPDATE `".MF_TABLE_PREFIX."form_{$form_id}_review` set session_id=? WHERE resume_key=?";
+					$query = "UPDATE [".MF_TABLE_PREFIX."form_{$form_id}_review] set session_id=? WHERE resume_key=?";
 					$params = array($session_id,$resume_key);
 					
 					mf_do_query($query,$params,$dbh);
@@ -4101,7 +4101,7 @@ EOT;
 				}
 			}
 			
-			$query = "SELECT `id` from `".MF_TABLE_PREFIX."form_{$form_id}_review` where session_id=?";
+			$query = "SELECT [id] from [".MF_TABLE_PREFIX."form_{$form_id}_review] where session_id=?";
 			$params = array($session_id);
 			
 			$sth = mf_do_query($query,$params,$dbh);
@@ -4126,9 +4126,9 @@ EOT;
 			$query = "select 
 							element_id,
 							option_id,
-							`price` 
+							[price] 
 					   from 
-					   		`".MF_TABLE_PREFIX."element_prices` 
+					   		[".MF_TABLE_PREFIX."element_prices]
 					   where 
 					   		form_id=? 
 				   order by 
@@ -4145,15 +4145,15 @@ EOT;
 		$query = "SELECT 
 						element_id,
 						option_id,
-						`position`,
-						`option`,
+						[position],
+						[option],
 						option_is_default 
 				    FROM 
 				    	".MF_TABLE_PREFIX."element_options 
 				   where 
 				   		form_id = ? and live=1 
 				order by 
-						element_id asc,`position` asc";
+						element_id asc,[position] asc";
 		$params = array($form_id);
 		
 		$sth = mf_do_query($query,$params,$dbh);
@@ -4403,7 +4403,7 @@ EOT;
 										selected_date 
 									from (
 											select 
-												  date_format(element_{$row['element_id']},'%m/%d/%Y') as selected_date,
+												  CONVERT(VARCHAR, element_{$row['element_id']}, 101) as selected_date,
 												  count(element_{$row['element_id']}) as total_selection 
 										      from 
 										      	  ".MF_TABLE_PREFIX."form_{$form_id} 
@@ -4660,7 +4660,7 @@ EOT;
 		$form_has_maximum_entries = false;
 		
 		if(!empty($form->limit_enable)){
-			$query = "select count(*) total_row from ".MF_TABLE_PREFIX."form_{$form_id} where `status`=1";
+			$query = "select count(*) total_row from ".MF_TABLE_PREFIX."form_{$form_id} where [status]=1";
 			$params = array();
 			
 			$sth = mf_do_query($query,$params,$dbh);
@@ -5096,7 +5096,7 @@ EOT;
 
 				//if the discount element for the current session having any value, we can be certain that the discount code has been validated and applicable
 				if(!empty($form->enable_discount)){
-					$query = "select element_{$form->discount_element_id} coupon_element from ".MF_TABLE_PREFIX."form_{$form_id}_review where `session_id` = ?";
+					$query = "select element_{$form->discount_element_id} coupon_element from ".MF_TABLE_PREFIX."form_{$form_id}_review where [session_id] = ?";
 					$params = array($session_id);
 					
 					$sth = mf_do_query($query,$params,$dbh);
@@ -5323,15 +5323,15 @@ EOT;
 		$query = "select 
 						element_id,
 						option_id,
-						`position`,
-						`option`,
+						[position],
+						[option],
 						option_is_default 
 				    from 
 				    	".MF_TABLE_PREFIX."element_options 
 				   where 
 				   		form_id = ? and live = 1 
 				order by 
-						element_id asc,`position` asc";
+						element_id asc,[position] asc";
 		$params = array($form_id);
 		$sth = mf_do_query($query,$params,$dbh);
 		
@@ -6384,7 +6384,7 @@ EOT;
 
 			//if the discount element for the current session having any value, we can be certain that the discount code has been validated and applicable
 			if(!empty($payment_enable_discount)){
-				$query = "select element_{$payment_discount_element_id} coupon_element from ".MF_TABLE_PREFIX."form_{$form_id}_review where `id` = ?";
+				$query = "select element_{$payment_discount_element_id} coupon_element from ".MF_TABLE_PREFIX."form_{$form_id}_review where [id] = ?";
 				$params = array($record_id);
 				
 				$sth = mf_do_query($query,$params,$dbh);
@@ -6738,7 +6738,7 @@ EOT;
 
 		//if the discount element for the current entry_id having any value, we can be certain that the discount code has been validated and applicable
 		if(!empty($payment_enable_discount)){
-			$query = "select element_{$payment_discount_element_id} coupon_element from ".MF_TABLE_PREFIX."form_{$form_id} where `id` = ? and `status` = 1";
+			$query = "select element_{$payment_discount_element_id} coupon_element from ".MF_TABLE_PREFIX."form_{$form_id} where [id] = ? and [status] = 1";
 			$params = array($record_id);
 			
 			$sth = mf_do_query($query,$params,$dbh);

@@ -28,7 +28,7 @@
 	//validate the email address
 	$is_registered_email = false;
 	
-	$query  = "SELECT count(`user_email`) total_email FROM `".MF_TABLE_PREFIX."users` WHERE `user_email`=? and `status`=1";
+	$query  = "SELECT count([user_email]) total_email FROM [".MF_TABLE_PREFIX."users] WHERE [user_email]=? and [status]=1";
 	$params = array($target_email);
 	
 	$sth = mf_do_query($query,$params,$dbh);
@@ -67,7 +67,12 @@ EOT;
 		$s_transport = Swift_SmtpTransport::newInstance($mf_settings['smtp_host'], $mf_settings['smtp_port']);
 			
 		if(!empty($mf_settings['smtp_secure'])){
-			$s_transport->setEncryption('tls');
+			//port 465 for (SSL), while port 587 for (TLS)
+			if($mf_settings['smtp_port'] == '587'){
+				$s_transport->setEncryption('tls');
+			}else{
+				$s_transport->setEncryption('ssl');
+			}
 		}
 			
 		if(!empty($mf_settings['smtp_auth'])){
@@ -101,7 +106,7 @@ EOT;
 			echo "Error sending email!";
 		}else{
 			//commit the new password into the database
-			$query = "UPDATE ".MF_TABLE_PREFIX."users SET user_password = ? WHERE user_email = ? and `status`=1";
+			$query = "UPDATE ".MF_TABLE_PREFIX."users SET user_password = ? WHERE user_email = ? and [status]=1";
 		   	$params = array($new_password_hash,$target_email);
 		   	mf_do_query($query,$params,$dbh);
 		}

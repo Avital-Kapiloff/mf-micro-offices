@@ -22,7 +22,7 @@
 	
 	$user_id = $_SESSION['mf_user_id'];
 
-	$query = "SELECT user_email,user_fullname FROM ".MF_TABLE_PREFIX."users WHERE user_id=? and `status`=1";
+	$query = "SELECT user_email,user_fullname FROM ".MF_TABLE_PREFIX."users WHERE user_id=? and [status]=1";
 	$params = array($user_id);
 			
 	$sth = mf_do_query($query,$params,$dbh);
@@ -44,7 +44,7 @@
 			$_SESSION['MF_ERROR'] = 'Please enter valid email address!';
 		}else{
 			//check for duplicate
-			$query = "select count(user_email) total_user from `".MF_TABLE_PREFIX."users` where user_email = ? and user_id <> ? and `status` > 0";
+			$query = "select count(user_email) total_user from ".MF_TABLE_PREFIX."users where user_email = ? and user_id <> ? and [status] > 0";
 				
 			$params = array($user_email,$user_id);
 			$sth = mf_do_query($query,$params,$dbh);

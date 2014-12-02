@@ -9,129 +9,136 @@
  ********************************************************************************/
 	
 	function create_ap_forms_table($dbh){
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."forms` (
-										  `form_id` int(11) NOT NULL AUTO_INCREMENT,
-										  `form_name` text,
-										  `form_description` text,
-										  `form_tags` varchar(255) DEFAULT NULL,
-										  `form_email` text,
-										  `form_redirect` text,
-										  `form_redirect_enable` int(1) NOT NULL DEFAULT '0',
-										  `form_success_message` text,
-										  `form_disabled_message` text,
-										  `form_password` varchar(100) DEFAULT NULL,
-										  `form_unique_ip` int(1) NOT NULL DEFAULT '0',
-										  `form_frame_height` int(11) DEFAULT NULL,
-										  `form_has_css` int(11) NOT NULL DEFAULT '0',
-										  `form_captcha` int(11) NOT NULL DEFAULT '0',
-										  `form_captcha_type` char(1) NOT NULL DEFAULT 'r',
-										  `form_active` int(11) NOT NULL DEFAULT '1',
-										  `form_theme_id` int(11) NOT NULL DEFAULT '0',
-										  `form_review` int(11) NOT NULL DEFAULT '0',
-										  `form_resume_enable` int(1) NOT NULL DEFAULT '0',
-										  `form_limit_enable` int(1) NOT NULL DEFAULT '0',
-										  `form_limit` int(11) NOT NULL DEFAULT '0',
-										  `form_label_alignment` varchar(11) NOT NULL DEFAULT 'top_label',
-										  `form_language` varchar(50) DEFAULT NULL,
-										  `form_page_total` int(11) NOT NULL DEFAULT '1',
-										  `form_lastpage_title` varchar(255) DEFAULT NULL,
-										  `form_submit_primary_text` varchar(255) NOT NULL DEFAULT 'Submit',
-										  `form_submit_secondary_text` varchar(255) NOT NULL DEFAULT 'Previous',
-										  `form_submit_primary_img` varchar(255) DEFAULT NULL,
-										  `form_submit_secondary_img` varchar(255) DEFAULT NULL,
-										  `form_submit_use_image` int(1) NOT NULL DEFAULT '0',
-										  `form_review_primary_text` varchar(255) NOT NULL DEFAULT 'Submit',
-										  `form_review_secondary_text` varchar(255) NOT NULL DEFAULT 'Previous',
-										  `form_review_primary_img` varchar(255) DEFAULT NULL,
-										  `form_review_secondary_img` varchar(255) DEFAULT NULL,
-										  `form_review_use_image` int(11) NOT NULL DEFAULT '0',
-										  `form_review_title` text,
-										  `form_review_description` text,
-										  `form_pagination_type` varchar(11) NOT NULL DEFAULT 'steps',
-										  `form_schedule_enable` int(1) NOT NULL DEFAULT '0',
-										  `form_schedule_start_date` date DEFAULT NULL,
-										  `form_schedule_end_date` date DEFAULT NULL,
-										  `form_schedule_start_hour` time DEFAULT NULL,
-										  `form_schedule_end_hour` time DEFAULT NULL,
-										  `esl_enable` tinyint(1) NOT NULL DEFAULT '0',
-										  `esl_from_name` text,
-										  `esl_from_email_address` varchar(255) DEFAULT NULL,
-										  `esl_subject` text,
-										  `esl_content` mediumtext,
-										  `esl_plain_text` int(11) NOT NULL DEFAULT '0',
-										  `esr_enable` tinyint(1) NOT NULL DEFAULT '0',
-										  `esr_email_address` text,
-										  `esr_from_name` text,
-										  `esr_from_email_address` varchar(255) DEFAULT NULL,
-										  `esr_subject` text,
-										  `esr_content` mediumtext,
-										  `esr_plain_text` int(11) NOT NULL DEFAULT '0',
-										  `payment_enable_merchant` int(1) NOT NULL DEFAULT '-1',
-										  `payment_merchant_type` varchar(25) NOT NULL DEFAULT 'paypal_standard',
-										  `payment_paypal_email` varchar(255) DEFAULT NULL,
-										  `payment_paypal_language` varchar(5) NOT NULL DEFAULT 'US',
-										  `payment_currency` varchar(5) NOT NULL DEFAULT 'USD',
-										  `payment_show_total` int(1) NOT NULL DEFAULT '0',
-										  `payment_total_location` varchar(11) NOT NULL DEFAULT 'top',
-										  `payment_enable_recurring` int(1) NOT NULL DEFAULT '0',
-										  `payment_recurring_cycle` int(11) NOT NULL DEFAULT '1',
-										  `payment_recurring_unit` varchar(5) NOT NULL DEFAULT 'month',
-										  `payment_enable_trial` int(1) NOT NULL DEFAULT '0',
-										  `payment_trial_period` int(11) NOT NULL DEFAULT '1',
-										  `payment_trial_unit` varchar(5) NOT NULL DEFAULT 'month',
-										  `payment_trial_amount` decimal(62,2) NOT NULL DEFAULT '0.00',
-										  `payment_price_type` varchar(11) NOT NULL DEFAULT 'fixed',
-										  `payment_price_amount` decimal(62,2) NOT NULL DEFAULT '0.00',
-										  `payment_price_name` varchar(255) DEFAULT NULL,
-										  `payment_stripe_live_secret_key` varchar(50) DEFAULT NULL,
-										  `payment_stripe_live_public_key` varchar(50) DEFAULT NULL,
-										  `payment_stripe_test_secret_key` varchar(50) DEFAULT NULL,
-										  `payment_stripe_test_public_key` varchar(50) DEFAULT NULL,
-										  `payment_stripe_enable_test_mode` int(1) NOT NULL DEFAULT '0',
-										  `payment_paypal_rest_live_clientid` varchar(100) DEFAULT NULL,
-										  `payment_paypal_rest_live_secret_key` varchar(100) DEFAULT NULL,
-										  `payment_paypal_rest_test_clientid` varchar(100) DEFAULT NULL,
-										  `payment_paypal_rest_test_secret_key` varchar(100) DEFAULT NULL,
-										  `payment_paypal_rest_enable_test_mode` int(1) NOT NULL DEFAULT '0',
-										  `payment_authorizenet_live_apiloginid` varchar(50) DEFAULT NULL,
-										  `payment_authorizenet_live_transkey` varchar(50) DEFAULT NULL,
-										  `payment_authorizenet_test_apiloginid` varchar(50) DEFAULT NULL,
-										  `payment_authorizenet_test_transkey` varchar(50) DEFAULT NULL,
-										  `payment_authorizenet_enable_test_mode` int(1) NOT NULL DEFAULT '0',
-										  `payment_authorizenet_save_cc_data` int(1) NOT NULL DEFAULT '0',
-										  `payment_braintree_live_merchant_id` varchar(50) DEFAULT NULL,
-										  `payment_braintree_live_public_key` varchar(50) DEFAULT NULL,
-										  `payment_braintree_live_private_key` varchar(50) DEFAULT NULL,
-										  `payment_braintree_live_encryption_key` text,
-										  `payment_braintree_test_merchant_id` varchar(50) DEFAULT NULL,
-										  `payment_braintree_test_public_key` varchar(50) DEFAULT NULL,
-										  `payment_braintree_test_private_key` varchar(50) DEFAULT NULL,
-										  `payment_braintree_test_encryption_key` text,
-										  `payment_braintree_enable_test_mode` int(1) NOT NULL DEFAULT '0',
-										  `payment_paypal_enable_test_mode` int(1) NOT NULL DEFAULT '0',
-										  `payment_enable_invoice` int(1) NOT NULL DEFAULT '0',
-										  `payment_invoice_email` varchar(255) DEFAULT NULL,
-										  `payment_delay_notifications` int(1) NOT NULL DEFAULT '1',
-										  `payment_ask_billing` int(1) NOT NULL DEFAULT '0',
-										  `payment_ask_shipping` int(1) NOT NULL DEFAULT '0',
-										  `payment_enable_tax` int(1) NOT NULL DEFAULT '0',
-										  `payment_tax_rate` decimal(62,2) NOT NULL DEFAULT '0.00',
-										  `payment_enable_discount` int(1) NOT NULL DEFAULT '0',
-										  `payment_discount_type` varchar(12) NOT NULL DEFAULT 'percent_off',
-										  `payment_discount_amount` decimal(62,2) NOT NULL DEFAULT '0.00',
-										  `payment_discount_code` text,
-										  `payment_discount_element_id` int(11) DEFAULT NULL,
-										  `payment_discount_max_usage` int(11) NOT NULL DEFAULT '0',
-										  `payment_discount_expiry_date` date DEFAULT NULL,
-										  `logic_field_enable` tinyint(1) NOT NULL DEFAULT '0',
-										  `logic_page_enable` tinyint(1) NOT NULL DEFAULT '0',
-										  `logic_email_enable` tinyint(1) NOT NULL DEFAULT '0',
-										  `webhook_enable` tinyint(1) NOT NULL DEFAULT '0',
-										  `webhook_url` text,
-										  `webhook_method` varchar(4) NOT NULL DEFAULT 'post',
-										  PRIMARY KEY (`form_id`),
-										  KEY `form_tags` (`form_tags`)
-										) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."forms(
+										  form_id int PRIMARY KEY,
+										  form_name nvarchar(255),
+										  form_description nvarchar(255),
+										  form_tags varchar(255) DEFAULT NULL,
+										  form_email varchar(255),
+										  form_redirect varchar(1024),
+										  form_redirect_enable int NOT NULL DEFAULT 0,
+										  form_success_message nvarchar(255),
+										  form_disabled_message nvarchar(255),
+										  form_password nvarchar(100) DEFAULT NULL,
+										  form_unique_ip int NOT NULL DEFAULT '0',
+										  form_frame_height int DEFAULT NULL,
+										  form_has_css int NOT NULL DEFAULT '0',
+										  form_captcha int NOT NULL DEFAULT '0',
+										  form_captcha_type char(1) NOT NULL DEFAULT 'r',
+										  form_active int NOT NULL DEFAULT '1',
+										  form_theme_id int NOT NULL DEFAULT '0',
+										  form_review int NOT NULL DEFAULT '0',
+										  form_resume_enable int NOT NULL DEFAULT '0',
+										  form_limit_enable int NOT NULL DEFAULT '0',
+										  form_limit int NOT NULL DEFAULT '0',
+										  form_label_alignment varchar(11) NOT NULL DEFAULT 'top_label',
+										  form_language nvarchar(50) DEFAULT NULL,
+										  form_page_total int NOT NULL DEFAULT '1',
+										  form_lastpage_title nvarchar(255) DEFAULT NULL,
+										  form_submit_primary_text nvarchar(255) NOT NULL DEFAULT 'Submit',
+										  form_submit_secondary_text nvarchar(255) NOT NULL DEFAULT 'Previous',
+										  form_submit_primary_img varchar(255) DEFAULT NULL,
+										  form_submit_secondary_img varchar(255) DEFAULT NULL,
+										  form_submit_use_image int NOT NULL DEFAULT '0',
+										  form_review_primary_text nvarchar(255) NOT NULL DEFAULT 'Submit',
+										  form_review_secondary_text nvarchar(255) NOT NULL DEFAULT 'Previous',
+										  form_review_primary_img varchar(255) DEFAULT NULL,
+										  form_review_secondary_img varchar(255) DEFAULT NULL,
+										  form_review_use_image int NOT NULL DEFAULT '0',
+										  form_review_title nvarchar(255),
+										  form_review_description nvarchar(255),
+										  form_pagination_type varchar(11) NOT NULL DEFAULT 'steps',
+										  form_schedule_enable int NOT NULL DEFAULT '0',
+										  form_schedule_start_date date DEFAULT NULL,
+										  form_schedule_end_date date DEFAULT NULL,
+										  form_schedule_start_hour time DEFAULT NULL,
+										  form_schedule_end_hour time DEFAULT NULL,
+										  esl_enable tinyint NOT NULL DEFAULT '0',
+										  esl_from_name nvarchar(255),
+										  esl_from_email_address varchar(255) DEFAULT NULL,
+										  esl_subject nvarchar(255),
+										  esl_content nvarchar(400),
+										  esl_plain_text int NOT NULL DEFAULT '0',
+										  esr_enable tinyint NOT NULL DEFAULT '0',
+										  esr_email_address varchar(255),
+										  esr_from_name nvarchar(255),
+										  esr_from_email_address varchar(255) DEFAULT NULL,
+										  esr_subject nvarchar(255),
+										  esr_content nvarchar(400),
+										  esr_plain_text int NOT NULL DEFAULT '0',
+										  payment_enable_merchant int NOT NULL DEFAULT '-1',
+										  payment_merchant_type varchar(25) NOT NULL DEFAULT 'paypal_standard',
+										  payment_paypal_email varchar(255) DEFAULT NULL,
+										  payment_paypal_language varchar(5) NOT NULL DEFAULT 'US',
+										  payment_currency varchar(5) NOT NULL DEFAULT 'USD',
+										  payment_show_total int NOT NULL DEFAULT '0',
+										  payment_total_location varchar(11) NOT NULL DEFAULT 'top',
+										  payment_enable_recurring int NOT NULL DEFAULT '0',
+										  payment_recurring_cycle int NOT NULL DEFAULT '1',
+										  payment_recurring_unit varchar(5) NOT NULL DEFAULT 'month',
+										  payment_enable_trial int NOT NULL DEFAULT '0',
+										  payment_trial_period int NOT NULL DEFAULT '1',
+										  payment_trial_unit varchar(5) NOT NULL DEFAULT 'month',
+										  payment_trial_amount decimal(38,2) NOT NULL DEFAULT '0.00',
+										  payment_price_type varchar(11) NOT NULL DEFAULT 'fixed',
+										  payment_price_amount decimal(38,2) NOT NULL DEFAULT '0.00',
+										  payment_price_name varchar(255) DEFAULT NULL,
+										  payment_stripe_live_secret_key varchar(50) DEFAULT NULL,
+										  payment_stripe_live_public_key varchar(50) DEFAULT NULL,
+										  payment_stripe_test_secret_key varchar(50) DEFAULT NULL,
+										  payment_stripe_test_public_key varchar(50) DEFAULT NULL,
+										  payment_stripe_enable_test_mode int NOT NULL DEFAULT '0',
+										  payment_paypal_rest_live_clientid varchar(100) DEFAULT NULL,
+										  payment_paypal_rest_live_secret_key varchar(100) DEFAULT NULL,
+										  payment_paypal_rest_test_clientid varchar(100) DEFAULT NULL,
+										  payment_paypal_rest_test_secret_key varchar(100) DEFAULT NULL,
+										  payment_paypal_rest_enable_test_mode int NOT NULL DEFAULT '0',
+										  payment_authorizenet_live_apiloginid varchar(50) DEFAULT NULL,
+										  payment_authorizenet_live_transkey varchar(50) DEFAULT NULL,
+										  payment_authorizenet_test_apiloginid varchar(50) DEFAULT NULL,
+										  payment_authorizenet_test_transkey varchar(50) DEFAULT NULL,
+										  payment_authorizenet_enable_test_mode int NOT NULL DEFAULT '0',
+										  payment_authorizenet_save_cc_data int NOT NULL DEFAULT '0',
+										  payment_braintree_live_merchant_id varchar(50) DEFAULT NULL,
+										  payment_braintree_live_public_key varchar(50) DEFAULT NULL,
+										  payment_braintree_live_private_key varchar(50) DEFAULT NULL,
+										  payment_braintree_live_encryption_key nvarchar(1000),
+										  payment_braintree_test_merchant_id varchar(50) DEFAULT NULL,
+										  payment_braintree_test_public_key varchar(50) DEFAULT NULL,
+										  payment_braintree_test_private_key varchar(50) DEFAULT NULL,
+										  payment_braintree_test_encryption_key nvarchar(1000),
+										  payment_braintree_enable_test_mode int NOT NULL DEFAULT '0',
+										  payment_paypal_enable_test_mode int NOT NULL DEFAULT '0',
+										  payment_enable_invoice int NOT NULL DEFAULT '0',
+										  payment_invoice_email varchar(255) DEFAULT NULL,
+										  payment_delay_notifications int NOT NULL DEFAULT '1',
+										  payment_ask_billing int NOT NULL DEFAULT '0',
+										  payment_ask_shipping int NOT NULL DEFAULT '0',
+										  payment_enable_tax int NOT NULL DEFAULT '0',
+										  payment_tax_rate decimal(38,2) NOT NULL DEFAULT '0.00',
+										  payment_enable_discount int NOT NULL DEFAULT '0',
+										  payment_discount_type varchar(12) NOT NULL DEFAULT 'percent_off',
+										  payment_discount_amount decimal(38,2) NOT NULL DEFAULT '0.00',
+										  payment_discount_code nvarchar(1000),
+										  payment_discount_element_id int DEFAULT NULL,
+										  payment_discount_max_usage int NOT NULL DEFAULT '0',
+										  payment_discount_expiry_date date DEFAULT NULL,
+										  logic_field_enable tinyint NOT NULL DEFAULT '0',
+										  logic_page_enable tinyint NOT NULL DEFAULT '0',
+										  logic_email_enable tinyint NOT NULL DEFAULT '0',
+										  webhook_enable tinyint NOT NULL DEFAULT '0',
+										  webhook_url nvarchar(1024),
+										  webhook_method varchar(4) NOT NULL DEFAULT 'post'
+										)";
+		$params = array();
+		$sth = $dbh->prepare($query);
+		try{
+			$sth->execute($params);
+		}catch(PDOException $e) {
+			return $e->getMessage().'<br/><br/>';
+		}
+
+		$query = "CREATE INDEX form_tags ON ".MF_TABLE_PREFIX."forms (form_tags)";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -144,16 +151,23 @@
 	}
 	
 	function create_ap_column_preferences_table($dbh){
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."column_preferences` (
-																		  `acp_id` int(11) NOT NULL AUTO_INCREMENT,
-																		  `form_id` int(11) DEFAULT NULL,
-																		  `user_id` int(11) NOT NULL DEFAULT '1',
-																		  `incomplete_entries` int(1) NOT NULL DEFAULT '0',
-																		  `element_name` varchar(255) NOT NULL DEFAULT '',
-																		  `position` int(11) NOT NULL DEFAULT '0',
-																		  PRIMARY KEY (`acp_id`),
-																		  KEY `acp_position` (`form_id`,`position`)
-																		) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."column_preferences (
+																		  acp_id int NOT NULL IDENTITY(1,1) PRIMARY KEY,
+																		  form_id int DEFAULT NULL,
+																		  user_id int NOT NULL DEFAULT '1',
+																		  incomplete_entries int NOT NULL DEFAULT '0',
+																		  element_name varchar(255) NOT NULL DEFAULT '',
+																		  position int NOT NULL DEFAULT '0'
+																		);";
+		$params = array();
+		$sth = $dbh->prepare($query);
+		try{
+			$sth->execute($params);
+		}catch(PDOException $e) {
+			return $e->getMessage().'<br/><br/>';
+		}
+
+		$query = "CREATE INDEX acp_position ON ".MF_TABLE_PREFIX."column_preferences (form_id,position)";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -166,19 +180,34 @@
 	}
 
 	function create_ap_element_options_table($dbh){
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."element_options` (
-														  `aeo_id` int(11) NOT NULL AUTO_INCREMENT,
-														  `form_id` int(11) NOT NULL DEFAULT '0',
-														  `element_id` int(11) NOT NULL DEFAULT '0',
-														  `option_id` int(11) NOT NULL DEFAULT '0',
-														  `position` int(11) NOT NULL DEFAULT '0',
-														  `option` text,
-														  `option_is_default` int(11) NOT NULL DEFAULT '0',
-														  `live` int(11) NOT NULL DEFAULT '1',
-														  PRIMARY KEY (`aeo_id`),
-														  KEY `form_id` (`form_id`),
-														  KEY `element_id` (`element_id`)
-														) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."element_options (
+														  aeo_id int NOT NULL IDENTITY(1,1) PRIMARY KEY,
+														  form_id int NOT NULL DEFAULT '0',
+														  element_id int NOT NULL DEFAULT '0',
+														  option_id int NOT NULL DEFAULT '0',
+														  position int NOT NULL DEFAULT '0',
+														  [option] nvarchar(255),
+														  option_is_default int NOT NULL DEFAULT '0',
+														  live int NOT NULL DEFAULT '1'
+														);";
+		$params = array();
+		$sth = $dbh->prepare($query);
+		try{
+			$sth->execute($params);
+		}catch(PDOException $e) {
+			return $e->getMessage().'<br/><br/>';
+		}
+
+		$query = "CREATE INDEX form_id ON ".MF_TABLE_PREFIX."element_options (form_id)";
+		$params = array();
+		$sth = $dbh->prepare($query);
+		try{
+			$sth->execute($params);
+		}catch(PDOException $e) {
+			return $e->getMessage().'<br/><br/>';
+		}
+
+		$query = "CREATE INDEX element_id ON ".MF_TABLE_PREFIX."element_options (element_id)";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -191,16 +220,31 @@
 	}
 
 	function create_ap_element_prices_table($dbh){
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."element_prices` (
-														  `aep_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-														  `form_id` int(11) NOT NULL,
-														  `element_id` int(11) NOT NULL,
-														  `option_id` int(11) NOT NULL DEFAULT '0',
-														  `price` decimal(62,2) NOT NULL DEFAULT '0.00',
-														  PRIMARY KEY (`aep_id`),
-														  KEY `form_id` (`form_id`),
-														  KEY `element_id` (`element_id`)
-														) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."element_prices (
+														  aep_id int NOT NULL IDENTITY(1,1) PRIMARY KEY,
+														  form_id int NOT NULL,
+														  element_id int NOT NULL,
+														  option_id int NOT NULL DEFAULT '0',
+														  price decimal(38,2) NOT NULL DEFAULT '0.00'
+														);";
+		$params = array();
+		$sth = $dbh->prepare($query);
+		try{
+			$sth->execute($params);
+		}catch(PDOException $e) {
+			return $e->getMessage().'<br/><br/>';
+		}
+
+		$query = "CREATE INDEX form_id ON ".MF_TABLE_PREFIX."element_prices (form_id)";
+		$params = array();
+		$sth = $dbh->prepare($query);
+		try{
+			$sth->execute($params);
+		}catch(PDOException $e) {
+			return $e->getMessage().'<br/><br/>';
+		}
+
+		$query = "CREATE INDEX element_id ON ".MF_TABLE_PREFIX."element_prices (element_id)";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -213,67 +257,67 @@
 	}
 
 	function create_ap_form_elements_table($dbh){
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."form_elements` (
-													  `form_id` int(11) NOT NULL DEFAULT '0',
-													  `element_id` int(11) NOT NULL DEFAULT '0',
-													  `element_title` text,
-													  `element_guidelines` text,
-													  `element_size` varchar(6) NOT NULL DEFAULT 'medium',
-													  `element_is_required` int(11) NOT NULL DEFAULT '0',
-													  `element_is_unique` int(11) NOT NULL DEFAULT '0',
-													  `element_is_private` int(11) NOT NULL DEFAULT '0',
-													  `element_type` varchar(50) DEFAULT NULL,
-													  `element_position` int(11) NOT NULL DEFAULT '0',
-													  `element_default_value` text,
-													  `element_constraint` varchar(255) DEFAULT NULL,
-													  `element_total_child` int(11) NOT NULL DEFAULT '0',
-													  `element_css_class` varchar(255) NOT NULL DEFAULT '',
-													  `element_range_min` bigint(11) unsigned NOT NULL DEFAULT '0',
-													  `element_range_max` bigint(11) unsigned NOT NULL DEFAULT '0',
-													  `element_range_limit_by` char(1) NOT NULL,
-													  `element_status` int(1) NOT NULL DEFAULT '2',
-													  `element_choice_columns` int(1) NOT NULL DEFAULT '1',
-													  `element_choice_has_other` int(1) NOT NULL DEFAULT '0',
-													  `element_choice_other_label` text,
-													  `element_time_showsecond` int(11) NOT NULL DEFAULT '0',
-													  `element_time_24hour` int(11) NOT NULL DEFAULT '0',
-													  `element_address_hideline2` int(11) NOT NULL DEFAULT '0',
-													  `element_address_us_only` int(11) NOT NULL DEFAULT '0',
-													  `element_date_enable_range` int(1) NOT NULL DEFAULT '0',
-													  `element_date_range_min` date DEFAULT NULL,
-													  `element_date_range_max` date DEFAULT NULL,
-													  `element_date_enable_selection_limit` int(1) NOT NULL DEFAULT '0',
-													  `element_date_selection_max` int(11) NOT NULL DEFAULT '1',
-													  `element_date_past_future` char(1) NOT NULL DEFAULT 'p',
-													  `element_date_disable_past_future` int(1) NOT NULL DEFAULT '0',
-													  `element_date_disable_weekend` int(1) NOT NULL DEFAULT '0',
-													  `element_date_disable_specific` int(1) NOT NULL DEFAULT '0',
-													  `element_date_disabled_list` text CHARACTER SET utf8 COLLATE utf8_bin,
-													  `element_file_enable_type_limit` int(1) NOT NULL DEFAULT '1',
-													  `element_file_block_or_allow` char(1) NOT NULL DEFAULT 'b',
-													  `element_file_type_list` varchar(255) DEFAULT NULL,
-													  `element_file_as_attachment` int(1) NOT NULL DEFAULT '0',
-													  `element_file_enable_advance` int(1) NOT NULL DEFAULT '0',
-													  `element_file_auto_upload` int(1) NOT NULL DEFAULT '0',
-													  `element_file_enable_multi_upload` int(1) NOT NULL DEFAULT '0',
-													  `element_file_max_selection` int(11) NOT NULL DEFAULT '5',
-													  `element_file_enable_size_limit` int(1) NOT NULL DEFAULT '0',
-													  `element_file_size_max` int(11) DEFAULT NULL,
-													  `element_matrix_allow_multiselect` int(1) NOT NULL DEFAULT '0',
-													  `element_matrix_parent_id` int(11) NOT NULL DEFAULT '0',
-													  `element_number_enable_quantity` int(1) NOT NULL DEFAULT '0',
-													  `element_number_quantity_link` varchar(15) DEFAULT NULL,
-													  `element_section_display_in_email` int(1) NOT NULL DEFAULT '0',
-													  `element_section_enable_scroll` int(1) NOT NULL DEFAULT '0',
-													  `element_submit_use_image` int(1) NOT NULL DEFAULT '0',
-													  `element_submit_primary_text` varchar(255) NOT NULL DEFAULT 'Continue',
-													  `element_submit_secondary_text` varchar(255) NOT NULL DEFAULT 'Previous',
-													  `element_submit_primary_img` varchar(255) DEFAULT NULL,
-													  `element_submit_secondary_img` varchar(255) DEFAULT NULL,
-													  `element_page_title` varchar(255) DEFAULT NULL,
-													  `element_page_number` int(11) NOT NULL DEFAULT '1',
-													  PRIMARY KEY (`form_id`,`element_id`)
-													) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."form_elements (
+													  form_id int NOT NULL DEFAULT '0',
+													  element_id int NOT NULL DEFAULT '0',
+													  element_title nvarchar(225),
+													  element_guidelines nvarchar(400),
+													  element_size varchar(6) NOT NULL DEFAULT 'medium',
+													  element_is_required int NOT NULL DEFAULT '0',
+													  element_is_unique int NOT NULL DEFAULT '0',
+													  element_is_private int NOT NULL DEFAULT '0',
+													  element_type varchar(50) DEFAULT NULL,
+													  element_position int NOT NULL DEFAULT '0',
+													  element_default_value nvarchar(1000),
+													  element_constraint varchar(255) DEFAULT NULL,
+													  element_total_child int NOT NULL DEFAULT '0',
+													  element_css_class varchar(255) NOT NULL DEFAULT '',
+													  element_range_min bigint NOT NULL DEFAULT '0',
+													  element_range_max bigint NOT NULL DEFAULT '0',
+													  element_range_limit_by char(1) NOT NULL,
+													  element_status int NOT NULL DEFAULT '2',
+													  element_choice_columns int NOT NULL DEFAULT '1',
+													  element_choice_has_other int NOT NULL DEFAULT '0',
+													  element_choice_other_label nvarchar(255),
+													  element_time_showsecond int NOT NULL DEFAULT '0',
+													  element_time_24hour int NOT NULL DEFAULT '0',
+													  element_address_hideline2 int NOT NULL DEFAULT '0',
+													  element_address_us_only int NOT NULL DEFAULT '0',
+													  element_date_enable_range int NOT NULL DEFAULT '0',
+													  element_date_range_min date DEFAULT NULL,
+													  element_date_range_max date DEFAULT NULL,
+													  element_date_enable_selection_limit int NOT NULL DEFAULT '0',
+													  element_date_selection_max int NOT NULL DEFAULT '1',
+													  element_date_past_future char(1) NOT NULL DEFAULT 'p',
+													  element_date_disable_past_future int NOT NULL DEFAULT '0',
+													  element_date_disable_weekend int NOT NULL DEFAULT '0',
+													  element_date_disable_specific int NOT NULL DEFAULT '0',
+													  element_date_disabled_list varchar(1000),
+													  element_file_enable_type_limit int NOT NULL DEFAULT '1',
+													  element_file_block_or_allow char(1) NOT NULL DEFAULT 'b',
+													  element_file_type_list varchar(255) DEFAULT NULL,
+													  element_file_as_attachment int NOT NULL DEFAULT '0',
+													  element_file_enable_advance int NOT NULL DEFAULT '0',
+													  element_file_auto_upload int NOT NULL DEFAULT '0',
+													  element_file_enable_multi_upload int NOT NULL DEFAULT '0',
+													  element_file_max_selection int NOT NULL DEFAULT '5',
+													  element_file_enable_size_limit int NOT NULL DEFAULT '0',
+													  element_file_size_max int DEFAULT NULL,
+													  element_matrix_allow_multiselect int NOT NULL DEFAULT '0',
+													  element_matrix_parent_id int NOT NULL DEFAULT '0',
+													  element_number_enable_quantity int NOT NULL DEFAULT '0',
+													  element_number_quantity_link varchar(15) DEFAULT NULL,
+													  element_section_display_in_email int NOT NULL DEFAULT '0',
+													  element_section_enable_scroll int NOT NULL DEFAULT '0',
+													  element_submit_use_image int NOT NULL DEFAULT '0',
+													  element_submit_primary_text nvarchar(255) NOT NULL DEFAULT 'Continue',
+													  element_submit_secondary_text nvarchar(255) NOT NULL DEFAULT 'Previous',
+													  element_submit_primary_img varchar(255) DEFAULT NULL,
+													  element_submit_secondary_img varchar(255) DEFAULT NULL,
+													  element_page_title nvarchar(255) DEFAULT NULL,
+													  element_page_number int NOT NULL DEFAULT '1',
+													  PRIMARY KEY (form_id,element_id)
+													);";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -286,17 +330,24 @@
 	}
 
 	function create_ap_form_filters_table($dbh){
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."form_filters` (
-													  `aff_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-													  `form_id` int(11) NOT NULL,
-													  `user_id` int(11) NOT NULL DEFAULT '1',
-													  `incomplete_entries` int(1) NOT NULL DEFAULT '0',
-													  `element_name` varchar(50) NOT NULL DEFAULT '',
-													  `filter_condition` varchar(15) NOT NULL DEFAULT 'is',
-													  `filter_keyword` varchar(255) NOT NULL DEFAULT '',
-													  PRIMARY KEY (`aff_id`),
-													  KEY `form_id` (`form_id`)
-													) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."form_filters (
+													  aff_id int NOT NULL IDENTITY(1,1) PRIMARY KEY,
+													  form_id int NOT NULL,
+													  user_id int NOT NULL DEFAULT '1',
+													  incomplete_entries int NOT NULL DEFAULT '0',
+													  element_name nvarchar(50) NOT NULL DEFAULT '',
+													  filter_condition varchar(15) NOT NULL DEFAULT 'is',
+													  filter_keyword varchar(255) NOT NULL DEFAULT ''
+													);";
+		$params = array();
+		$sth = $dbh->prepare($query);
+		try{
+			$sth->execute($params);
+		}catch(PDOException $e) {
+			return $e->getMessage().'<br/><br/>';
+		}
+
+		$query = "CREATE INDEX form_id ON ".MF_TABLE_PREFIX."form_filters (form_id)";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -309,97 +360,95 @@
 	}
 
 	function create_ap_form_themes_table($dbh){
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."form_themes` (
-												  `theme_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-												  `user_id` int(11) NOT NULL DEFAULT '1',
-												  `status` int(1) DEFAULT '1',
-												  `theme_has_css` int(1) NOT NULL DEFAULT '0',
-												  `theme_name` varchar(255) DEFAULT '',
-												  `theme_built_in` int(1) NOT NULL DEFAULT '0',
-												  `theme_is_private` int(11) NOT NULL DEFAULT '1',
-												  `logo_type` varchar(11) NOT NULL DEFAULT 'default' COMMENT 'default,custom,disabled',
-												  `logo_custom_image` text,
-												  `logo_custom_height` int(11) NOT NULL DEFAULT '40',
-												  `logo_default_image` varchar(50) DEFAULT '',
-												  `logo_default_repeat` int(1) NOT NULL DEFAULT '0',
-												  `wallpaper_bg_type` varchar(11) NOT NULL DEFAULT 'color' COMMENT 'color,pattern,custom',
-												  `wallpaper_bg_color` varchar(11) DEFAULT '',
-												  `wallpaper_bg_pattern` varchar(50) DEFAULT '',
-												  `wallpaper_bg_custom` text,
-												  `header_bg_type` varchar(11) NOT NULL DEFAULT 'color' COMMENT 'color,pattern,custom',
-												  `header_bg_color` varchar(11) DEFAULT '',
-												  `header_bg_pattern` varchar(50) DEFAULT '',
-												  `header_bg_custom` text,
-												  `form_bg_type` varchar(11) NOT NULL DEFAULT 'color' COMMENT 'color,pattern,custom',
-												  `form_bg_color` varchar(11) DEFAULT '',
-												  `form_bg_pattern` varchar(50) DEFAULT '',
-												  `form_bg_custom` text,
-												  `highlight_bg_type` varchar(11) NOT NULL DEFAULT 'color' COMMENT 'color,pattern,custom',
-												  `highlight_bg_color` varchar(11) DEFAULT '',
-												  `highlight_bg_pattern` varchar(50) DEFAULT '',
-												  `highlight_bg_custom` text,
-												  `guidelines_bg_type` varchar(11) NOT NULL DEFAULT 'color' COMMENT 'color,pattern,custom',
-												  `guidelines_bg_color` varchar(11) DEFAULT '',
-												  `guidelines_bg_pattern` varchar(50) DEFAULT '',
-												  `guidelines_bg_custom` text,
-												  `field_bg_type` varchar(11) NOT NULL DEFAULT 'color' COMMENT 'color,pattern,custom',
-												  `field_bg_color` varchar(11) DEFAULT '',
-												  `field_bg_pattern` varchar(50) DEFAULT '',
-												  `field_bg_custom` text,
-												  `form_title_font_type` varchar(50) NOT NULL DEFAULT 'Lucida Grande',
-												  `form_title_font_weight` int(11) NOT NULL DEFAULT '400',
-												  `form_title_font_style` varchar(25) NOT NULL DEFAULT 'normal',
-												  `form_title_font_size` varchar(11) DEFAULT '',
-												  `form_title_font_color` varchar(11) DEFAULT '',
-												  `form_desc_font_type` varchar(50) NOT NULL DEFAULT 'Lucida Grande',
-												  `form_desc_font_weight` int(11) NOT NULL DEFAULT '400',
-												  `form_desc_font_style` varchar(25) NOT NULL DEFAULT 'normal',
-												  `form_desc_font_size` varchar(11) DEFAULT '',
-												  `form_desc_font_color` varchar(11) DEFAULT '',
-												  `field_title_font_type` varchar(50) NOT NULL DEFAULT 'Lucida Grande',
-												  `field_title_font_weight` int(11) NOT NULL DEFAULT '400',
-												  `field_title_font_style` varchar(25) NOT NULL DEFAULT 'normal',
-												  `field_title_font_size` varchar(11) DEFAULT '',
-												  `field_title_font_color` varchar(11) DEFAULT '',
-												  `guidelines_font_type` varchar(50) NOT NULL DEFAULT 'Lucida Grande',
-												  `guidelines_font_weight` int(11) NOT NULL DEFAULT '400',
-												  `guidelines_font_style` varchar(25) NOT NULL DEFAULT 'normal',
-												  `guidelines_font_size` varchar(11) DEFAULT '',
-												  `guidelines_font_color` varchar(11) DEFAULT '',
-												  `section_title_font_type` varchar(50) NOT NULL DEFAULT 'Lucida Grande',
-												  `section_title_font_weight` int(11) NOT NULL DEFAULT '400',
-												  `section_title_font_style` varchar(25) NOT NULL DEFAULT 'normal',
-												  `section_title_font_size` varchar(11) DEFAULT '',
-												  `section_title_font_color` varchar(11) DEFAULT '',
-												  `section_desc_font_type` varchar(50) NOT NULL DEFAULT 'Lucida Grande',
-												  `section_desc_font_weight` int(11) NOT NULL DEFAULT '400',
-												  `section_desc_font_style` varchar(25) NOT NULL DEFAULT 'normal',
-												  `section_desc_font_size` varchar(11) DEFAULT '',
-												  `section_desc_font_color` varchar(11) DEFAULT '',
-												  `field_text_font_type` varchar(50) NOT NULL DEFAULT 'Lucida Grande',
-												  `field_text_font_weight` int(11) NOT NULL DEFAULT '400',
-												  `field_text_font_style` varchar(25) NOT NULL DEFAULT 'normal',
-												  `field_text_font_size` varchar(11) DEFAULT '',
-												  `field_text_font_color` varchar(11) DEFAULT '',
-												  `border_form_width` int(11) NOT NULL DEFAULT '1',
-												  `border_form_style` varchar(11) NOT NULL DEFAULT 'solid',
-												  `border_form_color` varchar(11) DEFAULT '',
-												  `border_guidelines_width` int(11) NOT NULL DEFAULT '1',
-												  `border_guidelines_style` varchar(11) NOT NULL DEFAULT 'solid',
-												  `border_guidelines_color` varchar(11) DEFAULT '',
-												  `border_section_width` int(11) NOT NULL DEFAULT '1',
-												  `border_section_style` varchar(11) NOT NULL DEFAULT 'solid',
-												  `border_section_color` varchar(11) DEFAULT '',
-												  `form_shadow_style` varchar(25) NOT NULL DEFAULT 'WarpShadow',
-												  `form_shadow_size` varchar(11) NOT NULL DEFAULT 'large',
-												  `form_shadow_brightness` varchar(11) NOT NULL DEFAULT 'normal',
-												  `form_button_type` varchar(11) NOT NULL DEFAULT 'text',
-												  `form_button_text` varchar(100) NOT NULL DEFAULT 'Submit',
-												  `form_button_image` text,
-												  `advanced_css` text,
-												  PRIMARY KEY (`theme_id`),
-												  KEY `theme_name` (`theme_name`)
-												) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."form_themes (
+												  theme_id int NOT NULL IDENTITY(1,1) PRIMARY KEY,
+												  user_id int NOT NULL DEFAULT '1',
+												  status int DEFAULT '1',
+												  theme_has_css int NOT NULL DEFAULT '0',
+												  theme_name varchar(255) DEFAULT '',
+												  theme_built_in int NOT NULL DEFAULT '0',
+												  theme_is_private int NOT NULL DEFAULT '1',
+												  logo_type varchar(11) NOT NULL DEFAULT 'default',
+												  logo_custom_image nvarchar(1024),
+												  logo_custom_height int NOT NULL DEFAULT '40',
+												  logo_default_image varchar(50) DEFAULT '',
+												  logo_default_repeat int NOT NULL DEFAULT '0',
+												  wallpaper_bg_type varchar(11) NOT NULL DEFAULT 'color',
+												  wallpaper_bg_color varchar(11) DEFAULT '',
+												  wallpaper_bg_pattern varchar(50) DEFAULT '',
+												  wallpaper_bg_custom varchar(255),
+												  header_bg_type varchar(11) NOT NULL DEFAULT 'color',
+												  header_bg_color varchar(11) DEFAULT '',
+												  header_bg_pattern varchar(50) DEFAULT '',
+												  header_bg_custom varchar(255),
+												  form_bg_type varchar(11) NOT NULL DEFAULT 'color',
+												  form_bg_color varchar(11) DEFAULT '',
+												  form_bg_pattern varchar(50) DEFAULT '',
+												  form_bg_custom varchar(255),
+												  highlight_bg_type varchar(11) NOT NULL DEFAULT 'color',
+												  highlight_bg_color varchar(11) DEFAULT '',
+												  highlight_bg_pattern varchar(50) DEFAULT '',
+												  highlight_bg_custom varchar(255),
+												  guidelines_bg_type varchar(11) NOT NULL DEFAULT 'color',
+												  guidelines_bg_color varchar(11) DEFAULT '',
+												  guidelines_bg_pattern varchar(50) DEFAULT '',
+												  guidelines_bg_custom varchar(255),
+												  field_bg_type varchar(11) NOT NULL DEFAULT 'color',
+												  field_bg_color varchar(11) DEFAULT '',
+												  field_bg_pattern varchar(50) DEFAULT '',
+												  field_bg_custom varchar(255),
+												  form_title_font_type varchar(50) NOT NULL DEFAULT 'Lucida Grande',
+												  form_title_font_weight int NOT NULL DEFAULT '400',
+												  form_title_font_style varchar(25) NOT NULL DEFAULT 'normal',
+												  form_title_font_size varchar(11) DEFAULT '',
+												  form_title_font_color varchar(11) DEFAULT '',
+												  form_desc_font_type varchar(50) NOT NULL DEFAULT 'Lucida Grande',
+												  form_desc_font_weight int NOT NULL DEFAULT '400',
+												  form_desc_font_style varchar(25) NOT NULL DEFAULT 'normal',
+												  form_desc_font_size varchar(11) DEFAULT '',
+												  form_desc_font_color varchar(11) DEFAULT '',
+												  field_title_font_type varchar(50) NOT NULL DEFAULT 'Lucida Grande',
+												  field_title_font_weight int NOT NULL DEFAULT '400',
+												  field_title_font_style varchar(25) NOT NULL DEFAULT 'normal',
+												  field_title_font_size varchar(11) DEFAULT '',
+												  field_title_font_color varchar(11) DEFAULT '',
+												  guidelines_font_type varchar(50) NOT NULL DEFAULT 'Lucida Grande',
+												  guidelines_font_weight int NOT NULL DEFAULT '400',
+												  guidelines_font_style varchar(25) NOT NULL DEFAULT 'normal',
+												  guidelines_font_size varchar(11) DEFAULT '',
+												  guidelines_font_color varchar(11) DEFAULT '',
+												  section_title_font_type varchar(50) NOT NULL DEFAULT 'Lucida Grande',
+												  section_title_font_weight int NOT NULL DEFAULT '400',
+												  section_title_font_style varchar(25) NOT NULL DEFAULT 'normal',
+												  section_title_font_size varchar(11) DEFAULT '',
+												  section_title_font_color varchar(11) DEFAULT '',
+												  section_desc_font_type varchar(50) NOT NULL DEFAULT 'Lucida Grande',
+												  section_desc_font_weight int NOT NULL DEFAULT '400',
+												  section_desc_font_style varchar(25) NOT NULL DEFAULT 'normal',
+												  section_desc_font_size varchar(11) DEFAULT '',
+												  section_desc_font_color varchar(11) DEFAULT '',
+												  field_text_font_type varchar(50) NOT NULL DEFAULT 'Lucida Grande',
+												  field_text_font_weight int NOT NULL DEFAULT '400',
+												  field_text_font_style varchar(25) NOT NULL DEFAULT 'normal',
+												  field_text_font_size varchar(11) DEFAULT '',
+												  field_text_font_color varchar(11) DEFAULT '',
+												  border_form_width int NOT NULL DEFAULT '1',
+												  border_form_style varchar(11) NOT NULL DEFAULT 'solid',
+												  border_form_color varchar(11) DEFAULT '',
+												  border_guidelines_width int NOT NULL DEFAULT '1',
+												  border_guidelines_style varchar(11) NOT NULL DEFAULT 'solid',
+												  border_guidelines_color varchar(11) DEFAULT '',
+												  border_section_width int NOT NULL DEFAULT '1',
+												  border_section_style varchar(11) NOT NULL DEFAULT 'solid',
+												  border_section_color varchar(11) DEFAULT '',
+												  form_shadow_style varchar(25) NOT NULL DEFAULT 'WarpShadow',
+												  form_shadow_size varchar(11) NOT NULL DEFAULT 'large',
+												  form_shadow_brightness varchar(11) NOT NULL DEFAULT 'normal',
+												  form_button_type varchar(11) NOT NULL DEFAULT 'text',
+												  form_button_text varchar(100) NOT NULL DEFAULT 'Submit',
+												  form_button_image varchar(1024),
+												  advanced_css varchar(1024)
+												);";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -408,34 +457,51 @@
 			return $e->getMessage().'<br/><br/>';
 		}
 
+		$query = "CREATE INDEX theme_name ON ".MF_TABLE_PREFIX."form_themes (theme_name)";
+		$params = array();
+		$sth = $dbh->prepare($query);
+		try{
+			$sth->execute($params);
+		}catch(PDOException $e) {
+			return $e->getMessage().'<br/><br/>';
+		}
+
+		add_MS_Description($dbh,'default,custom,disabled', MF_TABLE_PREFIX."form_themes", "logo_type");
+		add_MS_Description($dbh,'color,pattern,custom', MF_TABLE_PREFIX."form_themes", "wallpaper_bg_type");
+		add_MS_Description($dbh,'color,pattern,custom', MF_TABLE_PREFIX."form_themes", "header_bg_type");
+		add_MS_Description($dbh,'color,pattern,custom', MF_TABLE_PREFIX."form_themes", "form_bg_type");
+		add_MS_Description($dbh,'color,pattern,custom', MF_TABLE_PREFIX."form_themes", "highlight_bg_type");
+		add_MS_Description($dbh,'color,pattern,custom', MF_TABLE_PREFIX."form_themes", "guidelines_bg_type");
+		add_MS_Description($dbh,'color,pattern,custom', MF_TABLE_PREFIX."form_themes", "field_bg_type");
+
 		return '';
 	}
 
 	function populate_ap_form_themes_table($dbh){
 		
-		$query = "INSERT INTO `".MF_TABLE_PREFIX."form_themes` (`theme_id`, `user_id`, `status`, `theme_has_css`, `theme_name`, `theme_built_in`, `theme_is_private`, `logo_type`, `logo_custom_image`, `logo_custom_height`, `logo_default_image`, `logo_default_repeat`, `wallpaper_bg_type`, `wallpaper_bg_color`, `wallpaper_bg_pattern`, `wallpaper_bg_custom`, `header_bg_type`, `header_bg_color`, `header_bg_pattern`, `header_bg_custom`, `form_bg_type`, `form_bg_color`, `form_bg_pattern`, `form_bg_custom`, `highlight_bg_type`, `highlight_bg_color`, `highlight_bg_pattern`, `highlight_bg_custom`, `guidelines_bg_type`, `guidelines_bg_color`, `guidelines_bg_pattern`, `guidelines_bg_custom`, `field_bg_type`, `field_bg_color`, `field_bg_pattern`, `field_bg_custom`, `form_title_font_type`, `form_title_font_weight`, `form_title_font_style`, `form_title_font_size`, `form_title_font_color`, `form_desc_font_type`, `form_desc_font_weight`, `form_desc_font_style`, `form_desc_font_size`, `form_desc_font_color`, `field_title_font_type`, `field_title_font_weight`, `field_title_font_style`, `field_title_font_size`, `field_title_font_color`, `guidelines_font_type`, `guidelines_font_weight`, `guidelines_font_style`, `guidelines_font_size`, `guidelines_font_color`, `section_title_font_type`, `section_title_font_weight`, `section_title_font_style`, `section_title_font_size`, `section_title_font_color`, `section_desc_font_type`, `section_desc_font_weight`, `section_desc_font_style`, `section_desc_font_size`, `section_desc_font_color`, `field_text_font_type`, `field_text_font_weight`, `field_text_font_style`, `field_text_font_size`, `field_text_font_color`, `border_form_width`, `border_form_style`, `border_form_color`, `border_guidelines_width`, `border_guidelines_style`, `border_guidelines_color`, `border_section_width`, `border_section_style`, `border_section_color`, `form_shadow_style`, `form_shadow_size`, `form_shadow_brightness`, `form_button_type`, `form_button_text`, `form_button_image`, `advanced_css`)
+		$query = "INSERT INTO ".MF_TABLE_PREFIX."form_themes (user_id, status, theme_has_css, theme_name, theme_built_in, theme_is_private, logo_type, logo_custom_image, logo_custom_height, logo_default_image, logo_default_repeat, wallpaper_bg_type, wallpaper_bg_color, wallpaper_bg_pattern, wallpaper_bg_custom, header_bg_type, header_bg_color, header_bg_pattern, header_bg_custom, form_bg_type, form_bg_color, form_bg_pattern, form_bg_custom, highlight_bg_type, highlight_bg_color, highlight_bg_pattern, highlight_bg_custom, guidelines_bg_type, guidelines_bg_color, guidelines_bg_pattern, guidelines_bg_custom, field_bg_type, field_bg_color, field_bg_pattern, field_bg_custom, form_title_font_type, form_title_font_weight, form_title_font_style, form_title_font_size, form_title_font_color, form_desc_font_type, form_desc_font_weight, form_desc_font_style, form_desc_font_size, form_desc_font_color, field_title_font_type, field_title_font_weight, field_title_font_style, field_title_font_size, field_title_font_color, guidelines_font_type, guidelines_font_weight, guidelines_font_style, guidelines_font_size, guidelines_font_color, section_title_font_type, section_title_font_weight, section_title_font_style, section_title_font_size, section_title_font_color, section_desc_font_type, section_desc_font_weight, section_desc_font_style, section_desc_font_size, section_desc_font_color, field_text_font_type, field_text_font_weight, field_text_font_style, field_text_font_size, field_text_font_color, border_form_width, border_form_style, border_form_color, border_guidelines_width, border_guidelines_style, border_guidelines_color, border_section_width, border_section_style, border_section_color, form_shadow_style, form_shadow_size, form_shadow_brightness, form_button_type, form_button_text, form_button_image, advanced_css)
 VALUES
-	(1,1,1,0,'Green Senegal',1,1,'default','http://',40,'machform.png',0,'color','#cfdfc5','','','color','#bad4a9','','','color','#ffffff','','','color','#ecf1ea','','','color','#ecf1ea','','','color','#cfdfc5','','','Philosopher',700,'normal','','#80af1b','Philosopher',400,'normal','100%','#80af1b','Philosopher',700,'normal','110%','#80af1b','Ubuntu',400,'normal','','#666666','Philosopher',700,'normal','110%','#80af1b','Philosopher',400,'normal','95%','#80af1b','Ubuntu',400,'normal','','#666666',1,'solid','#bad4a9',1,'dashed','#bad4a9',1,'dotted','#CCCCCC','WarpShadow','large','normal','text','Submit','http://',''),
-	(2,1,1,0,'Blue Bigbird',1,1,'default','http://',40,'machform.png',0,'color','#336699','','','color','#6699cc','','','color','#ffffff','','','color','#ccdced','','','color','#6699cc','','','color','#ffffff','','','Open Sans',600,'normal','','','Open Sans',400,'normal','','','Open Sans',700,'normal','100%','','Ubuntu',400,'normal','80%','#ffffff','Open Sans',600,'normal','','','Open Sans',400,'normal','95%','','Open Sans',400,'normal','','',1,'solid','#336699',1,'dotted','#6699cc',1,'dotted','#CCCCCC','WarpShadow','large','normal','text','Submit','http://',''),
-	(3,1,1,0,'Blue Pionus',1,1,'default','http://',40,'machform.png',0,'color','#556270','','','color','#6b7b8c','','','color','#ffffff','','','color','#99aec4','','','color','#6b7b8c','','','color','#ffffff','','','Istok Web',400,'normal','170%','','Maven Pro',400,'normal','100%','','Istok Web',700,'normal','100%','','Maven Pro',400,'normal','95%','#ffffff','Istok Web',400,'normal','110%','','Maven Pro',400,'normal','95%','','Maven Pro',400,'normal','','',1,'solid','#556270',1,'solid','#6b7b8c',1,'dotted','#CCCCCC','WarpShadow','large','normal','text','Submit','http://',''),
-	(4,1,1,0,'Brown Conure',1,1,'default','http://',40,'machform.png',0,'pattern','#948c75','pattern_036.gif','','color','#b3a783','','','color','#ffffff','','','color','#e0d0a2','','','color','#948c75','','','color','#f0f0d8','pattern_036.gif','','Molengo',400,'normal','170%','','Molengo',400,'normal','110%','','Molengo',400,'normal','110%','','Nobile',400,'normal','','#ececec','Molengo',400,'normal','130%','','Molengo',400,'normal','100%','','Molengo',400,'normal','110%','',1,'solid','#948c75',1,'solid','#948c75',1,'dotted','#CCCCCC','WarpShadow','large','normal','text','Submit','http://',''),
-	(5,1,1,0,'Yellow Lovebird',1,1,'default','http://',40,'machform.png',0,'color','#f0d878','','','color','#edb817','','','color','#ffffff','','','color','#f5d678','','','color','#f7c52e','','','color','#ffffff','','','Amaranth',700,'normal','170%','','Amaranth',400,'normal','100%','','Amaranth',700,'normal','100%','','Amaranth',400,'normal','','#444444','Amaranth',400,'normal','110%','','Amaranth',400,'normal','95%','','Amaranth',400,'normal','100%','',1,'solid','#f0d878',1,'solid','#f7c52e',1,'dotted','#CCCCCC','WarpShadow','large','normal','text','Submit','http://',''),
-	(6,1,1,0,'Pink Starling',1,1,'default','http://',40,'machform.png',0,'color','#ff6699','','','color','#d93280','','','color','#ffffff','','','color','#ffd0d4','','','color','#f9fad2','','','color','#ffffff','','','Josefin Sans',600,'normal','160%','','Josefin Sans',400,'normal','110%','','Josefin Sans',700,'normal','110%','','Josefin Sans',600,'normal','100%','','Josefin Sans',700,'normal','','','Josefin Sans',400,'normal','110%','','Josefin Sans',400,'normal','130%','',1,'solid','#ff6699',1,'dashed','#f56990',1,'dotted','#CCCCCC','WarpShadow','large','normal','text','Submit','http://',''),
-	(8,1,1,0,'Red Rabbit',1,1,'default','http://',40,'machform.png',0,'color','#a40802','','','color','#800e0e','','','color','#ffffff','','','color','#ffa4a0','','','color','#800e0e','','','color','#ffffff','','','Lobster',400,'normal','','#000000','Ubuntu',400,'normal','100%','#000000','Lobster',400,'normal','110%','#222222','Ubuntu',400,'normal','85%','#ffffff','Lobster',400,'normal','130%','#000000','Ubuntu',400,'normal','95%','#000000','Ubuntu',400,'normal','','#333333',1,'solid','#a40702',1,'solid','#800e0e',1,'dotted','#CCCCCC','WarpShadow','large','normal','text','Submit','http://',''),
-	(9,1,1,0,'Orange Robin',1,1,'default','http://',40,'machform.png',0,'color','#f38430','','','color','#fa6800','','','color','#ffffff','','','color','#a7dbd8','','','color','#e0e4cc','','','color','#ffffff','','','Lucida Grande',400,'normal','','#000000','Nobile',400,'normal','','#000000','Nobile',700,'normal','','#000000','Lucida Grande',400,'normal','','#444444','Nobile',700,'normal','100%','#000000','Nobile',400,'normal','','#000000','Nobile',400,'normal','95%','#333333',1,'solid','#f38430',1,'solid','#e0e4cc',1,'dotted','#CCCCCC','WarpShadow','large','normal','text','Submit','http://',''),
-	(10,1,1,0,'Orange Sunbird',1,1,'default','http://',40,'machform.png',0,'color','#d95c43','','','color','#c02942','','','color','#ffffff','','','color','#d95c43','','','color','#53777a','','','color','#ffffff','','','Lucida Grande',400,'normal','','#000000','Lucida Grande',400,'normal','','#000000','Lucida Grande',700,'normal','','#222222','Lucida Grande',400,'normal','','#ffffff','Lucida Grande',400,'normal','','#000000','Lucida Grande',400,'normal','','#000000','Lucida Grande',400,'normal','','#333333',1,'solid','#d95c43',1,'solid','#53777a',1,'dotted','#CCCCCC','WarpShadow','large','normal','text','Submit','http://',''),
-	(11,1,1,0,'Green Ringneck',1,1,'default','http://',40,'machform.png',0,'color','#0b486b','','','color','#3b8686','','','color','#ffffff','','','color','#cff09e','','','color','#79bd9a','','','color','#a8dba8','','','Delius Swash Caps',400,'normal','','#000000','Delius Swash Caps',400,'normal','100%','#000000','Delius Swash Caps',400,'normal','100%','#222222','Delius',400,'normal','85%','#ffffff','Delius Swash Caps',400,'normal','','#000000','Delius Swash Caps',400,'normal','95%','#000000','Delius',400,'normal','','#515151',1,'solid','#0b486b',1,'solid','#79bd9a',1,'dotted','#CCCCCC','WarpShadow','large','normal','text','Submit','http://',''),
-	(12,1,1,0,'Brown Finch',1,1,'default','http://',40,'machform.png',0,'color','#774f38','','','color','#e08e79','','','color','#ffffff','','','color','#ece5ce','','','color','#c5e0dc','','','color','#f9fad2','','','Arvo',700,'normal','','#000000','Arvo',400,'normal','','#000000','Arvo',700,'normal','','#222222','Arvo',400,'normal','','#444444','Arvo',400,'normal','','#000000','Arvo',400,'normal','85%','#000000','Arvo',400,'normal','','#333333',1,'solid','#774f38',1,'dashed','#e08e79',1,'dotted','#CCCCCC','WarpShadow','large','normal','text','Submit','http://',''),
-	(14,1,1,0,'Brown Macaw',1,1,'default','http://',40,'machform.png',0,'color','#413e4a','','','color','#73626e','','','pattern','#ffffff','pattern_022.gif','','color','#f0b49e','','','color','#b38184','','','color','#ffffff','','','Cabin',500,'normal','160%','#000000','Cabin',400,'normal','100%','#000000','Cabin',700,'normal','110%','#222222','Lucida Grande',400,'normal','','#ececec','Cabin',600,'normal','','#000000','Cabin',600,'normal','95%','#000000','Cabin',400,'normal','110%','#333333',1,'solid','#413e4a',1,'dotted','#ff9900',1,'dotted','#CCCCCC','WarpShadow','large','normal','text','Submit','http://',''),
-	(15,1,1,0,'Pink Thrush',1,1,'default','http://',40,'machform.png',0,'color','#ff9f9d','','','color','#ff3d7e','','','color','#ffffff','','','color','#7fc7af','','','color','#3fb8b0','','','color','#ffffff','','','Crafty Girls',400,'normal','','#000000','Crafty Girls',400,'normal','100%','#000000','Crafty Girls',400,'normal','100%','#222222','Nobile',400,'normal','80%','#ffffff','Crafty Girls',400,'normal','','#000000','Crafty Girls',400,'normal','95%','#000000','Molengo',400,'normal','110%','#333333',1,'solid','#ff9f9d',1,'solid','#3fb8b0',1,'dotted','#CCCCCC','WarpShadow','large','normal','text','Submit','http://',''),
-	(16,1,1,0,'Yellow Bulbul',1,1,'default','http://',40,'machform.png',0,'color','#f8f4d7','','','color','#f4b26c','','','color','#f4dec2','','','color','#f2b4a7','','','color','#e98976','','','color','#ffffff','','','Special Elite',400,'normal','','#000000','Special Elite',400,'normal','','#000000','Special Elite',400,'normal','95%','#222222','Cousine',400,'normal','80%','#ececec','Special Elite',400,'normal','','#000000','Special Elite',400,'normal','','#000000','Cousine',400,'normal','','#333333',1,'solid','#f8f4d7',1,'solid','#f4b26c',1,'dotted','#CCCCCC','WarpShadow','large','normal','text','Submit','http://',''),
-	(17,1,1,0,'Blue Canary',1,1,'default','http://',40,'machform.png',0,'color','#81a8b8','','','color','#a4bcc2','','','color','#ffffff','','','color','#e8f3f8','','','color','#dbe6ec','','','color','#ffffff','','','PT Sans',400,'normal','','#000000','PT Sans',400,'normal','100%','#000000','PT Sans',700,'normal','100%','#222222','PT Sans',400,'normal','','#666666','PT Sans',700,'normal','','#000000','PT Sans',400,'normal','100%','#000000','PT Sans',400,'normal','110%','#333333',1,'solid','#81a8b8',1,'dashed','#a4bcc2',1,'dotted','#CCCCCC','WarpShadow','large','normal','text','Submit','http://',''),
-	(18,1,1,0,'Red Mockingbird',1,1,'default','http://',40,'machform.png',0,'color','#6b0103','','','color','#a30005','','','color','#c21b01','','','color','#f03d02','','','color','#1c0113','','','color','#ffffff','','','Oswald',400,'normal','','#ffffff','Open Sans',400,'normal','','#ffffff','Oswald',400,'normal','95%','#ffffff','Open Sans',400,'normal','','#ececec','Oswald',400,'normal','','#ececec','Lucida Grande',400,'normal','','#ffffff','Open Sans',400,'normal','','#333333',1,'solid','#6b0103',1,'solid','#1c0113',1,'dotted','#CCCCCC','WarpShadow','large','normal','text','Submit','http://',''),
-	(13,1,1,0,'Green Sparrow',1,1,'default','http://',40,'machform.png',0,'color','#d1f2a5','','','color','#f56990','','','color','#ffffff','','','color','#ffc48c','','','color','#ffa080','','','color','#ffffff','','','Open Sans',400,'normal','','#000000','Open Sans',400,'normal','','#000000','Open Sans',700,'normal','','#222222','Ubuntu',400,'normal','85%','#f4fce8','Open Sans',600,'normal','','#000000','Open Sans',400,'normal','95%','#000000','Open Sans',400,'normal','','#333333',10,'solid','#f0fab4',1,'solid','#ffa080',1,'dotted','#CCCCCC','WarpShadow','large','normal','text','Submit','http://',''),
-	(21,1,1,0,'Purple Vanga',1,1,'default','http://',40,'machform.png',0,'color','#7b85e2','','','color','#7aa6d6','','','color','#d1e7f9','','','color','#7aa6d6','','','color','#fbfcd0','','','color','#ffffff','','','Droid Sans',400,'normal','160%','#444444','Droid Sans',400,'normal','95%','#444444','Open Sans',700,'normal','95%','#444444','Droid Sans',400,'normal','85%','#444444','Droid Sans',400,'normal','110%','#444444','Droid Sans',400,'normal','95%','#000000','Droid Sans',400,'normal','100%','#333333',0,'solid','#CCCCCC',1,'solid','#fbfcd0',1,'dotted','#CCCCCC','WarpShadow','large','normal','text','Submit','http://',''),
-	(22,1,1,0,'Purple Dove',1,1,'default','http://',40,'machform.png',0,'color','#c0addb','','','color','#a662de','','','pattern','#ffffff','pattern_044.gif','','color','#a662de','','','color','#a662de','','','color','#c0addb','','','Pacifico',400,'normal','180%','#000000','Open Sans',400,'normal','95%','#000000','Pacifico',400,'normal','95%','#222222','Open Sans',400,'normal','80%','#ececec','Pacifico',400,'normal','110%','#000000','Open Sans',400,'normal','95%','#000000','Open Sans',400,'normal','100%','#333333',0,'solid','#a662de',1,'dashed','#CCCCCC',1,'dashed','#a662de','StandShadow','large','dark','text','Submit','http://',''),
-	(20,1,1,0,'Pink Flamingo',1,1,'default','http://',40,'machform.png',0,'color','#f87d7b','','','color','#5ea0a3','','','color','#ffffff','','','color','#fab97f','','','color','#dcd1b4','','','color','#ffffff','','','Lucida Grande',400,'normal','160%','#b05573','Lucida Grande',400,'normal','95%','#b05573','Lucida Grande',700,'normal','95%','#b05573','Lucida Grande',400,'normal','80%','#444444','Lucida Grande',400,'normal','110%','#b05573','Lucida Grande',400,'normal','85%','#b05573','Lucida Grande',400,'normal','100%','#333333',0,'solid','#f87d7b',1,'dotted','#fab97f',1,'dotted','#CCCCCC','WarpShadow','large','normal','text','Submit','http://',''),
-	(19,1,1,0,'Yellow Kiwi',1,1,'default','http://',40,'machform.png',0,'color','#ffe281','','','color','#ffbb7f','','','color','#eee9e5','','','color','#fad4b2','','','color','#ff9c97','','','color','#ffffff','','','Lucida Grande',400,'normal','160%','#000000','Lucida Grande',400,'normal','95%','#000000','Lucida Grande',700,'normal','95%','#222222','Lucida Grande',400,'normal','80%','#ffffff','Lucida Grande',400,'normal','110%','#000000','Lucida Grande',400,'normal','85%','#000000','Lucida Grande',400,'normal','100%','#333333',1,'solid','#ffe281',1,'solid','#CCCCCC',1,'dotted','#cdcdcd','WarpShadow','large','normal','text','Submit','http://','');";
+	(1,1,0,'Green Senegal',1,1,'default','http://',40,'machform.png',0,'color','#cfdfc5','','','color','#bad4a9','','','color','#ffffff','','','color','#ecf1ea','','','color','#ecf1ea','','','color','#cfdfc5','','','Philosopher',700,'normal','','#80af1b','Philosopher',400,'normal','100%','#80af1b','Philosopher',700,'normal','110%','#80af1b','Ubuntu',400,'normal','','#666666','Philosopher',700,'normal','110%','#80af1b','Philosopher',400,'normal','95%','#80af1b','Ubuntu',400,'normal','','#666666',1,'solid','#bad4a9',1,'dashed','#bad4a9',1,'dotted','#CCCCCC','WarpShadow','large','normal','text','Submit','http://',''),
+	(1,1,0,'Blue Bigbird',1,1,'default','http://',40,'machform.png',0,'color','#336699','','','color','#6699cc','','','color','#ffffff','','','color','#ccdced','','','color','#6699cc','','','color','#ffffff','','','Open Sans',600,'normal','','','Open Sans',400,'normal','','','Open Sans',700,'normal','100%','','Ubuntu',400,'normal','80%','#ffffff','Open Sans',600,'normal','','','Open Sans',400,'normal','95%','','Open Sans',400,'normal','','',1,'solid','#336699',1,'dotted','#6699cc',1,'dotted','#CCCCCC','WarpShadow','large','normal','text','Submit','http://',''),
+	(1,1,0,'Blue Pionus',1,1,'default','http://',40,'machform.png',0,'color','#556270','','','color','#6b7b8c','','','color','#ffffff','','','color','#99aec4','','','color','#6b7b8c','','','color','#ffffff','','','Istok Web',400,'normal','170%','','Maven Pro',400,'normal','100%','','Istok Web',700,'normal','100%','','Maven Pro',400,'normal','95%','#ffffff','Istok Web',400,'normal','110%','','Maven Pro',400,'normal','95%','','Maven Pro',400,'normal','','',1,'solid','#556270',1,'solid','#6b7b8c',1,'dotted','#CCCCCC','WarpShadow','large','normal','text','Submit','http://',''),
+	(1,1,0,'Brown Conure',1,1,'default','http://',40,'machform.png',0,'pattern','#948c75','pattern_036.gif','','color','#b3a783','','','color','#ffffff','','','color','#e0d0a2','','','color','#948c75','','','color','#f0f0d8','pattern_036.gif','','Molengo',400,'normal','170%','','Molengo',400,'normal','110%','','Molengo',400,'normal','110%','','Nobile',400,'normal','','#ececec','Molengo',400,'normal','130%','','Molengo',400,'normal','100%','','Molengo',400,'normal','110%','',1,'solid','#948c75',1,'solid','#948c75',1,'dotted','#CCCCCC','WarpShadow','large','normal','text','Submit','http://',''),
+	(1,1,0,'Yellow Lovebird',1,1,'default','http://',40,'machform.png',0,'color','#f0d878','','','color','#edb817','','','color','#ffffff','','','color','#f5d678','','','color','#f7c52e','','','color','#ffffff','','','Amaranth',700,'normal','170%','','Amaranth',400,'normal','100%','','Amaranth',700,'normal','100%','','Amaranth',400,'normal','','#444444','Amaranth',400,'normal','110%','','Amaranth',400,'normal','95%','','Amaranth',400,'normal','100%','',1,'solid','#f0d878',1,'solid','#f7c52e',1,'dotted','#CCCCCC','WarpShadow','large','normal','text','Submit','http://',''),
+	(1,1,0,'Pink Starling',1,1,'default','http://',40,'machform.png',0,'color','#ff6699','','','color','#d93280','','','color','#ffffff','','','color','#ffd0d4','','','color','#f9fad2','','','color','#ffffff','','','Josefin Sans',600,'normal','160%','','Josefin Sans',400,'normal','110%','','Josefin Sans',700,'normal','110%','','Josefin Sans',600,'normal','100%','','Josefin Sans',700,'normal','','','Josefin Sans',400,'normal','110%','','Josefin Sans',400,'normal','130%','',1,'solid','#ff6699',1,'dashed','#f56990',1,'dotted','#CCCCCC','WarpShadow','large','normal','text','Submit','http://',''),
+	(1,1,0,'Red Rabbit',1,1,'default','http://',40,'machform.png',0,'color','#a40802','','','color','#800e0e','','','color','#ffffff','','','color','#ffa4a0','','','color','#800e0e','','','color','#ffffff','','','Lobster',400,'normal','','#000000','Ubuntu',400,'normal','100%','#000000','Lobster',400,'normal','110%','#222222','Ubuntu',400,'normal','85%','#ffffff','Lobster',400,'normal','130%','#000000','Ubuntu',400,'normal','95%','#000000','Ubuntu',400,'normal','','#333333',1,'solid','#a40702',1,'solid','#800e0e',1,'dotted','#CCCCCC','WarpShadow','large','normal','text','Submit','http://',''),
+	(1,1,0,'Orange Robin',1,1,'default','http://',40,'machform.png',0,'color','#f38430','','','color','#fa6800','','','color','#ffffff','','','color','#a7dbd8','','','color','#e0e4cc','','','color','#ffffff','','','Lucida Grande',400,'normal','','#000000','Nobile',400,'normal','','#000000','Nobile',700,'normal','','#000000','Lucida Grande',400,'normal','','#444444','Nobile',700,'normal','100%','#000000','Nobile',400,'normal','','#000000','Nobile',400,'normal','95%','#333333',1,'solid','#f38430',1,'solid','#e0e4cc',1,'dotted','#CCCCCC','WarpShadow','large','normal','text','Submit','http://',''),
+	(1,1,0,'Orange Sunbird',1,1,'default','http://',40,'machform.png',0,'color','#d95c43','','','color','#c02942','','','color','#ffffff','','','color','#d95c43','','','color','#53777a','','','color','#ffffff','','','Lucida Grande',400,'normal','','#000000','Lucida Grande',400,'normal','','#000000','Lucida Grande',700,'normal','','#222222','Lucida Grande',400,'normal','','#ffffff','Lucida Grande',400,'normal','','#000000','Lucida Grande',400,'normal','','#000000','Lucida Grande',400,'normal','','#333333',1,'solid','#d95c43',1,'solid','#53777a',1,'dotted','#CCCCCC','WarpShadow','large','normal','text','Submit','http://',''),
+	(1,1,0,'Green Ringneck',1,1,'default','http://',40,'machform.png',0,'color','#0b486b','','','color','#3b8686','','','color','#ffffff','','','color','#cff09e','','','color','#79bd9a','','','color','#a8dba8','','','Delius Swash Caps',400,'normal','','#000000','Delius Swash Caps',400,'normal','100%','#000000','Delius Swash Caps',400,'normal','100%','#222222','Delius',400,'normal','85%','#ffffff','Delius Swash Caps',400,'normal','','#000000','Delius Swash Caps',400,'normal','95%','#000000','Delius',400,'normal','','#515151',1,'solid','#0b486b',1,'solid','#79bd9a',1,'dotted','#CCCCCC','WarpShadow','large','normal','text','Submit','http://',''),
+	(1,1,0,'Brown Finch',1,1,'default','http://',40,'machform.png',0,'color','#774f38','','','color','#e08e79','','','color','#ffffff','','','color','#ece5ce','','','color','#c5e0dc','','','color','#f9fad2','','','Arvo',700,'normal','','#000000','Arvo',400,'normal','','#000000','Arvo',700,'normal','','#222222','Arvo',400,'normal','','#444444','Arvo',400,'normal','','#000000','Arvo',400,'normal','85%','#000000','Arvo',400,'normal','','#333333',1,'solid','#774f38',1,'dashed','#e08e79',1,'dotted','#CCCCCC','WarpShadow','large','normal','text','Submit','http://',''),
+	(1,1,0,'Brown Macaw',1,1,'default','http://',40,'machform.png',0,'color','#413e4a','','','color','#73626e','','','pattern','#ffffff','pattern_022.gif','','color','#f0b49e','','','color','#b38184','','','color','#ffffff','','','Cabin',500,'normal','160%','#000000','Cabin',400,'normal','100%','#000000','Cabin',700,'normal','110%','#222222','Lucida Grande',400,'normal','','#ececec','Cabin',600,'normal','','#000000','Cabin',600,'normal','95%','#000000','Cabin',400,'normal','110%','#333333',1,'solid','#413e4a',1,'dotted','#ff9900',1,'dotted','#CCCCCC','WarpShadow','large','normal','text','Submit','http://',''),
+	(1,1,0,'Pink Thrush',1,1,'default','http://',40,'machform.png',0,'color','#ff9f9d','','','color','#ff3d7e','','','color','#ffffff','','','color','#7fc7af','','','color','#3fb8b0','','','color','#ffffff','','','Crafty Girls',400,'normal','','#000000','Crafty Girls',400,'normal','100%','#000000','Crafty Girls',400,'normal','100%','#222222','Nobile',400,'normal','80%','#ffffff','Crafty Girls',400,'normal','','#000000','Crafty Girls',400,'normal','95%','#000000','Molengo',400,'normal','110%','#333333',1,'solid','#ff9f9d',1,'solid','#3fb8b0',1,'dotted','#CCCCCC','WarpShadow','large','normal','text','Submit','http://',''),
+	(1,1,0,'Yellow Bulbul',1,1,'default','http://',40,'machform.png',0,'color','#f8f4d7','','','color','#f4b26c','','','color','#f4dec2','','','color','#f2b4a7','','','color','#e98976','','','color','#ffffff','','','Special Elite',400,'normal','','#000000','Special Elite',400,'normal','','#000000','Special Elite',400,'normal','95%','#222222','Cousine',400,'normal','80%','#ececec','Special Elite',400,'normal','','#000000','Special Elite',400,'normal','','#000000','Cousine',400,'normal','','#333333',1,'solid','#f8f4d7',1,'solid','#f4b26c',1,'dotted','#CCCCCC','WarpShadow','large','normal','text','Submit','http://',''),
+	(1,1,0,'Blue Canary',1,1,'default','http://',40,'machform.png',0,'color','#81a8b8','','','color','#a4bcc2','','','color','#ffffff','','','color','#e8f3f8','','','color','#dbe6ec','','','color','#ffffff','','','PT Sans',400,'normal','','#000000','PT Sans',400,'normal','100%','#000000','PT Sans',700,'normal','100%','#222222','PT Sans',400,'normal','','#666666','PT Sans',700,'normal','','#000000','PT Sans',400,'normal','100%','#000000','PT Sans',400,'normal','110%','#333333',1,'solid','#81a8b8',1,'dashed','#a4bcc2',1,'dotted','#CCCCCC','WarpShadow','large','normal','text','Submit','http://',''),
+	(1,1,0,'Red Mockingbird',1,1,'default','http://',40,'machform.png',0,'color','#6b0103','','','color','#a30005','','','color','#c21b01','','','color','#f03d02','','','color','#1c0113','','','color','#ffffff','','','Oswald',400,'normal','','#ffffff','Open Sans',400,'normal','','#ffffff','Oswald',400,'normal','95%','#ffffff','Open Sans',400,'normal','','#ececec','Oswald',400,'normal','','#ececec','Lucida Grande',400,'normal','','#ffffff','Open Sans',400,'normal','','#333333',1,'solid','#6b0103',1,'solid','#1c0113',1,'dotted','#CCCCCC','WarpShadow','large','normal','text','Submit','http://',''),
+	(1,1,0,'Green Sparrow',1,1,'default','http://',40,'machform.png',0,'color','#d1f2a5','','','color','#f56990','','','color','#ffffff','','','color','#ffc48c','','','color','#ffa080','','','color','#ffffff','','','Open Sans',400,'normal','','#000000','Open Sans',400,'normal','','#000000','Open Sans',700,'normal','','#222222','Ubuntu',400,'normal','85%','#f4fce8','Open Sans',600,'normal','','#000000','Open Sans',400,'normal','95%','#000000','Open Sans',400,'normal','','#333333',10,'solid','#f0fab4',1,'solid','#ffa080',1,'dotted','#CCCCCC','WarpShadow','large','normal','text','Submit','http://',''),
+	(1,1,0,'Purple Vanga',1,1,'default','http://',40,'machform.png',0,'color','#7b85e2','','','color','#7aa6d6','','','color','#d1e7f9','','','color','#7aa6d6','','','color','#fbfcd0','','','color','#ffffff','','','Droid Sans',400,'normal','160%','#444444','Droid Sans',400,'normal','95%','#444444','Open Sans',700,'normal','95%','#444444','Droid Sans',400,'normal','85%','#444444','Droid Sans',400,'normal','110%','#444444','Droid Sans',400,'normal','95%','#000000','Droid Sans',400,'normal','100%','#333333',0,'solid','#CCCCCC',1,'solid','#fbfcd0',1,'dotted','#CCCCCC','WarpShadow','large','normal','text','Submit','http://',''),
+	(1,1,0,'Purple Dove',1,1,'default','http://',40,'machform.png',0,'color','#c0addb','','','color','#a662de','','','pattern','#ffffff','pattern_044.gif','','color','#a662de','','','color','#a662de','','','color','#c0addb','','','Pacifico',400,'normal','180%','#000000','Open Sans',400,'normal','95%','#000000','Pacifico',400,'normal','95%','#222222','Open Sans',400,'normal','80%','#ececec','Pacifico',400,'normal','110%','#000000','Open Sans',400,'normal','95%','#000000','Open Sans',400,'normal','100%','#333333',0,'solid','#a662de',1,'dashed','#CCCCCC',1,'dashed','#a662de','StandShadow','large','dark','text','Submit','http://',''),
+	(1,1,0,'Pink Flamingo',1,1,'default','http://',40,'machform.png',0,'color','#f87d7b','','','color','#5ea0a3','','','color','#ffffff','','','color','#fab97f','','','color','#dcd1b4','','','color','#ffffff','','','Lucida Grande',400,'normal','160%','#b05573','Lucida Grande',400,'normal','95%','#b05573','Lucida Grande',700,'normal','95%','#b05573','Lucida Grande',400,'normal','80%','#444444','Lucida Grande',400,'normal','110%','#b05573','Lucida Grande',400,'normal','85%','#b05573','Lucida Grande',400,'normal','100%','#333333',0,'solid','#f87d7b',1,'dotted','#fab97f',1,'dotted','#CCCCCC','WarpShadow','large','normal','text','Submit','http://',''),
+	(1,1,0,'Yellow Kiwi',1,1,'default','http://',40,'machform.png',0,'color','#ffe281','','','color','#ffbb7f','','','color','#eee9e5','','','color','#fad4b2','','','color','#ff9c97','','','color','#ffffff','','','Lucida Grande',400,'normal','160%','#000000','Lucida Grande',400,'normal','95%','#000000','Lucida Grande',700,'normal','95%','#222222','Lucida Grande',400,'normal','80%','#ffffff','Lucida Grande',400,'normal','110%','#000000','Lucida Grande',400,'normal','85%','#000000','Lucida Grande',400,'normal','100%','#333333',1,'solid','#ffe281',1,'solid','#CCCCCC',1,'dotted','#cdcdcd','WarpShadow','large','normal','text','Submit','http://','');";
 			
 		$params = array();
 		$sth = $dbh->prepare($query);
@@ -449,15 +515,13 @@ VALUES
 	}
 
 	function create_ap_fonts_table($dbh){
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."fonts` (
-											  `font_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-											  `font_origin` varchar(11) NOT NULL DEFAULT 'google',
-											  `font_family` varchar(100) DEFAULT NULL,
-											  `font_variants` text,
-											  `font_variants_numeric` text,
-											  PRIMARY KEY (`font_id`),
-											  KEY `font_family` (`font_family`)
-											) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."fonts (
+											  font_id int NOT NULL IDENTITY(1,1) PRIMARY KEY,
+											  font_origin varchar(11) NOT NULL DEFAULT 'google',
+											  font_family varchar(100) DEFAULT NULL,
+											  font_variants varchar(1000),
+											  font_variants_numeric varchar(1000)
+											);";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -465,6 +529,16 @@ VALUES
 		}catch(PDOException $e) {
 			return $e->getMessage().'<br/><br/>';
 		}
+
+		$query = "CREATE INDEX font_family ON ".MF_TABLE_PREFIX."fonts (font_family)";
+		$params = array();
+		$sth = $dbh->prepare($query);
+		try{
+			$sth->execute($params);
+		}catch(PDOException $e) {
+			return $e->getMessage().'<br/><br/>';
+		}
+
 
 		return '';
 	}
@@ -472,7 +546,7 @@ VALUES
 	function populate_ap_fonts_table($dbh){
 
 		//truncate ap_fonts table
-		$query = "TRUNCATE ".MF_TABLE_PREFIX."fonts";
+		$query = "TRUNCATE TABLE ".MF_TABLE_PREFIX."fonts";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -481,7 +555,7 @@ VALUES
 			return $e->getMessage().'<br/><br/>';
 		}
 
-		$query = "INSERT INTO `".MF_TABLE_PREFIX."fonts` (`font_id`, `font_origin`, `font_family`, `font_variants`, `font_variants_numeric`)
+		$query = "SET IDENTITY_INSERT ".MF_TABLE_PREFIX."fonts ON; INSERT INTO ".MF_TABLE_PREFIX."fonts (font_id, font_origin, font_family, font_variants, font_variants_numeric)
 VALUES
 	(1,'google','Open Sans','300,300italic,regular,italic,600,600italic,700,700italic,800,800italic','300,300-italic,400,400-italic,600,600-italic,700,700-italic,800,800-italic'),
 	(2,'google','Roboto','100,100italic,300,300italic,regular,italic,500,500italic,700,700italic,900,900italic','100,100-italic,300,300-italic,400,400-italic,500,500-italic,700,700-italic,900,900italic'),
@@ -547,7 +621,7 @@ VALUES
 	(62,'google','Bree Serif','regular','400'),
 	(63,'google','Coming Soon','regular','400'),
 	(64,'google','Quicksand','300,regular,700','300,400,700'),
-	(65,'google','Changa One','regular,italic','400,400-italic'),
+	(65,'google','Changa One','regular,italic','400,400-italic'), 
 	(66,'google','Cardo','regular,italic,700','400,400-italic,700'),
 	(67,'google','Cabin Condensed','regular,500,600,700','400,500,600,700'),
 	(68,'google','Ubuntu Mono','regular,italic,700,700italic','400,400-italic,700,700-italic'),
@@ -1139,7 +1213,7 @@ VALUES
 	(654,'google','Almendra Display','regular','400'),
 	(655,'google','Fruktur','regular','400'),
 	(656,'google','Fasthand','regular','400'),
-	(657,'google','Warnes','regular','400');";
+	(657,'google','Warnes','regular','400'); SET IDENTITY_INSERT ".MF_TABLE_PREFIX."fonts OFF";
 		
 		$params = array();
 		$sth = $dbh->prepare($query);
@@ -1153,30 +1227,29 @@ VALUES
 	}
 
 	function create_ap_settings_table($dbh){
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."settings` (
-												  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-												  `smtp_enable` tinyint(1) NOT NULL DEFAULT '0',
-												  `smtp_host` varchar(255) NOT NULL DEFAULT 'localhost',
-												  `smtp_port` int(11) NOT NULL DEFAULT '25',
-												  `smtp_auth` tinyint(1) NOT NULL DEFAULT '0',
-												  `smtp_username` varchar(255) DEFAULT NULL,
-												  `smtp_password` varchar(255) DEFAULT NULL,
-												  `smtp_secure` tinyint(1) NOT NULL DEFAULT '0',
-												  `upload_dir` varchar(255) NOT NULL DEFAULT './data',
-												  `data_dir` varchar(255) NOT NULL DEFAULT './data',
-												  `default_from_name` varchar(255) NOT NULL DEFAULT 'MachForm',
-												  `default_from_email` varchar(255) DEFAULT NULL,
-												  `base_url` varchar(255) DEFAULT NULL,
-												  `form_manager_max_rows` int(11) DEFAULT '10',
-												  `admin_image_url` varchar(255) DEFAULT NULL,
-												  `disable_machform_link` int(1) DEFAULT '0',
-												  `customer_id` varchar(100) DEFAULT NULL,
-												  `customer_name` varchar(100) DEFAULT NULL,
-												  `license_key` varchar(50) DEFAULT NULL,
-												  `machform_version` varchar(10) NOT NULL DEFAULT '3.3',
-												  `admin_theme` varchar(11) DEFAULT NULL,
-												  PRIMARY KEY (`id`)
-												) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."settings (
+												  id int NOT NULL IDENTITY(1,1) PRIMARY KEY,
+												  smtp_enable tinyint NOT NULL DEFAULT '0',
+												  smtp_host varchar(255) NOT NULL DEFAULT 'localhost',
+												  smtp_port int NOT NULL DEFAULT '25',
+												  smtp_auth tinyint NOT NULL DEFAULT '0',
+												  smtp_username varchar(255) DEFAULT NULL,
+												  smtp_password varchar(255) DEFAULT NULL,
+												  smtp_secure tinyint NOT NULL DEFAULT '0',
+												  upload_dir varchar(255) NOT NULL DEFAULT './data',
+												  data_dir varchar(255) NOT NULL DEFAULT './data',
+												  default_from_name varchar(255) NOT NULL DEFAULT 'MachForm',
+												  default_from_email varchar(255) DEFAULT NULL,
+												  base_url varchar(255) DEFAULT NULL,
+												  form_manager_max_rows int DEFAULT '10',
+												  admin_image_url varchar(255) DEFAULT NULL,
+												  disable_machform_link int DEFAULT '0',
+												  customer_id varchar(100) DEFAULT NULL,
+												  customer_name varchar(100) DEFAULT NULL,
+												  license_key varchar(50) DEFAULT NULL,
+												  machform_version varchar(10) NOT NULL DEFAULT '3.3',
+												  admin_theme varchar(11) DEFAULT NULL
+												);";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -1194,24 +1267,24 @@ VALUES
 		$new_machform_version = $options['new_machform_version'];
 		$license_key = $options['license_key'];
 
-		$query = "INSERT INTO `".MF_TABLE_PREFIX."settings` (`id`, 
-																`smtp_enable`, 
-																`smtp_host`, 
-																`smtp_port`, 
-																`smtp_auth`, 
-																`smtp_username`, 
-																`smtp_password`, 
-																`smtp_secure`, 
-																`upload_dir`, 
-																`data_dir`, 
-																`default_from_name`, 
-																`default_from_email`, 
-																`base_url`, 
-																`form_manager_max_rows`, 
-																`admin_image_url`, 
-																`disable_machform_link`,
-																`license_key`,
-																`machform_version`)
+		$query = "SET IDENTITY_INSERT ".MF_TABLE_PREFIX."settings ON; INSERT INTO ".MF_TABLE_PREFIX."settings (id, 
+																smtp_enable, 
+																smtp_host, 
+																smtp_port, 
+																smtp_auth, 
+																smtp_username, 
+																smtp_password, 
+																smtp_secure, 
+																upload_dir, 
+																data_dir, 
+																default_from_name, 
+																default_from_email, 
+																base_url, 
+																form_manager_max_rows, 
+																admin_image_url, 
+																disable_machform_link,
+																license_key,
+																machform_version)
 														VALUES
 																(1,
 																 0,
@@ -1230,7 +1303,7 @@ VALUES
 																'',
 																0,
 																'{$license_key}',
-																'{$new_machform_version}');";
+																'{$new_machform_version}'); SET IDENTITY_INSERT ".MF_TABLE_PREFIX."settings OFF;";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -1243,20 +1316,19 @@ VALUES
 	}
 
 	function create_ap_users_table($dbh){
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."users` (
-												  `user_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-												  `user_email` varchar(255) NOT NULL DEFAULT '',
-												  `user_password` varchar(255) NOT NULL DEFAULT '',
-												  `user_fullname` varchar(255) NOT NULL DEFAULT '',
-												  `priv_administer` tinyint(1) NOT NULL DEFAULT '0',
-												  `priv_new_forms` tinyint(1) NOT NULL DEFAULT '0',
-												  `priv_new_themes` tinyint(1) NOT NULL DEFAULT '0',
-												  `last_login_date` datetime DEFAULT NULL,
-												  `last_ip_address` varchar(15) DEFAULT '',
-												  `cookie_hash` varchar(255) DEFAULT '',
-												  `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '0 - deleted; 1 - active; 2 - suspended',
-												  PRIMARY KEY (`user_id`)
-												) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."users (
+												  user_id int NOT NULL IDENTITY(1,1) PRIMARY KEY,
+												  user_email varchar(255) NOT NULL DEFAULT '',
+												  user_password nvarchar(255) NOT NULL DEFAULT '',
+												  user_fullname nvarchar(255) NOT NULL DEFAULT '',
+												  priv_administer tinyint NOT NULL DEFAULT '0',
+												  priv_new_forms tinyint NOT NULL DEFAULT '0',
+												  priv_new_themes tinyint NOT NULL DEFAULT '0',
+												  last_login_date datetime DEFAULT NULL,
+												  last_ip_address varchar(15) DEFAULT '',
+												  cookie_hash varchar(255) DEFAULT '',
+												  status tinyint NOT NULL DEFAULT '1'
+												);";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -1264,6 +1336,8 @@ VALUES
 		}catch(PDOException $e) {
 			return $e->getMessage().'<br/><br/>';
 		}
+
+		add_MS_Description($dbh,'0 - deleted; 1 - active; 2 - suspended', MF_TABLE_PREFIX."users", "status");
 
 		return '';
 	}
@@ -1273,14 +1347,14 @@ VALUES
 		$admin_username 	   = $options['admin_username'];
 		$default_password_hash = $options['default_password_hash'];
 
-		$query = "INSERT INTO `".MF_TABLE_PREFIX."users` (`user_id`, 
-																`user_email`, 
-																`user_password`, 
-																`user_fullname`, 
-																`priv_administer`, 
-																`priv_new_forms`, 
-																`priv_new_themes`, 
-																`status`)
+		$query = "SET IDENTITY_INSERT ".MF_TABLE_PREFIX."users ON; INSERT INTO ".MF_TABLE_PREFIX."users (user_id, 
+																user_email, 
+																user_password, 
+																user_fullname, 
+																priv_administer, 
+																priv_new_forms, 
+																priv_new_themes, 
+																status)
 														VALUES
 																(1,
 																'{$admin_username}',
@@ -1289,7 +1363,7 @@ VALUES
 																1,
 																1,
 																1,
-																1);";
+																1); SET IDENTITY_INSERT ".MF_TABLE_PREFIX."users OFF;";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -1302,14 +1376,14 @@ VALUES
 	}
 
 	function create_ap_permissions_table($dbh){
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."permissions` (
-												  `form_id` bigint(11) unsigned NOT NULL,
-												  `user_id` int(11) unsigned NOT NULL,
-												  `edit_form` tinyint(1) NOT NULL DEFAULT '0',
-												  `edit_entries` tinyint(1) NOT NULL DEFAULT '0',
-												  `view_entries` tinyint(1) NOT NULL DEFAULT '0',
-												  PRIMARY KEY (`form_id`,`user_id`)
-												) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."permissions (
+												  form_id bigint NOT NULL,
+												  user_id int NOT NULL,
+												  edit_form tinyint NOT NULL DEFAULT '0',
+												  edit_entries tinyint NOT NULL DEFAULT '0',
+												  view_entries tinyint NOT NULL DEFAULT '0',
+												  PRIMARY KEY (form_id,user_id)
+												);";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -1322,16 +1396,16 @@ VALUES
 	}
 
 	function create_ap_entries_preferences_table($dbh){
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."entries_preferences` (
-												      `form_id` int(11) NOT NULL,
-													  `user_id` int(11) NOT NULL,
-													  `entries_sort_by` varchar(100) NOT NULL DEFAULT 'id-desc',
-													  `entries_enable_filter` int(1) NOT NULL DEFAULT '0',
-													  `entries_filter_type` varchar(5) NOT NULL DEFAULT 'all' COMMENT 'all or any',
-													  `entries_incomplete_sort_by` varchar(100) NOT NULL DEFAULT 'id-desc',
-													  `entries_incomplete_enable_filter` int(1) NOT NULL DEFAULT '0',
-													  `entries_incomplete_filter_type` varchar(5) NOT NULL DEFAULT 'all' COMMENT 'all or any'
-												) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."entries_preferences (
+												      form_id int NOT NULL,
+													  user_id int NOT NULL,
+													  entries_sort_by varchar(100) NOT NULL DEFAULT 'id-desc',
+													  entries_enable_filter int NOT NULL DEFAULT '0',
+													  entries_filter_type varchar(5) NOT NULL DEFAULT 'all',
+													  entries_incomplete_sort_by varchar(100) NOT NULL DEFAULT 'id-desc',
+													  entries_incomplete_enable_filter int NOT NULL DEFAULT '0',
+													  entries_incomplete_filter_type varchar(5) NOT NULL DEFAULT 'all'
+												);";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -1340,15 +1414,18 @@ VALUES
 			return $e->getMessage().'<br/><br/>';
 		}
 
+		add_MS_Description($dbh,'all or any', MF_TABLE_PREFIX."entries_preferences", "entries_filter_type");
+		add_MS_Description($dbh,'all or any', MF_TABLE_PREFIX."entries_preferences", "entries_incomplete_filter_type");
+
 		return '';
 	}
 	
 	function create_ap_form_locks_table($dbh){
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."form_locks` (
-												  `form_id` int(11) NOT NULL,
-												  `user_id` int(11) NOT NULL,
-												  `lock_date` datetime NOT NULL
-												) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."form_locks (
+												  form_id int NOT NULL,
+												  user_id int NOT NULL,
+												  lock_date datetime NOT NULL
+												);";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -1361,13 +1438,13 @@ VALUES
 	}
 
 	function create_ap_field_logic_elements_table($dbh){
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."field_logic_elements` (
-																		  `form_id` int(11) NOT NULL,
-																		  `element_id` int(11) NOT NULL,
-																		  `rule_show_hide` varchar(4) NOT NULL DEFAULT 'show',
-																		  `rule_all_any` varchar(3) NOT NULL DEFAULT 'all',
-																		  PRIMARY KEY (`form_id`,`element_id`)
-																		) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."field_logic_elements (
+																		  form_id int NOT NULL,
+																		  element_id int NOT NULL,
+																		  rule_show_hide varchar(4) NOT NULL DEFAULT 'show',
+																		  rule_all_any varchar(3) NOT NULL DEFAULT 'all',
+																		  PRIMARY KEY (form_id,element_id)
+																		);";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -1380,15 +1457,14 @@ VALUES
 	}
 
 	function create_ap_field_logic_conditions_table($dbh){
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."field_logic_conditions` (
-																		  `alc_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-																		  `form_id` int(11) NOT NULL,
-																		  `target_element_id` int(11) NOT NULL,
-																		  `element_name` varchar(50) NOT NULL DEFAULT '',
-																		  `rule_condition` varchar(15) NOT NULL DEFAULT 'is',
-																		  `rule_keyword` varchar(255) DEFAULT NULL,
-																		  PRIMARY KEY (`alc_id`)
-																		) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."field_logic_conditions (
+																		  alc_id int NOT NULL IDENTITY(1,1) PRIMARY KEY,
+																		  form_id int NOT NULL,
+																		  target_element_id int NOT NULL,
+																		  element_name varchar(50) NOT NULL DEFAULT '',
+																		  rule_condition varchar(15) NOT NULL DEFAULT 'is',
+																		  rule_keyword varchar(255) DEFAULT NULL
+																		);";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -1401,33 +1477,33 @@ VALUES
 	}
 
 	function create_ap_form_payments_table($dbh){
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."form_payments` (
-																  `afp_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-																  `form_id` int(11) unsigned NOT NULL,
-																  `record_id` int(11) unsigned NOT NULL,
-																  `payment_id` varchar(255) DEFAULT NULL,
-																  `date_created` datetime DEFAULT NULL,
-																  `payment_date` datetime DEFAULT NULL,
-																  `payment_status` varchar(255) DEFAULT NULL,
-																  `payment_fullname` varchar(255) DEFAULT NULL,
-																  `payment_amount` decimal(62,2) NOT NULL DEFAULT '0.00',
-																  `payment_currency` varchar(3) NOT NULL DEFAULT 'usd',
-																  `payment_test_mode` int(1) NOT NULL DEFAULT '0',
-																  `payment_merchant_type` varchar(25) DEFAULT NULL,
-																  `status` int(1) NOT NULL DEFAULT '1',
-																  `billing_street` varchar(255) DEFAULT NULL,
-																  `billing_city` varchar(255) DEFAULT NULL,
-																  `billing_state` varchar(255) DEFAULT NULL,
-																  `billing_zipcode` varchar(255) DEFAULT NULL,
-																  `billing_country` varchar(255) DEFAULT NULL,
-																  `same_shipping_address` int(1) NOT NULL DEFAULT '1',
-																  `shipping_street` varchar(255) DEFAULT NULL,
-																  `shipping_city` varchar(255) DEFAULT NULL,
-																  `shipping_state` varchar(255) DEFAULT NULL,
-																  `shipping_zipcode` varchar(255) DEFAULT NULL,
-																  `shipping_country` varchar(255) DEFAULT NULL,
-																   PRIMARY KEY (`afp_id`)
-																  ) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."form_payments (
+																  afp_id int NOT NULL IDENTITY(1,1),
+																  form_id int NOT NULL,
+																  record_id int NOT NULL,
+																  payment_id varchar(255) DEFAULT NULL,
+																  date_created datetime DEFAULT NULL,
+																  payment_date datetime DEFAULT NULL,
+																  payment_status varchar(255) DEFAULT NULL,
+																  payment_fullname varchar(255) DEFAULT NULL,
+																  payment_amount decimal(38,2) NOT NULL DEFAULT '0.00',
+																  payment_currency varchar(3) NOT NULL DEFAULT 'usd',
+																  payment_test_mode int NOT NULL DEFAULT '0',
+																  payment_merchant_type varchar(25) DEFAULT NULL,
+																  status int NOT NULL DEFAULT '1',
+																  billing_street varchar(255) DEFAULT NULL,
+																  billing_city varchar(255) DEFAULT NULL,
+																  billing_state varchar(255) DEFAULT NULL,
+																  billing_zipcode varchar(255) DEFAULT NULL,
+																  billing_country varchar(255) DEFAULT NULL,
+																  same_shipping_address int NOT NULL DEFAULT '1',
+																  shipping_street varchar(255) DEFAULT NULL,
+																  shipping_city varchar(255) DEFAULT NULL,
+																  shipping_state varchar(255) DEFAULT NULL,
+																  shipping_zipcode varchar(255) DEFAULT NULL,
+																  shipping_country varchar(255) DEFAULT NULL,
+																  PRIMARY KEY (afp_id)
+																  );";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -1440,12 +1516,12 @@ VALUES
 	}
 
 	function create_ap_page_logic_table($dbh){
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."page_logic` (
-																`form_id` int(11) NOT NULL,
-															  	`page_id` varchar(15) NOT NULL DEFAULT '',
-															  	`rule_all_any` varchar(3) NOT NULL DEFAULT 'all',
-															  	 PRIMARY KEY (`form_id`,`page_id`)
-															   ) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."page_logic (
+																form_id int NOT NULL,
+															  	page_id varchar(15) NOT NULL DEFAULT '',
+															  	rule_all_any varchar(3) NOT NULL DEFAULT 'all',
+															  	PRIMARY KEY (form_id,page_id)
+															   );";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -1458,15 +1534,15 @@ VALUES
 	}
 
 	function create_ap_page_logic_conditions_table($dbh){
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."page_logic_conditions` (
-																		   `apc_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-																		   `form_id` int(11) NOT NULL,
-																		   `target_page_id` varchar(15) NOT NULL DEFAULT '',
-																		   `element_name` varchar(50) NOT NULL DEFAULT '',
-																		   `rule_condition` varchar(15) NOT NULL DEFAULT 'is',
-																		   `rule_keyword` varchar(255) DEFAULT NULL,
-																		    PRIMARY KEY (`apc_id`)
-															   			  ) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."page_logic_conditions (
+																		   apc_id int NOT NULL IDENTITY(1,1),
+																		   form_id int NOT NULL,
+																		   target_page_id varchar(15) NOT NULL DEFAULT '',
+																		   element_name varchar(50) NOT NULL DEFAULT '',
+																		   rule_condition varchar(15) NOT NULL DEFAULT 'is',
+																		   rule_keyword varchar(255) DEFAULT NULL,
+																		   PRIMARY KEY (apc_id)
+															   			  );";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -1479,11 +1555,11 @@ VALUES
 	}
 
 	function create_ap_form_sorts_table($dbh){
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."form_sorts` (
-												  `user_id` int(11) NOT NULL,
-												  `sort_by` varchar(25) DEFAULT '',
-												  PRIMARY KEY (`user_id`)
-												) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."form_sorts (
+												  user_id int NOT NULL,
+												  sort_by varchar(25) DEFAULT '',
+												  PRIMARY KEY (user_id)
+												);";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -1496,19 +1572,19 @@ VALUES
 	}
 
 	function create_ap_email_logic_table($dbh){
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."email_logic` (
-												    		  `form_id` int(11) NOT NULL,
-															  `rule_id` int(11) NOT NULL,
-															  `rule_all_any` varchar(3) NOT NULL DEFAULT 'all',
-															  `target_email` text NOT NULL,
-															  `template_name` varchar(15) NOT NULL DEFAULT 'notification' COMMENT 'notification - confirmation - custom',
-															  `custom_from_name` text,
-															  `custom_from_email` varchar(255) NOT NULL DEFAULT '',
-															  `custom_subject` text,
-															  `custom_content` text,
-															  `custom_plain_text` int(1) NOT NULL DEFAULT '0',
-															  PRIMARY KEY (`form_id`,`rule_id`)
-												) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."email_logic (
+												    		  form_id int NOT NULL,
+															  rule_id int NOT NULL,
+															  rule_all_any varchar(3) NOT NULL DEFAULT 'all',
+															  target_email varchar(1024) NOT NULL,
+															  template_name varchar(15) NOT NULL DEFAULT 'notification',
+															  custom_from_name nvarchar(255),
+															  custom_from_email varchar(255) NOT NULL DEFAULT '',
+															  custom_subject nvarchar(255),
+															  custom_content nvarchar(4000),
+															  custom_plain_text int NOT NULL DEFAULT '0',
+															  PRIMARY KEY (form_id,rule_id)
+												);";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -1517,19 +1593,21 @@ VALUES
 			return $e->getMessage().'<br/><br/>';
 		}
 
+		add_MS_Description($dbh,'notification - confirmation - custom', MF_TABLE_PREFIX."email_logic", "template_name");
+
 		return '';
 	}
 
 	function create_ap_email_logic_conditions_table($dbh){
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."email_logic_conditions` (
-												    		  `aec_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-															  `form_id` int(11) NOT NULL,
-															  `target_rule_id` int(11) NOT NULL,
-															  `element_name` varchar(50) NOT NULL DEFAULT '',
-															  `rule_condition` varchar(15) NOT NULL DEFAULT 'is',
-															  `rule_keyword` varchar(255) DEFAULT NULL,
-															  PRIMARY KEY (`aec_id`)
-															) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."email_logic_conditions (
+												    		  aec_id int NOT NULL IDENTITY(1,1),
+															  form_id int NOT NULL,
+															  target_rule_id int NOT NULL,
+															  element_name varchar(50) NOT NULL DEFAULT '',
+															  rule_condition varchar(15) NOT NULL DEFAULT 'is',
+															  rule_keyword varchar(255) DEFAULT NULL,
+															  PRIMARY KEY (aec_id)
+															);";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -1542,21 +1620,21 @@ VALUES
 	}
 
 	function create_ap_webhook_options_table($dbh){
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."webhook_options` (
-												    		  `awo_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-															  `form_id` int(11) NOT NULL,
-															  `rule_id` int(11) NOT NULL DEFAULT '0',
-															  `webhook_url` text,
-															  `webhook_method` varchar(4) NOT NULL DEFAULT 'post',
-															  `webhook_format` varchar(10) NOT NULL DEFAULT 'key-value',
-															  `webhook_raw_data` mediumtext,
-															  `enable_http_auth` int(1) DEFAULT '0',
-															  `http_username` varchar(255) DEFAULT NULL,
-															  `http_password` varchar(255) DEFAULT NULL,
-															  `enable_custom_http_headers` int(1) NOT NULL DEFAULT '0',
-															  `custom_http_headers` text,
-															  PRIMARY KEY (`awo_id`)
-															) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."webhook_options (
+												    		  awo_id int NOT NULL IDENTITY(1,1),
+															  form_id int NOT NULL,
+															  rule_id int NOT NULL DEFAULT '0',
+															  webhook_url varchar(1024),
+															  webhook_method varchar(4) NOT NULL DEFAULT 'post',
+															  webhook_format varchar(10) NOT NULL DEFAULT 'key-value',
+															  webhook_raw_data nvarchar(4000),
+															  enable_http_auth int DEFAULT '0',
+															  http_username varchar(255) DEFAULT NULL,
+															  http_password varchar(255) DEFAULT NULL,
+															  enable_custom_http_headers int NOT NULL DEFAULT '0',
+															  custom_http_headers nvarchar(1024),
+															  PRIMARY KEY (awo_id)
+															);";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -1569,14 +1647,14 @@ VALUES
 	}
 
 	function create_ap_webhook_parameters_table($dbh){
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."webhook_parameters` (
-												    		  `awp_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-															  `form_id` int(11) NOT NULL,
-															  `rule_id` int(11) NOT NULL DEFAULT '0',
-															  `param_name` text,
-															  `param_value` text,
-															  PRIMARY KEY (`awp_id`)
-															) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."webhook_parameters (
+												    		  awp_id int NOT NULL IDENTITY(1,1),
+															  form_id int NOT NULL,
+															  rule_id int NOT NULL DEFAULT '0',
+															  param_name nvarchar(255),
+															  param_value nvarchar(1024),
+															  PRIMARY KEY (awp_id)
+															);";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -1589,12 +1667,11 @@ VALUES
 	}
 
 	function create_ap_reports_table($dbh){
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."reports` (
-												    		  `form_id` int(11) NOT NULL,
-															  `report_access_key` varchar(100) DEFAULT NULL,
-															  PRIMARY KEY (`form_id`),
-															  KEY `report_access_key` (`report_access_key`)
-															) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."reports (
+												    		  form_id int NOT NULL,
+															  report_access_key varchar(100) DEFAULT NULL,
+															  PRIMARY KEY (form_id)
+															);";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -1602,53 +1679,62 @@ VALUES
 		}catch(PDOException $e) {
 			return $e->getMessage().'<br/><br/>';
 		}
+
+		$query = "CREATE INDEX report_access_key ON ".MF_TABLE_PREFIX."reports (report_access_key)";
+		$params = array();
+		$sth = $dbh->prepare($query);
+		try{
+			$sth->execute($params);
+		}catch(PDOException $e) {
+			return $e->getMessage().'<br/><br/>';
+		}
+
 
 		return '';
 	}
 
 	function create_ap_report_elements_table($dbh){
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."report_elements` (
-												    		  `access_key` varchar(100) DEFAULT NULL,
-															  `form_id` int(11) NOT NULL,
-															  `chart_id` int(11) NOT NULL,
-															  `chart_position` int(11) NOT NULL DEFAULT '0',
-															  `chart_status` int(1) NOT NULL DEFAULT '1',
-															  `chart_datasource` varchar(25) NOT NULL DEFAULT '',
-															  `chart_type` varchar(25) NOT NULL DEFAULT '',
-															  `chart_enable_filter` int(1) NOT NULL DEFAULT '0',
-															  `chart_filter_type` varchar(5) NOT NULL DEFAULT 'all',
-															  `chart_title` text,
-															  `chart_title_position` varchar(10) NOT NULL DEFAULT 'top',
-															  `chart_title_align` varchar(10) NOT NULL DEFAULT 'center',
-															  `chart_width` int(11) NOT NULL DEFAULT '0',
-															  `chart_height` int(11) NOT NULL DEFAULT '400',
-															  `chart_background` varchar(8) DEFAULT NULL,
-															  `chart_theme` varchar(25) NOT NULL DEFAULT 'blueopal',
-															  `chart_legend_visible` int(1) NOT NULL DEFAULT '1',
-															  `chart_legend_position` varchar(10) NOT NULL DEFAULT 'right',
-															  `chart_labels_visible` int(1) NOT NULL DEFAULT '1',
-															  `chart_labels_position` varchar(10) NOT NULL DEFAULT 'outsideEnd',
-															  `chart_labels_template` varchar(255) NOT NULL DEFAULT '#= category #',
-															  `chart_labels_align` varchar(10) NOT NULL DEFAULT 'circle',
-															  `chart_tooltip_visible` int(1) NOT NULL DEFAULT '1',
-															  `chart_tooltip_template` varchar(255) NOT NULL DEFAULT '#= category # - #= dataItem.entry # - #= kendo.format(''{0:P}'', percentage)#',
-															  `chart_gridlines_visible` int(1) NOT NULL DEFAULT '1',
-															  `chart_bar_color` varchar(8) DEFAULT NULL,
-															  `chart_is_stacked` int(1) NOT NULL DEFAULT '0',
-															  `chart_is_vertical` int(1) NOT NULL DEFAULT '0',
-															  `chart_line_style` varchar(6) NOT NULL DEFAULT 'smooth',
-															  `chart_axis_is_date` int(1) NOT NULL DEFAULT '0',
-															  `chart_date_range` varchar(6) NOT NULL DEFAULT 'all' COMMENT 'all,period,custom',
-															  `chart_date_period_value` int(11) NOT NULL DEFAULT '1',
-															  `chart_date_period_unit` varchar(5) NOT NULL DEFAULT 'day',
-															  `chart_date_axis_baseunit` varchar(5) DEFAULT NULL,
-															  `chart_date_range_start` date DEFAULT NULL,
-															  `chart_date_range_end` date DEFAULT NULL,
-															  `chart_grid_page_size` int(11) NOT NULL DEFAULT '10',
-															  `chart_grid_max_length` int(11) NOT NULL DEFAULT '100',
-															  PRIMARY KEY (`form_id`,`chart_id`),
-															  KEY `access_key` (`access_key`)
-															) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."report_elements (
+												    		  access_key varchar(100) DEFAULT NULL,
+															  form_id int NOT NULL,
+															  chart_id int NOT NULL,
+															  chart_position int NOT NULL DEFAULT '0',
+															  chart_status int NOT NULL DEFAULT '1',
+															  chart_datasource varchar(25) NOT NULL DEFAULT '',
+															  chart_type varchar(25) NOT NULL DEFAULT '',
+															  chart_enable_filter int NOT NULL DEFAULT '0',
+															  chart_filter_type varchar(5) NOT NULL DEFAULT 'all',
+															  chart_title nvarchar(255),
+															  chart_title_position varchar(10) NOT NULL DEFAULT 'top',
+															  chart_title_align varchar(10) NOT NULL DEFAULT 'center',
+															  chart_width int NOT NULL DEFAULT '0',
+															  chart_height int NOT NULL DEFAULT '400',
+															  chart_background varchar(8) DEFAULT NULL,
+															  chart_theme varchar(25) NOT NULL DEFAULT 'blueopal',
+															  chart_legend_visible int NOT NULL DEFAULT '1',
+															  chart_legend_position varchar(10) NOT NULL DEFAULT 'right',
+															  chart_labels_visible int NOT NULL DEFAULT '1',
+															  chart_labels_position varchar(10) NOT NULL DEFAULT 'outsideEnd',
+															  chart_labels_template varchar(255) NOT NULL DEFAULT '#= category #',
+															  chart_labels_align varchar(10) NOT NULL DEFAULT 'circle',
+															  chart_tooltip_visible int NOT NULL DEFAULT '1',
+															  chart_tooltip_template nvarchar(255) NOT NULL DEFAULT '#= category # - #= dataItem.entry # - #= kendo.format(''{0:P}'', percentage)#',
+															  chart_gridlines_visible int NOT NULL DEFAULT '1',
+															  chart_bar_color varchar(8) DEFAULT NULL,
+															  chart_is_stacked int NOT NULL DEFAULT '0',
+															  chart_is_vertical int NOT NULL DEFAULT '0',
+															  chart_line_style varchar(6) NOT NULL DEFAULT 'smooth',
+															  chart_axis_is_date int NOT NULL DEFAULT '0',
+															  chart_date_range varchar(6) NOT NULL DEFAULT 'all',
+															  chart_date_period_value int NOT NULL DEFAULT '1',
+															  chart_date_period_unit varchar(5) NOT NULL DEFAULT 'day',
+															  chart_date_axis_baseunit varchar(5) DEFAULT NULL,
+															  chart_date_range_start date DEFAULT NULL,
+															  chart_date_range_end date DEFAULT NULL,
+															  chart_grid_page_size int NOT NULL DEFAULT '10',
+															  chart_grid_max_length int NOT NULL DEFAULT '100',
+															  PRIMARY KEY (form_id,chart_id)
+															);";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -1657,20 +1743,39 @@ VALUES
 			return $e->getMessage().'<br/><br/>';
 		}
 
+		$query = "CREATE INDEX access_key ON ".MF_TABLE_PREFIX."report_elements (access_key)";
+		$params = array();
+		$sth = $dbh->prepare($query);
+		try{
+			$sth->execute($params);
+		}catch(PDOException $e) {
+			return $e->getMessage().'<br/><br/>';
+		}
+
+		add_MS_Description($dbh,'all,period,custom', MF_TABLE_PREFIX."report_elements", "chart_date_range");
+
 		return '';
 	}
 
 	function create_ap_report_filters_table($dbh){
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."report_filters` (
-												    		  `arf_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-															  `form_id` int(11) NOT NULL,
-															  `chart_id` int(11) NOT NULL,
-															  `element_name` varchar(50) NOT NULL DEFAULT '',
-															  `filter_condition` varchar(15) NOT NULL DEFAULT 'is',
-															  `filter_keyword` varchar(255) DEFAULT NULL,
-															  PRIMARY KEY (`arf_id`),
-															  KEY `form_id` (`form_id`,`chart_id`)
-															) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."report_filters (
+												    		  arf_id int NOT NULL IDENTITY(1,1),
+															  form_id int NOT NULL,
+															  chart_id int NOT NULL,
+															  element_name varchar(50) NOT NULL DEFAULT '',
+															  filter_condition varchar(15) NOT NULL DEFAULT 'is',
+															  filter_keyword varchar(255) DEFAULT NULL,
+															  PRIMARY KEY (arf_id)
+															);";
+		$params = array();
+		$sth = $dbh->prepare($query);
+		try{
+			$sth->execute($params);
+		}catch(PDOException $e) {
+			return $e->getMessage().'<br/><br/>';
+		}
+
+		$query = "CREATE INDEX form_id ON ".MF_TABLE_PREFIX."report_filters (form_id)";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -1683,14 +1788,14 @@ VALUES
 	}
 
 	function create_ap_grid_columns_table($dbh){
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."grid_columns` (
-												    		  `agc_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-															  `form_id` int(11) NOT NULL,
-															  `chart_id` int(11) NOT NULL,
-															  `element_name` varchar(255) NOT NULL DEFAULT '',
-															  `position` int(11) NOT NULL,
-															  PRIMARY KEY (`agc_id`)
-															) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."grid_columns (
+												    		  agc_id int NOT NULL IDENTITY(1,1),
+															  form_id int NOT NULL,
+															  chart_id int NOT NULL,
+															  element_name varchar(255) NOT NULL DEFAULT '',
+															  position int NOT NULL,
+															  PRIMARY KEY (agc_id)
+															);";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -1735,54 +1840,54 @@ VALUES
 
 		//2. Alter table ap_forms
 		//add new columns
-		$query = "ALTER TABLE `".MF_TABLE_PREFIX."forms`
-												  ADD COLUMN `form_tags` varchar(255) DEFAULT NULL,
-												  ADD COLUMN `form_redirect_enable` int(1) NOT NULL DEFAULT '0',
-												  ADD COLUMN `form_captcha_type` char(1) NOT NULL DEFAULT 'r',
-												  ADD COLUMN `form_theme_id` int(11) NOT NULL DEFAULT '0',
-												  ADD COLUMN `form_resume_enable` int(1) NOT NULL DEFAULT '0',
-												  ADD COLUMN `form_limit_enable` int(1) NOT NULL DEFAULT '0',
-												  ADD COLUMN `form_limit` int(11) NOT NULL DEFAULT '0',
-												  ADD COLUMN `form_label_alignment` varchar(11) NOT NULL DEFAULT 'top_label',
-												  ADD COLUMN `form_language` varchar(50) DEFAULT NULL,
-												  ADD COLUMN `form_page_total` int(11) NOT NULL DEFAULT '1',
-												  ADD COLUMN `form_lastpage_title` varchar(255) DEFAULT NULL,
-												  ADD COLUMN `form_submit_primary_text` varchar(255) NOT NULL DEFAULT 'Submit',
-												  ADD COLUMN `form_submit_secondary_text` varchar(255) NOT NULL DEFAULT 'Previous',
-												  ADD COLUMN `form_submit_primary_img` varchar(255) DEFAULT NULL,
-												  ADD COLUMN `form_submit_secondary_img` varchar(255) DEFAULT NULL,
-												  ADD COLUMN `form_submit_use_image` int(1) NOT NULL DEFAULT '0',
-												  ADD COLUMN `form_review_primary_text` varchar(255) NOT NULL DEFAULT 'Submit',
-												  ADD COLUMN `form_review_secondary_text` varchar(255) NOT NULL DEFAULT 'Previous',
-												  ADD COLUMN `form_review_primary_img` varchar(255) DEFAULT NULL,
-												  ADD COLUMN `form_review_secondary_img` varchar(255) DEFAULT NULL,
-												  ADD COLUMN `form_review_use_image` int(11) NOT NULL DEFAULT '0',
-												  ADD COLUMN `form_review_title` text,
-												  ADD COLUMN `form_review_description` text,
-												  ADD COLUMN `form_pagination_type` varchar(11) NOT NULL DEFAULT 'steps',
-												  ADD COLUMN `form_schedule_enable` int(1) NOT NULL DEFAULT '0',
-												  ADD COLUMN `form_schedule_start_date` date DEFAULT NULL,
-												  ADD COLUMN `form_schedule_end_date` date DEFAULT NULL,
-												  ADD COLUMN `form_schedule_start_hour` time DEFAULT NULL,
-												  ADD COLUMN `form_schedule_end_hour` time DEFAULT NULL,
-												  ADD COLUMN `esl_enable` tinyint(1) NOT NULL DEFAULT '0',
-												  ADD COLUMN `esr_enable` tinyint(1) NOT NULL DEFAULT '0',
-												  ADD COLUMN `payment_enable_merchant` int(1) NOT NULL DEFAULT '-1',
-												  ADD COLUMN `payment_merchant_type` varchar(25) NOT NULL DEFAULT 'paypal_standard',
-												  ADD COLUMN `payment_paypal_email` varchar(255) DEFAULT NULL,
-												  ADD COLUMN `payment_paypal_language` varchar(5) NOT NULL DEFAULT 'US',
-												  ADD COLUMN `payment_currency` varchar(5) NOT NULL DEFAULT 'USD',
-												  ADD COLUMN `payment_show_total` int(1) NOT NULL DEFAULT '0',
-												  ADD COLUMN `payment_total_location` varchar(11) NOT NULL DEFAULT 'top',
-												  ADD COLUMN `payment_enable_recurring` int(1) NOT NULL DEFAULT '0',
-												  ADD COLUMN `payment_recurring_cycle` int(11) NOT NULL DEFAULT '1',
-												  ADD COLUMN `payment_recurring_unit` varchar(5) NOT NULL DEFAULT 'month',
-												  ADD COLUMN `payment_price_type` varchar(11) NOT NULL DEFAULT 'fixed',
-												  ADD COLUMN `payment_price_amount` decimal(62,2) NOT NULL DEFAULT '0.00',
-												  ADD COLUMN `payment_price_name` varchar(255) DEFAULT NULL,
-												  ADD COLUMN `entries_sort_by` varchar(100) NOT NULL DEFAULT 'id-desc',
-												  ADD COLUMN `entries_enable_filter` int(1) NOT NULL DEFAULT '0',
-												  ADD COLUMN `entries_filter_type` varchar(5) NOT NULL DEFAULT 'all' COMMENT 'all or any';";
+		$query = "ALTER TABLE ".MF_TABLE_PREFIX."forms
+												  ADD COLUMN form_tags varchar(255) DEFAULT NULL,
+												  ADD COLUMN form_redirect_enable int NOT NULL DEFAULT '0',
+												  ADD COLUMN form_captcha_type char(1) NOT NULL DEFAULT 'r',
+												  ADD COLUMN form_theme_id int NOT NULL DEFAULT '0',
+												  ADD COLUMN form_resume_enable int NOT NULL DEFAULT '0',
+												  ADD COLUMN form_limit_enable int NOT NULL DEFAULT '0',
+												  ADD COLUMN form_limit int NOT NULL DEFAULT '0',
+												  ADD COLUMN form_label_alignment varchar(11) NOT NULL DEFAULT 'top_label',
+												  ADD COLUMN form_language varchar(50) DEFAULT NULL,
+												  ADD COLUMN form_page_total int NOT NULL DEFAULT '1',
+												  ADD COLUMN form_lastpage_title varchar(255) DEFAULT NULL,
+												  ADD COLUMN form_submit_primary_text varchar(255) NOT NULL DEFAULT 'Submit',
+												  ADD COLUMN form_submit_secondary_text varchar(255) NOT NULL DEFAULT 'Previous',
+												  ADD COLUMN form_submit_primary_img varchar(255) DEFAULT NULL,
+												  ADD COLUMN form_submit_secondary_img varchar(255) DEFAULT NULL,
+												  ADD COLUMN form_submit_use_image int NOT NULL DEFAULT '0',
+												  ADD COLUMN form_review_primary_text varchar(255) NOT NULL DEFAULT 'Submit',
+												  ADD COLUMN form_review_secondary_text varchar(255) NOT NULL DEFAULT 'Previous',
+												  ADD COLUMN form_review_primary_img varchar(255) DEFAULT NULL,
+												  ADD COLUMN form_review_secondary_img varchar(255) DEFAULT NULL,
+												  ADD COLUMN form_review_use_image int NOT NULL DEFAULT '0',
+												  ADD COLUMN form_review_title nvarchar(255),
+												  ADD COLUMN form_review_description nvarchar(255),
+												  ADD COLUMN form_pagination_type varchar(11) NOT NULL DEFAULT 'steps',
+												  ADD COLUMN form_schedule_enable int NOT NULL DEFAULT '0',
+												  ADD COLUMN form_schedule_start_date date DEFAULT NULL,
+												  ADD COLUMN form_schedule_end_date date DEFAULT NULL,
+												  ADD COLUMN form_schedule_start_hour time DEFAULT NULL,
+												  ADD COLUMN form_schedule_end_hour time DEFAULT NULL,
+												  ADD COLUMN esl_enable tinyint NOT NULL DEFAULT '0',
+												  ADD COLUMN esr_enable tinyint NOT NULL DEFAULT '0',
+												  ADD COLUMN payment_enable_merchant int NOT NULL DEFAULT '-1',
+												  ADD COLUMN payment_merchant_type varchar(25) NOT NULL DEFAULT 'paypal_standard',
+												  ADD COLUMN payment_paypal_email varchar(255) DEFAULT NULL,
+												  ADD COLUMN payment_paypal_language varchar(5) NOT NULL DEFAULT 'US',
+												  ADD COLUMN payment_currency varchar(5) NOT NULL DEFAULT 'USD',
+												  ADD COLUMN payment_show_total int NOT NULL DEFAULT '0',
+												  ADD COLUMN payment_total_location varchar(11) NOT NULL DEFAULT 'top',
+												  ADD COLUMN payment_enable_recurring int NOT NULL DEFAULT '0',
+												  ADD COLUMN payment_recurring_cycle int NOT NULL DEFAULT '1',
+												  ADD COLUMN payment_recurring_unit varchar(5) NOT NULL DEFAULT 'month',
+												  ADD COLUMN payment_price_type varchar(11) NOT NULL DEFAULT 'fixed',
+												  ADD COLUMN payment_price_amount decimal(38,2) NOT NULL DEFAULT '0.00',
+												  ADD COLUMN payment_price_name varchar(255) DEFAULT NULL,
+												  ADD COLUMN entries_sort_by varchar(100) NOT NULL DEFAULT 'id-desc',
+												  ADD COLUMN entries_enable_filter int NOT NULL DEFAULT '0',
+												  ADD COLUMN entries_filter_type varchar(5) NOT NULL DEFAULT 'all';";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -1791,49 +1896,51 @@ VALUES
 			$post_install_error .= $e->getMessage().'<br/><br/>';
 		}
 
+		add_MS_Description($dbh,'all or any', MF_TABLE_PREFIX."forms", "entries_filter_type");
+
 		//3. Alter table ap_form_elements
-		$query = "ALTER TABLE `".MF_TABLE_PREFIX."form_elements` 
-														  ADD COLUMN `element_css_class` varchar(255) NOT NULL DEFAULT '',
-														  ADD COLUMN `element_range_min` bigint(11) unsigned NOT NULL DEFAULT '0',
-														  ADD COLUMN `element_range_max` bigint(11) unsigned NOT NULL DEFAULT '0',
-														  ADD COLUMN `element_range_limit_by` char(1) NOT NULL,
-														  ADD COLUMN `element_status` int(1) NOT NULL DEFAULT '2',
-														  ADD COLUMN `element_choice_columns` int(1) NOT NULL DEFAULT '1',
-														  ADD COLUMN `element_choice_has_other` int(1) NOT NULL DEFAULT '0',
-														  ADD COLUMN `element_choice_other_label` text,
-														  ADD COLUMN `element_time_showsecond` int(11) NOT NULL DEFAULT '0',
-														  ADD COLUMN `element_time_24hour` int(11) NOT NULL DEFAULT '0',
-														  ADD COLUMN `element_address_hideline2` int(11) NOT NULL DEFAULT '0',
-														  ADD COLUMN `element_address_us_only` int(11) NOT NULL DEFAULT '0',
-														  ADD COLUMN `element_date_enable_range` int(1) NOT NULL DEFAULT '0',
-														  ADD COLUMN `element_date_range_min` date DEFAULT NULL,
-														  ADD COLUMN `element_date_range_max` date DEFAULT NULL,
-														  ADD COLUMN `element_date_enable_selection_limit` int(1) NOT NULL DEFAULT '0',
-														  ADD COLUMN `element_date_selection_max` int(11) NOT NULL DEFAULT '1',
-														  ADD COLUMN `element_date_past_future` char(1) NOT NULL DEFAULT 'p',
-														  ADD COLUMN `element_date_disable_past_future` int(1) NOT NULL DEFAULT '0',
-														  ADD COLUMN `element_date_disable_weekend` int(1) NOT NULL DEFAULT '0',
-														  ADD COLUMN `element_date_disable_specific` int(1) NOT NULL DEFAULT '0',
-														  ADD COLUMN `element_date_disabled_list` text CHARACTER SET utf8 COLLATE utf8_bin,
-														  ADD COLUMN `element_file_enable_type_limit` int(1) NOT NULL DEFAULT '1',
-														  ADD COLUMN `element_file_block_or_allow` char(1) NOT NULL DEFAULT 'b',
-														  ADD COLUMN `element_file_type_list` varchar(255) DEFAULT NULL,
-														  ADD COLUMN `element_file_as_attachment` int(1) NOT NULL DEFAULT '0',
-														  ADD COLUMN `element_file_enable_advance` int(1) NOT NULL DEFAULT '0',
-														  ADD COLUMN `element_file_auto_upload` int(1) NOT NULL DEFAULT '0',
-														  ADD COLUMN `element_file_enable_multi_upload` int(1) NOT NULL DEFAULT '0',
-														  ADD COLUMN `element_file_max_selection` int(11) NOT NULL DEFAULT '5',
-														  ADD COLUMN `element_file_enable_size_limit` int(1) NOT NULL DEFAULT '0',
-														  ADD COLUMN `element_file_size_max` int(11) DEFAULT NULL,
-														  ADD COLUMN `element_matrix_allow_multiselect` int(1) NOT NULL DEFAULT '0',
-														  ADD COLUMN `element_matrix_parent_id` int(11) NOT NULL DEFAULT '0',
-														  ADD COLUMN `element_submit_use_image` int(1) NOT NULL DEFAULT '0',
-														  ADD COLUMN `element_submit_primary_text` varchar(255) NOT NULL DEFAULT 'Continue',
-														  ADD COLUMN `element_submit_secondary_text` varchar(255) NOT NULL DEFAULT 'Previous',
-														  ADD COLUMN `element_submit_primary_img` varchar(255) DEFAULT NULL,
-														  ADD COLUMN `element_submit_secondary_img` varchar(255) DEFAULT NULL,
-														  ADD COLUMN `element_page_title` varchar(255) DEFAULT NULL,
-														  ADD COLUMN `element_page_number` int(11) NOT NULL DEFAULT '1';";
+		$query = "ALTER TABLE ".MF_TABLE_PREFIX."form_elements 
+														  ADD COLUMN element_css_class varchar(255) NOT NULL DEFAULT '',
+														  ADD COLUMN element_range_min bigint NOT NULL DEFAULT '0',
+														  ADD COLUMN element_range_max bigint NOT NULL DEFAULT '0',
+														  ADD COLUMN element_range_limit_by char(1) NOT NULL,
+														  ADD COLUMN element_status int NOT NULL DEFAULT '2',
+														  ADD COLUMN element_choice_columns int NOT NULL DEFAULT '1',
+														  ADD COLUMN element_choice_has_other int NOT NULL DEFAULT '0',
+														  ADD COLUMN element_choice_other_label nvarchar(255),
+														  ADD COLUMN element_time_showsecond int NOT NULL DEFAULT '0',
+														  ADD COLUMN element_time_24hour int NOT NULL DEFAULT '0',
+														  ADD COLUMN element_address_hideline2 int NOT NULL DEFAULT '0',
+														  ADD COLUMN element_address_us_only int NOT NULL DEFAULT '0',
+														  ADD COLUMN element_date_enable_range int NOT NULL DEFAULT '0',
+														  ADD COLUMN element_date_range_min date DEFAULT NULL,
+														  ADD COLUMN element_date_range_max date DEFAULT NULL,
+														  ADD COLUMN element_date_enable_selection_limit int NOT NULL DEFAULT '0',
+														  ADD COLUMN element_date_selection_max int NOT NULL DEFAULT '1',
+														  ADD COLUMN element_date_past_future char(1) NOT NULL DEFAULT 'p',
+														  ADD COLUMN element_date_disable_past_future int NOT NULL DEFAULT '0',
+														  ADD COLUMN element_date_disable_weekend int NOT NULL DEFAULT '0',
+														  ADD COLUMN element_date_disable_specific int NOT NULL DEFAULT '0',
+														  ADD COLUMN element_date_disabled_list nvarchar(1000),
+														  ADD COLUMN element_file_enable_type_limit int NOT NULL DEFAULT '1',
+														  ADD COLUMN element_file_block_or_allow char(1) NOT NULL DEFAULT 'b',
+														  ADD COLUMN element_file_type_list varchar(255) DEFAULT NULL,
+														  ADD COLUMN element_file_as_attachment int NOT NULL DEFAULT '0',
+														  ADD COLUMN element_file_enable_advance int NOT NULL DEFAULT '0',
+														  ADD COLUMN element_file_auto_upload int NOT NULL DEFAULT '0',
+														  ADD COLUMN element_file_enable_multi_upload int NOT NULL DEFAULT '0',
+														  ADD COLUMN element_file_max_selection int NOT NULL DEFAULT '5',
+														  ADD COLUMN element_file_enable_size_limit int NOT NULL DEFAULT '0',
+														  ADD COLUMN element_file_size_max int DEFAULT NULL,
+														  ADD COLUMN element_matrix_allow_multiselect int NOT NULL DEFAULT '0',
+														  ADD COLUMN element_matrix_parent_id int NOT NULL DEFAULT '0',
+														  ADD COLUMN element_submit_use_image int NOT NULL DEFAULT '0',
+														  ADD COLUMN element_submit_primary_text nvarchar(255) NOT NULL DEFAULT 'Continue',
+														  ADD COLUMN element_submit_secondary_text nvarchar(255) NOT NULL DEFAULT 'Previous',
+														  ADD COLUMN element_submit_primary_img varchar(255) DEFAULT NULL,
+														  ADD COLUMN element_submit_secondary_img varchar(255) DEFAULT NULL,
+														  ADD COLUMN element_page_title nvarchar(255) DEFAULT NULL,
+														  ADD COLUMN element_page_number int NOT NULL DEFAULT '1';";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -1843,7 +1950,7 @@ VALUES
 		}
 
 		//change the field size of element_constraint
-		$query = "ALTER TABLE `".MF_TABLE_PREFIX."form_elements` CHANGE COLUMN `element_constraint` `element_constraint` varchar(255) DEFAULT NULL;";
+		$query = "ALTER TABLE ".MF_TABLE_PREFIX."form_elements CHANGE COLUMN element_constraint element_constraint varchar(255) DEFAULT NULL;";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -1853,7 +1960,7 @@ VALUES
 		}
 
 		//update the element_status value to 1
-		$query = "UPDATE `".MF_TABLE_PREFIX."form_elements` SET `element_status`=1";
+		$query = "UPDATE ".MF_TABLE_PREFIX."form_elements SET element_status=1";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -1863,16 +1970,14 @@ VALUES
 		}
 
 		//4. Create table ap_element_prices
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."element_prices` (
-													  `aep_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-													  `form_id` int(11) NOT NULL,
-													  `element_id` int(11) NOT NULL,
-													  `option_id` int(11) NOT NULL DEFAULT '0',
-													  `price` decimal(62,2) NOT NULL DEFAULT '0.00',
-													  PRIMARY KEY (`aep_id`),
-													  KEY `form_id` (`form_id`),
-													  KEY `element_id` (`element_id`)
-													) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."element_prices (
+													  aep_id int NOT NULL IDENTITY(1,1),
+													  form_id int NOT NULL,
+													  element_id int NOT NULL,
+													  option_id int NOT NULL DEFAULT '0',
+													  price decimal(38,2) NOT NULL DEFAULT '0.00',
+													  PRIMARY KEY (aep_id)
+													);";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -1881,134 +1986,167 @@ VALUES
 			$post_install_error .= $e->getMessage().'<br/><br/>';
 		}
 
+		$query = "CREATE INDEX form_id ON ".MF_TABLE_PREFIX."element_prices (form_id)";
+		$params = array();
+		$sth = $dbh->prepare($query);
+		try{
+			$sth->execute($params);
+		}catch(PDOException $e) {
+			return $e->getMessage().'<br/><br/>';
+		}
+
+		$query = "CREATE INDEX element_id ON ".MF_TABLE_PREFIX."element_prices (element_id)";
+		$params = array();
+		$sth = $dbh->prepare($query);
+		try{
+			$sth->execute($params);
+		}catch(PDOException $e) {
+			return $e->getMessage().'<br/><br/>';
+		}
+
 		//5. Create table ap_fonts
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."fonts` (
-												  `font_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-												  `font_origin` varchar(11) NOT NULL DEFAULT 'google',
-												  `font_family` varchar(100) DEFAULT NULL,
-												  `font_variants` text,
-												  `font_variants_numeric` text,
-												  PRIMARY KEY (`font_id`),
-												  KEY `font_family` (`font_family`)
-												) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."fonts (
+												  font_id int NOT NULL IDENTITY(1,1),
+												  font_origin varchar(11) NOT NULL DEFAULT 'google',
+												  font_family varchar(100) DEFAULT NULL,
+												  font_variants varchar(1000),
+												  font_variants_numeric varchar(1000),
+												  PRIMARY KEY (font_id)
+												);";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
 			$sth->execute($params);
 		}catch(PDOException $e) {
 			$post_install_error .= $e->getMessage().'<br/><br/>';
+		}
+
+		$query = "CREATE INDEX font_family ON ".MF_TABLE_PREFIX."fonts (font_family)";
+		$params = array();
+		$sth = $dbh->prepare($query);
+		try{
+			$sth->execute($params);
+		}catch(PDOException $e) {
+			return $e->getMessage().'<br/><br/>';
 		}
 
 		
 
 		//6. Create table ap_form_filters
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."form_filters` (
-														  `aff_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-														  `form_id` int(11) NOT NULL,
-														  `element_name` varchar(50) NOT NULL DEFAULT '',
-														  `filter_condition` varchar(15) NOT NULL DEFAULT 'is',
-														  `filter_keyword` varchar(255) NOT NULL DEFAULT '',
-														  PRIMARY KEY (`aff_id`),
-														  KEY `form_id` (`form_id`)
-														) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."form_filters (
+														  aff_id int NOT NULL IDENTITY(1,1),
+														  form_id int NOT NULL,
+														  element_name varchar(50) NOT NULL DEFAULT '',
+														  filter_condition varchar(15) NOT NULL DEFAULT 'is',
+														  filter_keyword nvarchar(255) NOT NULL DEFAULT '',
+														  PRIMARY KEY (aff_id)
+														);";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
 			$sth->execute($params);
 		}catch(PDOException $e) {
 			$post_install_error .= $e->getMessage().'<br/><br/>';
+		}
+
+		$query = "CREATE INDEX form_id ON ".MF_TABLE_PREFIX."form_filters (form_id)";
+		$params = array();
+		$sth = $dbh->prepare($query);
+		try{
+			$sth->execute($params);
+		}catch(PDOException $e) {
+			return $e->getMessage().'<br/><br/>';
 		}
 
 		//7. Create table ap_form_themes
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."form_themes` (
-													  `theme_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-													  `status` int(1) DEFAULT '1',
-													  `theme_has_css` int(1) NOT NULL DEFAULT '0',
-													  `theme_name` varchar(255) DEFAULT '',
-													  `theme_built_in` int(1) NOT NULL DEFAULT '0',
-													  `logo_type` varchar(11) NOT NULL DEFAULT 'default' COMMENT 'default,custom,disabled',
-													  `logo_custom_image` text,
-													  `logo_custom_height` int(11) NOT NULL DEFAULT '40',
-													  `logo_default_image` varchar(50) DEFAULT '',
-													  `logo_default_repeat` int(1) NOT NULL DEFAULT '0',
-													  `wallpaper_bg_type` varchar(11) NOT NULL DEFAULT 'color' COMMENT 'color,pattern,custom',
-													  `wallpaper_bg_color` varchar(11) DEFAULT '',
-													  `wallpaper_bg_pattern` varchar(50) DEFAULT '',
-													  `wallpaper_bg_custom` text,
-													  `header_bg_type` varchar(11) NOT NULL DEFAULT 'color' COMMENT 'color,pattern,custom',
-													  `header_bg_color` varchar(11) DEFAULT '',
-													  `header_bg_pattern` varchar(50) DEFAULT '',
-													  `header_bg_custom` text,
-													  `form_bg_type` varchar(11) NOT NULL DEFAULT 'color' COMMENT 'color,pattern,custom',
-													  `form_bg_color` varchar(11) DEFAULT '',
-													  `form_bg_pattern` varchar(50) DEFAULT '',
-													  `form_bg_custom` text,
-													  `highlight_bg_type` varchar(11) NOT NULL DEFAULT 'color' COMMENT 'color,pattern,custom',
-													  `highlight_bg_color` varchar(11) DEFAULT '',
-													  `highlight_bg_pattern` varchar(50) DEFAULT '',
-													  `highlight_bg_custom` text,
-													  `guidelines_bg_type` varchar(11) NOT NULL DEFAULT 'color' COMMENT 'color,pattern,custom',
-													  `guidelines_bg_color` varchar(11) DEFAULT '',
-													  `guidelines_bg_pattern` varchar(50) DEFAULT '',
-													  `guidelines_bg_custom` text,
-													  `field_bg_type` varchar(11) NOT NULL DEFAULT 'color' COMMENT 'color,pattern,custom',
-													  `field_bg_color` varchar(11) DEFAULT '',
-													  `field_bg_pattern` varchar(50) DEFAULT '',
-													  `field_bg_custom` text,
-													  `form_title_font_type` varchar(50) NOT NULL DEFAULT 'Lucida Grande',
-													  `form_title_font_weight` int(11) NOT NULL DEFAULT '400',
-													  `form_title_font_style` varchar(25) NOT NULL DEFAULT 'normal',
-													  `form_title_font_size` varchar(11) DEFAULT '',
-													  `form_title_font_color` varchar(11) DEFAULT '',
-													  `form_desc_font_type` varchar(50) NOT NULL DEFAULT 'Lucida Grande',
-													  `form_desc_font_weight` int(11) NOT NULL DEFAULT '400',
-													  `form_desc_font_style` varchar(25) NOT NULL DEFAULT 'normal',
-													  `form_desc_font_size` varchar(11) DEFAULT '',
-													  `form_desc_font_color` varchar(11) DEFAULT '',
-													  `field_title_font_type` varchar(50) NOT NULL DEFAULT 'Lucida Grande',
-													  `field_title_font_weight` int(11) NOT NULL DEFAULT '400',
-													  `field_title_font_style` varchar(25) NOT NULL DEFAULT 'normal',
-													  `field_title_font_size` varchar(11) DEFAULT '',
-													  `field_title_font_color` varchar(11) DEFAULT '',
-													  `guidelines_font_type` varchar(50) NOT NULL DEFAULT 'Lucida Grande',
-													  `guidelines_font_weight` int(11) NOT NULL DEFAULT '400',
-													  `guidelines_font_style` varchar(25) NOT NULL DEFAULT 'normal',
-													  `guidelines_font_size` varchar(11) DEFAULT '',
-													  `guidelines_font_color` varchar(11) DEFAULT '',
-													  `section_title_font_type` varchar(50) NOT NULL DEFAULT 'Lucida Grande',
-													  `section_title_font_weight` int(11) NOT NULL DEFAULT '400',
-													  `section_title_font_style` varchar(25) NOT NULL DEFAULT 'normal',
-													  `section_title_font_size` varchar(11) DEFAULT '',
-													  `section_title_font_color` varchar(11) DEFAULT '',
-													  `section_desc_font_type` varchar(50) NOT NULL DEFAULT 'Lucida Grande',
-													  `section_desc_font_weight` int(11) NOT NULL DEFAULT '400',
-													  `section_desc_font_style` varchar(25) NOT NULL DEFAULT 'normal',
-													  `section_desc_font_size` varchar(11) DEFAULT '',
-													  `section_desc_font_color` varchar(11) DEFAULT '',
-													  `field_text_font_type` varchar(50) NOT NULL DEFAULT 'Lucida Grande',
-													  `field_text_font_weight` int(11) NOT NULL DEFAULT '400',
-													  `field_text_font_style` varchar(25) NOT NULL DEFAULT 'normal',
-													  `field_text_font_size` varchar(11) DEFAULT '',
-													  `field_text_font_color` varchar(11) DEFAULT '',
-													  `border_form_width` int(11) NOT NULL DEFAULT '1',
-													  `border_form_style` varchar(11) NOT NULL DEFAULT 'solid',
-													  `border_form_color` varchar(11) DEFAULT '',
-													  `border_guidelines_width` int(11) NOT NULL DEFAULT '1',
-													  `border_guidelines_style` varchar(11) NOT NULL DEFAULT 'solid',
-													  `border_guidelines_color` varchar(11) DEFAULT '',
-													  `border_section_width` int(11) NOT NULL DEFAULT '1',
-													  `border_section_style` varchar(11) NOT NULL DEFAULT 'solid',
-													  `border_section_color` varchar(11) DEFAULT '',
-													  `form_shadow_style` varchar(25) NOT NULL DEFAULT 'WarpShadow',
-													  `form_shadow_size` varchar(11) NOT NULL DEFAULT 'large',
-													  `form_shadow_brightness` varchar(11) NOT NULL DEFAULT 'normal',
-													  `form_button_type` varchar(11) NOT NULL DEFAULT 'text',
-													  `form_button_text` varchar(100) NOT NULL DEFAULT 'Submit',
-													  `form_button_image` text,
-													  `advanced_css` text,
-													  PRIMARY KEY (`theme_id`),
-													  KEY `theme_name` (`theme_name`)
-													) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."form_themes (
+													  theme_id int NOT NULL IDENTITY(1,1),
+													  status int DEFAULT '1',
+													  theme_has_css int NOT NULL DEFAULT '0',
+													  theme_name varchar(255) DEFAULT '',
+													  theme_built_in int NOT NULL DEFAULT '0',
+													  logo_type varchar(11) NOT NULL DEFAULT 'default' COMMENT 'default,custom,disabled',
+													  logo_custom_image nvarchar(1024),
+													  logo_custom_height int NOT NULL DEFAULT '40',
+													  logo_default_image varchar(50) DEFAULT '',
+													  logo_default_repeat int NOT NULL DEFAULT '0',
+													  wallpaper_bg_type varchar(11) NOT NULL DEFAULT 'color' COMMENT 'color,pattern,custom',
+													  wallpaper_bg_color varchar(11) DEFAULT '',
+													  wallpaper_bg_pattern varchar(50) DEFAULT '',
+													  wallpaper_bg_custom varchar(255),
+													  header_bg_type varchar(11) NOT NULL DEFAULT 'color' COMMENT 'color,pattern,custom',
+													  header_bg_color varchar(11) DEFAULT '',
+													  header_bg_pattern varchar(50) DEFAULT '',
+													  header_bg_custom varchar(255),
+													  form_bg_type varchar(11) NOT NULL DEFAULT 'color' COMMENT 'color,pattern,custom',
+													  form_bg_color varchar(11) DEFAULT '',
+													  form_bg_pattern varchar(50) DEFAULT '',
+													  form_bg_custom varchar(255),
+													  highlight_bg_type varchar(11) NOT NULL DEFAULT 'color' COMMENT 'color,pattern,custom',
+													  highlight_bg_color varchar(11) DEFAULT '',
+													  highlight_bg_pattern varchar(50) DEFAULT '',
+													  highlight_bg_custom varchar(255),
+													  guidelines_bg_type varchar(11) NOT NULL DEFAULT 'color' COMMENT 'color,pattern,custom',
+													  guidelines_bg_color varchar(11) DEFAULT '',
+													  guidelines_bg_pattern varchar(50) DEFAULT '',
+													  guidelines_bg_custom varchar(255),
+													  field_bg_type varchar(11) NOT NULL DEFAULT 'color' COMMENT 'color,pattern,custom',
+													  field_bg_color varchar(11) DEFAULT '',
+													  field_bg_pattern varchar(50) DEFAULT '',
+													  field_bg_custom varchar(255),
+													  form_title_font_type varchar(50) NOT NULL DEFAULT 'Lucida Grande',
+													  form_title_font_weight int NOT NULL DEFAULT '400',
+													  form_title_font_style varchar(25) NOT NULL DEFAULT 'normal',
+													  form_title_font_size varchar(11) DEFAULT '',
+													  form_title_font_color varchar(11) DEFAULT '',
+													  form_desc_font_type varchar(50) NOT NULL DEFAULT 'Lucida Grande',
+													  form_desc_font_weight int NOT NULL DEFAULT '400',
+													  form_desc_font_style varchar(25) NOT NULL DEFAULT 'normal',
+													  form_desc_font_size varchar(11) DEFAULT '',
+													  form_desc_font_color varchar(11) DEFAULT '',
+													  field_title_font_type varchar(50) NOT NULL DEFAULT 'Lucida Grande',
+													  field_title_font_weight int NOT NULL DEFAULT '400',
+													  field_title_font_style varchar(25) NOT NULL DEFAULT 'normal',
+													  field_title_font_size varchar(11) DEFAULT '',
+													  field_title_font_color varchar(11) DEFAULT '',
+													  guidelines_font_type varchar(50) NOT NULL DEFAULT 'Lucida Grande',
+													  guidelines_font_weight int NOT NULL DEFAULT '400',
+													  guidelines_font_style varchar(25) NOT NULL DEFAULT 'normal',
+													  guidelines_font_size varchar(11) DEFAULT '',
+													  guidelines_font_color varchar(11) DEFAULT '',
+													  section_title_font_type varchar(50) NOT NULL DEFAULT 'Lucida Grande',
+													  section_title_font_weight int NOT NULL DEFAULT '400',
+													  section_title_font_style varchar(25) NOT NULL DEFAULT 'normal',
+													  section_title_font_size varchar(11) DEFAULT '',
+													  section_title_font_color varchar(11) DEFAULT '',
+													  section_desc_font_type varchar(50) NOT NULL DEFAULT 'Lucida Grande',
+													  section_desc_font_weight int NOT NULL DEFAULT '400',
+													  section_desc_font_style varchar(25) NOT NULL DEFAULT 'normal',
+													  section_desc_font_size varchar(11) DEFAULT '',
+													  section_desc_font_color varchar(11) DEFAULT '',
+													  field_text_font_type varchar(50) NOT NULL DEFAULT 'Lucida Grande',
+													  field_text_font_weight int NOT NULL DEFAULT '400',
+													  field_text_font_style varchar(25) NOT NULL DEFAULT 'normal',
+													  field_text_font_size varchar(11) DEFAULT '',
+													  field_text_font_color varchar(11) DEFAULT '',
+													  border_form_width int NOT NULL DEFAULT '1',
+													  border_form_style varchar(11) NOT NULL DEFAULT 'solid',
+													  border_form_color varchar(11) DEFAULT '',
+													  border_guidelines_width int NOT NULL DEFAULT '1',
+													  border_guidelines_style varchar(11) NOT NULL DEFAULT 'solid',
+													  border_guidelines_color varchar(11) DEFAULT '',
+													  border_section_width int NOT NULL DEFAULT '1',
+													  border_section_style varchar(11) NOT NULL DEFAULT 'solid',
+													  border_section_color varchar(11) DEFAULT '',
+													  form_shadow_style varchar(25) NOT NULL DEFAULT 'WarpShadow',
+													  form_shadow_size varchar(11) NOT NULL DEFAULT 'large',
+													  form_shadow_brightness varchar(11) NOT NULL DEFAULT 'normal',
+													  form_button_type varchar(11) NOT NULL DEFAULT 'text',
+													  form_button_text varchar(100) NOT NULL DEFAULT 'Submit',
+													  form_button_image varchar(1024),
+													  advanced_css varchar(1024),
+													  PRIMARY KEY (theme_id)
+													);";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -2017,8 +2155,17 @@ VALUES
 			$post_install_error .= $e->getMessage().'<br/><br/>';
 		}
 
+		$query = "CREATE INDEX theme_name ON ".MF_TABLE_PREFIX."form_themes (theme_name)";
+		$params = array();
+		$sth = $dbh->prepare($query);
+		try{
+			$sth->execute($params);
+		}catch(PDOException $e) {
+			return $e->getMessage().'<br/><br/>';
+		}
+
 		//insert into ap_form_themes table
-		$query = "INSERT INTO `".MF_TABLE_PREFIX."form_themes` (`theme_id`, `status`, `theme_has_css`, `theme_name`, `theme_built_in`, `logo_type`, `logo_custom_image`, `logo_custom_height`, `logo_default_image`, `logo_default_repeat`, `wallpaper_bg_type`, `wallpaper_bg_color`, `wallpaper_bg_pattern`, `wallpaper_bg_custom`, `header_bg_type`, `header_bg_color`, `header_bg_pattern`, `header_bg_custom`, `form_bg_type`, `form_bg_color`, `form_bg_pattern`, `form_bg_custom`, `highlight_bg_type`, `highlight_bg_color`, `highlight_bg_pattern`, `highlight_bg_custom`, `guidelines_bg_type`, `guidelines_bg_color`, `guidelines_bg_pattern`, `guidelines_bg_custom`, `field_bg_type`, `field_bg_color`, `field_bg_pattern`, `field_bg_custom`, `form_title_font_type`, `form_title_font_weight`, `form_title_font_style`, `form_title_font_size`, `form_title_font_color`, `form_desc_font_type`, `form_desc_font_weight`, `form_desc_font_style`, `form_desc_font_size`, `form_desc_font_color`, `field_title_font_type`, `field_title_font_weight`, `field_title_font_style`, `field_title_font_size`, `field_title_font_color`, `guidelines_font_type`, `guidelines_font_weight`, `guidelines_font_style`, `guidelines_font_size`, `guidelines_font_color`, `section_title_font_type`, `section_title_font_weight`, `section_title_font_style`, `section_title_font_size`, `section_title_font_color`, `section_desc_font_type`, `section_desc_font_weight`, `section_desc_font_style`, `section_desc_font_size`, `section_desc_font_color`, `field_text_font_type`, `field_text_font_weight`, `field_text_font_style`, `field_text_font_size`, `field_text_font_color`, `border_form_width`, `border_form_style`, `border_form_color`, `border_guidelines_width`, `border_guidelines_style`, `border_guidelines_color`, `border_section_width`, `border_section_style`, `border_section_color`, `form_shadow_style`, `form_shadow_size`, `form_shadow_brightness`, `form_button_type`, `form_button_text`, `form_button_image`, `advanced_css`)
+		$query = "INSERT INTO ".MF_TABLE_PREFIX."form_themes (theme_id, status, theme_has_css, theme_name, theme_built_in, logo_type, logo_custom_image, logo_custom_height, logo_default_image, logo_default_repeat, wallpaper_bg_type, wallpaper_bg_color, wallpaper_bg_pattern, wallpaper_bg_custom, header_bg_type, header_bg_color, header_bg_pattern, header_bg_custom, form_bg_type, form_bg_color, form_bg_pattern, form_bg_custom, highlight_bg_type, highlight_bg_color, highlight_bg_pattern, highlight_bg_custom, guidelines_bg_type, guidelines_bg_color, guidelines_bg_pattern, guidelines_bg_custom, field_bg_type, field_bg_color, field_bg_pattern, field_bg_custom, form_title_font_type, form_title_font_weight, form_title_font_style, form_title_font_size, form_title_font_color, form_desc_font_type, form_desc_font_weight, form_desc_font_style, form_desc_font_size, form_desc_font_color, field_title_font_type, field_title_font_weight, field_title_font_style, field_title_font_size, field_title_font_color, guidelines_font_type, guidelines_font_weight, guidelines_font_style, guidelines_font_size, guidelines_font_color, section_title_font_type, section_title_font_weight, section_title_font_style, section_title_font_size, section_title_font_color, section_desc_font_type, section_desc_font_weight, section_desc_font_style, section_desc_font_size, section_desc_font_color, field_text_font_type, field_text_font_weight, field_text_font_style, field_text_font_size, field_text_font_color, border_form_width, border_form_style, border_form_color, border_guidelines_width, border_guidelines_style, border_guidelines_color, border_section_width, border_section_style, border_section_color, form_shadow_style, form_shadow_size, form_shadow_brightness, form_button_type, form_button_text, form_button_image, advanced_css)
 	VALUES
 		(1,1,0,'Green Senegal',1,'default','http://',40,'machform.png',0,'color','#cfdfc5','','','color','#bad4a9','','','color','#ffffff','','','color','#ecf1ea','','','color','#ecf1ea','','','color','#cfdfc5','','','Philosopher',700,'normal','','#80af1b','Philosopher',400,'normal','100%','#80af1b','Philosopher',700,'normal','110%','#80af1b','Ubuntu',400,'normal','','#666666','Philosopher',700,'normal','110%','#80af1b','Philosopher',400,'normal','95%','#80af1b','Ubuntu',400,'normal','','#666666',1,'solid','#bad4a9',1,'dashed','#bad4a9',1,'dotted','#CCCCCC','WarpShadow','large','normal','text','Submit','http://',''),
 		(2,1,0,'Blue Bigbird',1,'default','http://',40,'machform.png',0,'color','#336699','','','color','#6699cc','','','color','#ffffff','','','color','#ccdced','','','color','#6699cc','','','color','#ffffff','','','Open Sans',600,'normal','','','Open Sans',400,'normal','','','Open Sans',700,'normal','100%','','Ubuntu',400,'normal','80%','#ffffff','Open Sans',600,'normal','','','Open Sans',400,'normal','95%','','Open Sans',400,'normal','','',1,'solid','#336699',1,'dotted','#6699cc',1,'dotted','#CCCCCC','WarpShadow','large','normal','text','Submit','http://',''),
@@ -2051,33 +2198,33 @@ VALUES
 		}
 
 		//8. Create table ap_settings
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."settings` (
-													  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-													  `smtp_enable` tinyint(1) NOT NULL DEFAULT '0',
-													  `smtp_host` varchar(255) NOT NULL DEFAULT 'localhost',
-													  `smtp_port` int(11) NOT NULL DEFAULT '25',
-													  `smtp_auth` tinyint(1) NOT NULL DEFAULT '0',
-													  `smtp_username` varchar(255) DEFAULT NULL,
-													  `smtp_password` varchar(255) DEFAULT NULL,
-													  `smtp_secure` tinyint(1) NOT NULL DEFAULT '0',
-													  `upload_dir` varchar(255) NOT NULL DEFAULT './data',
-													  `data_dir` varchar(255) NOT NULL DEFAULT './data',
-													  `default_from_name` varchar(255) NOT NULL DEFAULT 'MachForm',
-													  `default_from_email` varchar(255) DEFAULT NULL,
-													  `base_url` varchar(255) DEFAULT NULL,
-													  `form_manager_max_rows` int(11) DEFAULT '10',
-													  `form_manager_sort_by` varchar(25) DEFAULT NULL,
-													  `admin_login` varchar(255) NOT NULL DEFAULT '',
-													  `admin_password` varchar(255) NOT NULL DEFAULT '',
-													  `cookie_hash` varchar(25) DEFAULT NULL,
-													  `admin_image_url` varchar(255) DEFAULT NULL,
-													  `disable_machform_link` int(1) DEFAULT '0',
-													  `customer_id` varchar(100) DEFAULT NULL,
-													  `customer_name` varchar(100) DEFAULT NULL,
-													  `license_key` varchar(50) DEFAULT NULL,
-													  `machform_version` varchar(10) NOT NULL DEFAULT '3.3',
-													  PRIMARY KEY (`id`)
-													) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."settings (
+													  id int NOT NULL IDENTITY(1,1),
+													  smtp_enable tinyint NOT NULL DEFAULT '0',
+													  smtp_host varchar(255) NOT NULL DEFAULT 'localhost',
+													  smtp_port int NOT NULL DEFAULT '25',
+													  smtp_auth tinyint NOT NULL DEFAULT '0',
+													  smtp_username varchar(255) DEFAULT NULL,
+													  smtp_password varchar(255) DEFAULT NULL,
+													  smtp_secure tinyint NOT NULL DEFAULT '0',
+													  upload_dir varchar(255) NOT NULL DEFAULT './data',
+													  data_dir varchar(255) NOT NULL DEFAULT './data',
+													  default_from_name varchar(255) NOT NULL DEFAULT 'MachForm',
+													  default_from_email varchar(255) DEFAULT NULL,
+													  base_url varchar(255) DEFAULT NULL,
+													  form_manager_max_rows int DEFAULT '10',
+													  form_manager_sort_by varchar(25) DEFAULT NULL,
+													  admin_login varchar(255) NOT NULL DEFAULT '',
+													  admin_password varchar(255) NOT NULL DEFAULT '',
+													  cookie_hash varchar(25) DEFAULT NULL,
+													  admin_image_url varchar(255) DEFAULT NULL,
+													  disable_machform_link int DEFAULT '0',
+													  customer_id varchar(100) DEFAULT NULL,
+													  customer_name varchar(100) DEFAULT NULL,
+													  license_key varchar(50) DEFAULT NULL,
+													  machform_version varchar(10) NOT NULL DEFAULT '3.3',
+													  PRIMARY KEY (id)
+													);";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -2104,28 +2251,28 @@ VALUES
 		$hasher = new PasswordHash(8, FALSE);
 		$default_password_hash = $hasher->HashPassword('machform');
 
-		$query = "INSERT INTO `".MF_TABLE_PREFIX."settings` (`id`, 
-																	`smtp_enable`, 
-																	`smtp_host`, 
-																	`smtp_port`, 
-																	`smtp_auth`, 
-																	`smtp_username`, 
-																	`smtp_password`, 
-																	`smtp_secure`, 
-																	`upload_dir`, 
-																	`data_dir`, 
-																	`default_from_name`, 
-																	`default_from_email`, 
-																	`base_url`, 
-																	`form_manager_max_rows`, 
-																	`form_manager_sort_by`, 
-																	`admin_login`, 
-																	`admin_password`, 
-																	`cookie_hash`, 
-																	`admin_image_url`, 
-																	`disable_machform_link`,
-																	`license_key`,
-																	`machform_version`)
+		$query = "INSERT INTO ".MF_TABLE_PREFIX."settings (id, 
+																	smtp_enable, 
+																	smtp_host, 
+																	smtp_port, 
+																	smtp_auth, 
+																	smtp_username, 
+																	smtp_password, 
+																	smtp_secure, 
+																	upload_dir, 
+																	data_dir, 
+																	default_from_name, 
+																	default_from_email, 
+																	base_url, 
+																	form_manager_max_rows, 
+																	form_manager_sort_by, 
+																	admin_login, 
+																	admin_password, 
+																	cookie_hash, 
+																	admin_image_url, 
+																	disable_machform_link,
+																	license_key,
+																	machform_version)
 															VALUES
 																	(1,
 																	 0,
@@ -2158,7 +2305,7 @@ VALUES
 		}
 
 		//10. Loop through each form table and alter table structure
-		$query = "select `form_id`,`form_email`,`esr_email_address`,`form_redirect` from ".MF_TABLE_PREFIX."forms";
+		$query = "select form_id,form_email,esr_email_address,form_redirect from ".MF_TABLE_PREFIX."forms";
 		$params = array();
 		$sth 	= mf_do_query($query,$params,$dbh);
 				
@@ -2189,9 +2336,9 @@ VALUES
 				
 		foreach ($form_id_array as $form_id) {
 			//add new columns
-			$query = "ALTER TABLE `".MF_TABLE_PREFIX."form_{$form_id}`
-													  ADD COLUMN `status` int(4) unsigned NOT NULL DEFAULT '1',
-													  ADD COLUMN `resume_key` varchar(10) default NULL;";
+			$query = "ALTER TABLE ".MF_TABLE_PREFIX."form_{$form_id}
+													  ADD COLUMN status int(4) NOT NULL DEFAULT '1',
+													  ADD COLUMN resume_key varchar(10) default NULL;";
 			$params = array();
 			$sth = $dbh->prepare($query);
 			try{
@@ -2200,9 +2347,9 @@ VALUES
 				$post_install_error .= $e->getMessage().'<br/><br/>';
 			}
 
-			$query = "ALTER TABLE `".MF_TABLE_PREFIX."form_{$form_id}_review`
-													  ADD COLUMN `status` int(4) unsigned NOT NULL DEFAULT '1',
-													  ADD COLUMN `resume_key` varchar(10) default NULL;";
+			$query = "ALTER TABLE ".MF_TABLE_PREFIX."form_{$form_id}_review
+													  ADD COLUMN status int(4) NOT NULL DEFAULT '1',
+													  ADD COLUMN resume_key varchar(10) default NULL;";
 			$params = array();
 			$sth = $dbh->prepare($query);
 			try{
@@ -2212,7 +2359,7 @@ VALUES
 			}
 
 			//update the esl_enable/esr_enable/redirect_enable
-			$query = "UPDATE `".MF_TABLE_PREFIX."forms` SET esl_enable = ?,esr_enable = ?,form_redirect_enable = ? WHERE form_id = ?";
+			$query = "UPDATE ".MF_TABLE_PREFIX."forms SET esl_enable = ?,esr_enable = ?,form_redirect_enable = ? WHERE form_id = ?";
 					
 			$params = array($email_enable_status_array[$form_id]['esl_enable'],$email_enable_status_array[$form_id]['esr_enable'],$redirect_enable_status_array[$form_id],$form_id);
 					
@@ -2268,92 +2415,92 @@ VALUES
 			
 				//insert into ap_form_themes  table
 				$query = "INSERT INTO 
-								`".MF_TABLE_PREFIX."form_themes` 
+								".MF_TABLE_PREFIX."form_themes 
 										( 
-										`status`, 
-										`theme_has_css`, 
-										`theme_name`, 
-										`theme_built_in`, 
-										`logo_type`, 
-										`logo_custom_image`, 
-										`logo_custom_height`, 
-										`logo_default_image`, 
-										`logo_default_repeat`, 
-										`wallpaper_bg_type`, 
-										`wallpaper_bg_color`, 
-										`wallpaper_bg_pattern`, 
-										`wallpaper_bg_custom`, 
-										`header_bg_type`, 
-										`header_bg_color`, 
-										`header_bg_pattern`, 
-										`header_bg_custom`, 
-										`form_bg_type`, 
-										`form_bg_color`, 
-										`form_bg_pattern`, 
-										`form_bg_custom`, 
-										`highlight_bg_type`, 
-										`highlight_bg_color`, 
-										`highlight_bg_pattern`, 
-										`highlight_bg_custom`, 
-										`guidelines_bg_type`, 
-										`guidelines_bg_color`, 
-										`guidelines_bg_pattern`, 
-										`guidelines_bg_custom`, 
-										`field_bg_type`, 
-										`field_bg_color`, 
-										`field_bg_pattern`, 
-										`field_bg_custom`, 
-										`form_title_font_type`, 
-										`form_title_font_weight`, 
-										`form_title_font_style`, 
-										`form_title_font_size`, 
-										`form_title_font_color`, 
-										`form_desc_font_type`, 
-										`form_desc_font_weight`, 
-										`form_desc_font_style`, 
-										`form_desc_font_size`, 
-										`form_desc_font_color`, 
-										`field_title_font_type`, 
-										`field_title_font_weight`, 
-										`field_title_font_style`, 
-										`field_title_font_size`, 
-										`field_title_font_color`, 
-										`guidelines_font_type`, 
-										`guidelines_font_weight`, 
-										`guidelines_font_style`, 
-										`guidelines_font_size`, 
-										`guidelines_font_color`, 
-										`section_title_font_type`, 
-										`section_title_font_weight`, 
-										`section_title_font_style`, 
-										`section_title_font_size`, 
-										`section_title_font_color`, 
-										`section_desc_font_type`, 
-										`section_desc_font_weight`, 
-										`section_desc_font_style`, 
-										`section_desc_font_size`, 
-										`section_desc_font_color`, 
-										`field_text_font_type`, 
-										`field_text_font_weight`, 
-										`field_text_font_style`, 
-										`field_text_font_size`, 
-										`field_text_font_color`, 
-										`border_form_width`, 
-										`border_form_style`, 
-										`border_form_color`, 
-										`border_guidelines_width`, 
-										`border_guidelines_style`, 
-										`border_guidelines_color`, 
-										`border_section_width`, 
-										`border_section_style`, 
-										`border_section_color`, 
-										`form_shadow_style`, 
-										`form_shadow_size`, 
-										`form_shadow_brightness`, 
-										`form_button_type`, 
-										`form_button_text`, 
-										`form_button_image`, 
-										`advanced_css`)
+										status, 
+										theme_has_css, 
+										theme_name, 
+										theme_built_in, 
+										logo_type, 
+										logo_custom_image, 
+										logo_custom_height, 
+										logo_default_image, 
+										logo_default_repeat, 
+										wallpaper_bg_type, 
+										wallpaper_bg_color, 
+										wallpaper_bg_pattern, 
+										wallpaper_bg_custom, 
+										header_bg_type, 
+										header_bg_color, 
+										header_bg_pattern, 
+										header_bg_custom, 
+										form_bg_type, 
+										form_bg_color, 
+										form_bg_pattern, 
+										form_bg_custom, 
+										highlight_bg_type, 
+										highlight_bg_color, 
+										highlight_bg_pattern, 
+										highlight_bg_custom, 
+										guidelines_bg_type, 
+										guidelines_bg_color, 
+										guidelines_bg_pattern, 
+										guidelines_bg_custom, 
+										field_bg_type, 
+										field_bg_color, 
+										field_bg_pattern, 
+										field_bg_custom, 
+										form_title_font_type, 
+										form_title_font_weight, 
+										form_title_font_style, 
+										form_title_font_size, 
+										form_title_font_color, 
+										form_desc_font_type, 
+										form_desc_font_weight, 
+										form_desc_font_style, 
+										form_desc_font_size, 
+										form_desc_font_color, 
+										field_title_font_type, 
+										field_title_font_weight, 
+										field_title_font_style, 
+										field_title_font_size, 
+										field_title_font_color, 
+										guidelines_font_type, 
+										guidelines_font_weight, 
+										guidelines_font_style, 
+										guidelines_font_size, 
+										guidelines_font_color, 
+										section_title_font_type, 
+										section_title_font_weight, 
+										section_title_font_style, 
+										section_title_font_size, 
+										section_title_font_color, 
+										section_desc_font_type, 
+										section_desc_font_weight, 
+										section_desc_font_style, 
+										section_desc_font_size, 
+										section_desc_font_color, 
+										field_text_font_type, 
+										field_text_font_weight, 
+										field_text_font_style, 
+										field_text_font_size, 
+										field_text_font_color, 
+										border_form_width, 
+										border_form_style, 
+										border_form_color, 
+										border_guidelines_width, 
+										border_guidelines_style, 
+										border_guidelines_color, 
+										border_section_width, 
+										border_section_style, 
+										border_section_color, 
+										form_shadow_style, 
+										form_shadow_size, 
+										form_shadow_brightness, 
+										form_button_type, 
+										form_button_text, 
+										form_button_image, 
+										advanced_css)
 								VALUES
 									(1,0,?,0,'default','http://',40,'machform.png',0,'color','#ececec','','','color','#DEDEDE','','',
 									'color','#ffffff','','','color','#FFF7C0','','','color','#F5F5F5','','','color','#ffffff','','','Lucida Grande',
@@ -2435,7 +2582,7 @@ VALUES
 		$mf_settings = mf_get_settings($dbh);
 
 		//alter table ap_settings, add new columns
-		$query = "ALTER TABLE `".MF_TABLE_PREFIX."settings` ADD COLUMN `admin_theme` varchar(11) DEFAULT NULL;";
+		$query = "ALTER TABLE ".MF_TABLE_PREFIX."settings ADD COLUMN admin_theme varchar(11) DEFAULT NULL;";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -2445,9 +2592,9 @@ VALUES
 		}
 
 		//alter table ap_form_elements, add new columns
-		$query = "ALTER TABLE `".MF_TABLE_PREFIX."form_elements` 
-															ADD COLUMN `element_section_display_in_email` int(1) NOT NULL DEFAULT '0',
-  													  		ADD COLUMN `element_section_enable_scroll` int(1) NOT NULL DEFAULT '0';";
+		$query = "ALTER TABLE ".MF_TABLE_PREFIX."form_elements 
+															ADD COLUMN element_section_display_in_email int NOT NULL DEFAULT '0',
+  													  		ADD COLUMN element_section_enable_scroll int NOT NULL DEFAULT '0';";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -2457,7 +2604,7 @@ VALUES
 		}
 
 		//loop through each view.css file and add new classes
-		$query  = "select `form_id` from ".MF_TABLE_PREFIX."forms";
+		$query  = "select form_id from ".MF_TABLE_PREFIX."forms";
 		$params = array();
 		$sth 	= mf_do_query($query,$params,$dbh);
 	
@@ -2592,20 +2739,20 @@ EOT;
 		$mf_settings = mf_get_settings($dbh);
 
 		//1. Create table ap_users
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."users` (
-												  `user_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-												  `user_email` varchar(255) NOT NULL DEFAULT '',
-												  `user_password` varchar(255) NOT NULL DEFAULT '',
-												  `user_fullname` varchar(255) NOT NULL DEFAULT '',
-												  `priv_administer` tinyint(1) NOT NULL DEFAULT '0',
-												  `priv_new_forms` tinyint(1) NOT NULL DEFAULT '0',
-												  `priv_new_themes` tinyint(1) NOT NULL DEFAULT '0',
-												  `last_login_date` datetime DEFAULT NULL,
-												  `last_ip_address` varchar(15) DEFAULT '',
-												  `cookie_hash` varchar(255) DEFAULT '',
-												  `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '0 - deleted; 1 - active; 2 - suspended',
-												  PRIMARY KEY (`user_id`)
-												) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."users (
+												  user_id int NOT NULL IDENTITY(1,1),
+												  user_email varchar(255) NOT NULL DEFAULT '',
+												  user_password nvarchar(255) NOT NULL DEFAULT '',
+												  user_fullname nvarchar(255) NOT NULL DEFAULT '',
+												  priv_administer tinyint NOT NULL DEFAULT '0',
+												  priv_new_forms tinyint NOT NULL DEFAULT '0',
+												  priv_new_themes tinyint NOT NULL DEFAULT '0',
+												  last_login_date datetime DEFAULT NULL,
+												  last_ip_address varchar(15) DEFAULT '',
+												  cookie_hash varchar(255) DEFAULT '',
+												  status tinyint NOT NULL DEFAULT '1' COMMENT '0 - deleted; 1 - active; 2 - suspended',
+												  PRIMARY KEY (user_id)
+												);";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -2615,14 +2762,14 @@ EOT;
 		}
 
 		//2. Create table ap_permissions
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."permissions` (
-												  `form_id` bigint(11) unsigned NOT NULL,
-												  `user_id` int(11) unsigned NOT NULL,
-												  `edit_form` tinyint(1) NOT NULL DEFAULT '0',
-												  `edit_entries` tinyint(1) NOT NULL DEFAULT '0',
-												  `view_entries` tinyint(1) NOT NULL DEFAULT '0',
-												  PRIMARY KEY (`form_id`,`user_id`)
-												) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."permissions (
+												  form_id bigint NOT NULL,
+												  user_id int NOT NULL,
+												  edit_form tinyint NOT NULL DEFAULT '0',
+												  edit_entries tinyint NOT NULL DEFAULT '0',
+												  view_entries tinyint NOT NULL DEFAULT '0',
+												  PRIMARY KEY (form_id,user_id)
+												);";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -2632,13 +2779,13 @@ EOT;
 		}
 
 		//3. Create table ap_entries_preferences
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."entries_preferences` (
-												  `form_id` int(11) NOT NULL,
-												  `user_id` int(11) NOT NULL,
-												  `entries_sort_by` varchar(100) NOT NULL DEFAULT 'id-desc',
-												  `entries_enable_filter` int(1) NOT NULL DEFAULT '0',
-												  `entries_filter_type` varchar(5) NOT NULL DEFAULT 'all' COMMENT 'all or any'
-												) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."entries_preferences (
+												  form_id int NOT NULL,
+												  user_id int NOT NULL,
+												  entries_sort_by varchar(100) NOT NULL DEFAULT 'id-desc',
+												  entries_enable_filter int NOT NULL DEFAULT '0',
+												  entries_filter_type varchar(5) NOT NULL DEFAULT 'all' COMMENT 'all or any'
+												);";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -2648,11 +2795,11 @@ EOT;
 		}
 
 		//4. Create table ap_form_locks
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."form_locks` (
-												  `form_id` int(11) NOT NULL,
-												  `user_id` int(11) NOT NULL,
-												  `lock_date` datetime NOT NULL
-												) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."form_locks (
+												  form_id int NOT NULL,
+												  user_id int NOT NULL,
+												  lock_date datetime NOT NULL
+												);";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -2662,11 +2809,11 @@ EOT;
 		}
 
 		//5. Create table ap_form_sorts
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."form_sorts` (
-												  `user_id` int(11) NOT NULL,
-												  `sort_by` varchar(25) DEFAULT '',
-												  PRIMARY KEY (`user_id`)
-												) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."form_sorts (
+												  user_id int NOT NULL,
+												  sort_by varchar(25) DEFAULT '',
+												  PRIMARY KEY (user_id)
+												);";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -2676,7 +2823,7 @@ EOT;
 		}
 		
 		//6. Alter table ap_form_filters. Add 'user_id' column
-		$query = "ALTER TABLE `".MF_TABLE_PREFIX."form_filters` ADD COLUMN `user_id` int(11) NOT NULL DEFAULT '1';";
+		$query = "ALTER TABLE ".MF_TABLE_PREFIX."form_filters ADD COLUMN user_id int NOT NULL DEFAULT '1';";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -2686,7 +2833,7 @@ EOT;
 		}
 
 		//7. Alter table ap_column_preferences. Add 'user_id' column
-		$query = "ALTER TABLE `".MF_TABLE_PREFIX."column_preferences` ADD COLUMN `user_id` int(11) NOT NULL DEFAULT '1';";
+		$query = "ALTER TABLE ".MF_TABLE_PREFIX."column_preferences ADD COLUMN user_id int NOT NULL DEFAULT '1';";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -2696,9 +2843,9 @@ EOT;
 		}
 
 		//8. Alter table ap_form_themes. Add 'user_id' and 'theme_is_private' column
-		$query = "ALTER TABLE `".MF_TABLE_PREFIX."form_themes`
-													  ADD COLUMN `user_id` int(11) NOT NULL DEFAULT '1',
-													  ADD COLUMN `theme_is_private` int(11) NOT NULL DEFAULT '1';";
+		$query = "ALTER TABLE ".MF_TABLE_PREFIX."form_themes
+													  ADD COLUMN user_id int NOT NULL DEFAULT '1',
+													  ADD COLUMN theme_is_private int NOT NULL DEFAULT '1';";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -2731,7 +2878,7 @@ EOT;
 			$post_install_error .= $e->getMessage().'<br/><br/>';
 		}
 
-		$query = "ALTER TABLE ".MF_TABLE_PREFIX."forms DROP COLUMN `entries_sort_by`,DROP COLUMN `entries_enable_filter`,DROP COLUMN `entries_filter_type`;";
+		$query = "ALTER TABLE ".MF_TABLE_PREFIX."forms DROP COLUMN entries_sort_by,DROP COLUMN entries_enable_filter,DROP COLUMN entries_filter_type;";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -2751,7 +2898,7 @@ EOT;
 			$post_install_error .= $e->getMessage().'<br/><br/>';
 		}
 
-		$query = "ALTER TABLE ".MF_TABLE_PREFIX."settings DROP COLUMN `form_manager_sort_by`;";
+		$query = "ALTER TABLE ".MF_TABLE_PREFIX."settings DROP COLUMN form_manager_sort_by;";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -2772,7 +2919,7 @@ EOT;
 		   							  priv_new_forms,
 		   							  priv_new_themes,
 		   							  cookie_hash,
-		   							  `status`)
+		   							  status)
 								SELECT 
 									  '1' as user_id,
 									  admin_login,
@@ -2782,7 +2929,7 @@ EOT;
 									  '1' as priv_new_forms,
 									  '1' as priv_new_themes,
 									  cookie_hash,
-									  '1' as `status` 
+									  '1' as status 
 								  FROM 
 									  ".MF_TABLE_PREFIX."settings";
 		$params = array();
@@ -2793,7 +2940,7 @@ EOT;
 			$post_install_error .= $e->getMessage().'<br/><br/>';
 		}
 
-		$query = "ALTER TABLE ".MF_TABLE_PREFIX."settings DROP COLUMN `admin_login`,DROP COLUMN `admin_password`,DROP COLUMN `cookie_hash`;";
+		$query = "ALTER TABLE ".MF_TABLE_PREFIX."settings DROP COLUMN admin_login,DROP COLUMN admin_password,DROP COLUMN cookie_hash;";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -2803,7 +2950,7 @@ EOT;
 		}
 
 		//12. Loop through each "files" folder and to "data" folder. Create an empty "index.html" file.
-		$query = "select `form_id` from ".MF_TABLE_PREFIX."forms";
+		$query = "select form_id from ".MF_TABLE_PREFIX."forms";
 		$params = array();
 		$sth 	= mf_do_query($query,$params,$dbh);
 				
@@ -2854,13 +3001,13 @@ EOT;
 		$mf_settings = mf_get_settings($dbh);
 
 		//1. Create table ap_field_logic_elements
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."field_logic_elements` (
-																		  `form_id` int(11) NOT NULL,
-																		  `element_id` int(11) NOT NULL,
-																		  `rule_show_hide` varchar(4) NOT NULL DEFAULT 'show',
-																		  `rule_all_any` varchar(3) NOT NULL DEFAULT 'all',
-																		  PRIMARY KEY (`form_id`,`element_id`)
-																		) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."field_logic_elements (
+																		  form_id int NOT NULL,
+																		  element_id int NOT NULL,
+																		  rule_show_hide varchar(4) NOT NULL DEFAULT 'show',
+																		  rule_all_any varchar(3) NOT NULL DEFAULT 'all',
+																		  PRIMARY KEY (form_id,element_id)
+																		);";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -2870,15 +3017,15 @@ EOT;
 		}
 
 		//2. Create table ap_field_logic_conditions
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."field_logic_conditions` (
-																		  `alc_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-																		  `form_id` int(11) NOT NULL,
-																		  `target_element_id` int(11) NOT NULL,
-																		  `element_name` varchar(50) NOT NULL DEFAULT '',
-																		  `rule_condition` varchar(15) NOT NULL DEFAULT 'is',
-																		  `rule_keyword` varchar(255) DEFAULT NULL,
-																		  PRIMARY KEY (`alc_id`)
-																		) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."field_logic_conditions (
+																		  alc_id int NOT NULL IDENTITY(1,1),
+																		  form_id int NOT NULL,
+																		  target_element_id int NOT NULL,
+																		  element_name varchar(50) NOT NULL DEFAULT '',
+																		  rule_condition varchar(15) NOT NULL DEFAULT 'is',
+																		  rule_keyword varchar(255) DEFAULT NULL,
+																		  PRIMARY KEY (alc_id)
+																		);";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -2888,33 +3035,33 @@ EOT;
 		}
 
 		//3. Create table ap_form_payments
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."form_payments` (
-																  `afp_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-																  `form_id` int(11) unsigned NOT NULL,
-																  `record_id` int(11) unsigned NOT NULL,
-																  `payment_id` varchar(255) DEFAULT NULL,
-																  `date_created` datetime DEFAULT NULL,
-																  `payment_date` datetime DEFAULT NULL,
-																  `payment_status` varchar(255) DEFAULT NULL,
-																  `payment_fullname` varchar(255) DEFAULT NULL,
-																  `payment_amount` decimal(62,2) NOT NULL DEFAULT '0.00',
-																  `payment_currency` varchar(3) NOT NULL DEFAULT 'usd',
-																  `payment_test_mode` int(1) NOT NULL DEFAULT '0',
-																  `payment_merchant_type` varchar(25) DEFAULT NULL,
-																  `status` int(1) NOT NULL DEFAULT '1',
-																  `billing_street` varchar(255) DEFAULT NULL,
-																  `billing_city` varchar(255) DEFAULT NULL,
-																  `billing_state` varchar(255) DEFAULT NULL,
-																  `billing_zipcode` varchar(255) DEFAULT NULL,
-																  `billing_country` varchar(255) DEFAULT NULL,
-																  `same_shipping_address` int(1) NOT NULL DEFAULT '1',
-																  `shipping_street` varchar(255) DEFAULT NULL,
-																  `shipping_city` varchar(255) DEFAULT NULL,
-																  `shipping_state` varchar(255) DEFAULT NULL,
-																  `shipping_zipcode` varchar(255) DEFAULT NULL,
-																  `shipping_country` varchar(255) DEFAULT NULL,
-																   PRIMARY KEY (`afp_id`)
-																  ) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."form_payments (
+																  afp_id int NOT NULL IDENTITY(1,1),
+																  form_id int NOT NULL,
+																  record_id int NOT NULL,
+																  payment_id varchar(255) DEFAULT NULL,
+																  date_created datetime DEFAULT NULL,
+																  payment_date datetime DEFAULT NULL,
+																  payment_status varchar(255) DEFAULT NULL,
+																  payment_fullname varchar(255) DEFAULT NULL,
+																  payment_amount decimal(38,2) NOT NULL DEFAULT '0.00',
+																  payment_currency varchar(3) NOT NULL DEFAULT 'usd',
+																  payment_test_mode int NOT NULL DEFAULT '0',
+																  payment_merchant_type varchar(25) DEFAULT NULL,
+																  status int NOT NULL DEFAULT '1',
+																  billing_street varchar(255) DEFAULT NULL,
+																  billing_city varchar(255) DEFAULT NULL,
+																  billing_state varchar(255) DEFAULT NULL,
+																  billing_zipcode varchar(255) DEFAULT NULL,
+																  billing_country varchar(255) DEFAULT NULL,
+																  same_shipping_address int NOT NULL DEFAULT '1',
+																  shipping_street varchar(255) DEFAULT NULL,
+																  shipping_city varchar(255) DEFAULT NULL,
+																  shipping_state varchar(255) DEFAULT NULL,
+																  shipping_zipcode varchar(255) DEFAULT NULL,
+																  shipping_country varchar(255) DEFAULT NULL,
+																   PRIMARY KEY (afp_id)
+																  );";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -2924,12 +3071,12 @@ EOT;
 		}
 
 		//4. Create table ap_page_logic
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."page_logic` (
-																`form_id` int(11) NOT NULL,
-															  	`page_id` varchar(15) NOT NULL DEFAULT '',
-															  	`rule_all_any` varchar(3) NOT NULL DEFAULT 'all',
-															  	 PRIMARY KEY (`form_id`,`page_id`)
-															   ) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."page_logic (
+																form_id int NOT NULL,
+															  	page_id varchar(15) NOT NULL DEFAULT '',
+															  	rule_all_any varchar(3) NOT NULL DEFAULT 'all',
+															  	 PRIMARY KEY (form_id,page_id)
+															   );";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -2939,15 +3086,15 @@ EOT;
 		}
 
 		//5. Create table ap_page_logic_conditions
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."page_logic_conditions` (
-																		   `apc_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-																		   `form_id` int(11) NOT NULL,
-																		   `target_page_id` varchar(15) NOT NULL DEFAULT '',
-																		   `element_name` varchar(50) NOT NULL DEFAULT '',
-																		   `rule_condition` varchar(15) NOT NULL DEFAULT 'is',
-																		   `rule_keyword` varchar(255) DEFAULT NULL,
-																		    PRIMARY KEY (`apc_id`)
-															   			  ) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."page_logic_conditions (
+																		   apc_id int NOT NULL IDENTITY(1,1),
+																		   form_id int NOT NULL,
+																		   target_page_id varchar(15) NOT NULL DEFAULT '',
+																		   element_name varchar(50) NOT NULL DEFAULT '',
+																		   rule_condition varchar(15) NOT NULL DEFAULT 'is',
+																		   rule_keyword varchar(255) DEFAULT NULL,
+																		    PRIMARY KEY (apc_id)
+															   			  );";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -2957,24 +3104,24 @@ EOT;
 		}
 
 		//6. Alter ap_forms table. Add new columns
-		$query = "ALTER TABLE `".MF_TABLE_PREFIX."forms` 
-														  ADD COLUMN `logic_field_enable` tinyint(1) NOT NULL DEFAULT '0',
-														  ADD COLUMN `logic_page_enable` tinyint(1) NOT NULL DEFAULT '0',
-														  ADD COLUMN `payment_enable_trial` int(1) NOT NULL DEFAULT '0',
-														  ADD COLUMN `payment_trial_period` int(11) NOT NULL DEFAULT '1',
-														  ADD COLUMN `payment_trial_unit` varchar(5) NOT NULL DEFAULT 'month',
-														  ADD COLUMN `payment_trial_amount` decimal(62,2) NOT NULL DEFAULT '0.00',
-														  ADD COLUMN `payment_stripe_live_secret_key` varchar(50) DEFAULT NULL,
-											  			  ADD COLUMN `payment_stripe_live_public_key` varchar(50) DEFAULT NULL,
-											  			  ADD COLUMN `payment_stripe_test_secret_key` varchar(50) DEFAULT NULL,
-											  			  ADD COLUMN `payment_stripe_test_public_key` varchar(50) DEFAULT NULL,
-											  			  ADD COLUMN `payment_stripe_enable_test_mode` int(1) NOT NULL DEFAULT '0',
-											  			  ADD COLUMN `payment_paypal_enable_test_mode` int(1) NOT NULL DEFAULT '0',
-														  ADD COLUMN `payment_enable_invoice` int(1) NOT NULL DEFAULT '0',
-														  ADD COLUMN `payment_invoice_email` varchar(255) DEFAULT NULL,
-														  ADD COLUMN `payment_delay_notifications` int(1) NOT NULL DEFAULT '1',
-														  ADD COLUMN `payment_ask_billing` int(1) NOT NULL DEFAULT '0',
-														  ADD COLUMN `payment_ask_shipping` int(1) NOT NULL DEFAULT '0';";
+		$query = "ALTER TABLE ".MF_TABLE_PREFIX."forms 
+														  ADD COLUMN logic_field_enable tinyint NOT NULL DEFAULT '0',
+														  ADD COLUMN logic_page_enable tinyint NOT NULL DEFAULT '0',
+														  ADD COLUMN payment_enable_trial int NOT NULL DEFAULT '0',
+														  ADD COLUMN payment_trial_period int NOT NULL DEFAULT '1',
+														  ADD COLUMN payment_trial_unit varchar(5) NOT NULL DEFAULT 'month',
+														  ADD COLUMN payment_trial_amount decimal(38,2) NOT NULL DEFAULT '0.00',
+														  ADD COLUMN payment_stripe_live_secret_key varchar(50) DEFAULT NULL,
+											  			  ADD COLUMN payment_stripe_live_public_key varchar(50) DEFAULT NULL,
+											  			  ADD COLUMN payment_stripe_test_secret_key varchar(50) DEFAULT NULL,
+											  			  ADD COLUMN payment_stripe_test_public_key varchar(50) DEFAULT NULL,
+											  			  ADD COLUMN payment_stripe_enable_test_mode int NOT NULL DEFAULT '0',
+											  			  ADD COLUMN payment_paypal_enable_test_mode int NOT NULL DEFAULT '0',
+														  ADD COLUMN payment_enable_invoice int NOT NULL DEFAULT '0',
+														  ADD COLUMN payment_invoice_email varchar(255) DEFAULT NULL,
+														  ADD COLUMN payment_delay_notifications int NOT NULL DEFAULT '1',
+														  ADD COLUMN payment_ask_billing int NOT NULL DEFAULT '0',
+														  ADD COLUMN payment_ask_shipping int NOT NULL DEFAULT '0';";
 														  
 		$params = array();
 		$sth = $dbh->prepare($query);
@@ -2986,7 +3133,7 @@ EOT;
 
 		//7. Update ap_forms records, set the value of 'payment_delay_notifications' to 0 for all records. 
 		//so that all existing paypal payments will still working as it is now.
-		$query = "UPDATE `".MF_TABLE_PREFIX."forms` SET `payment_delay_notifications`=0";
+		$query = "UPDATE ".MF_TABLE_PREFIX."forms SET payment_delay_notifications=0";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -2996,7 +3143,7 @@ EOT;
 		}
 
 		//8. Loop through each form CSS file and add new CSS code
-		$query  = "select `form_id` from ".MF_TABLE_PREFIX."forms";
+		$query  = "select form_id from ".MF_TABLE_PREFIX."forms";
 		$params = array();
 		$sth 	= mf_do_query($query,$params,$dbh);
 	
@@ -3122,19 +3269,19 @@ EOT;
 		$mf_settings = mf_get_settings($dbh);
 
 		//1. Create table ap_email_logic
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."email_logic` (
-												    		  `form_id` int(11) NOT NULL,
-															  `rule_id` int(11) NOT NULL,
-															  `rule_all_any` varchar(3) NOT NULL DEFAULT 'all',
-															  `target_email` text NOT NULL,
-															  `template_name` varchar(15) NOT NULL DEFAULT 'notification' COMMENT 'notification - confirmation - custom',
-															  `custom_from_name` text,
-															  `custom_from_email` varchar(255) NOT NULL DEFAULT '',
-															  `custom_subject` text,
-															  `custom_content` text,
-															  `custom_plain_text` int(1) NOT NULL DEFAULT '0',
-															  PRIMARY KEY (`form_id`,`rule_id`)
-												) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."email_logic (
+												    		  form_id int NOT NULL,
+															  rule_id int NOT NULL,
+															  rule_all_any varchar(3) NOT NULL DEFAULT 'all',
+															  target_email nvarchar(1024) NOT NULL,
+															  template_name varchar(15) NOT NULL DEFAULT 'notification' COMMENT 'notification - confirmation - custom',
+															  custom_from_name nvarchar(255),
+															  custom_from_email varchar(255) NOT NULL DEFAULT '',
+															  custom_subject nvarchar(255),
+															  custom_content nvarchar(4000),
+															  custom_plain_text int NOT NULL DEFAULT '0',
+															  PRIMARY KEY (form_id,rule_id)
+												);";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -3144,15 +3291,15 @@ EOT;
 		}
 
 		//2. Create table ap_email_logic_conditions
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."email_logic_conditions` (
-												    		  `aec_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-															  `form_id` int(11) NOT NULL,
-															  `target_rule_id` int(11) NOT NULL,
-															  `element_name` varchar(50) NOT NULL DEFAULT '',
-															  `rule_condition` varchar(15) NOT NULL DEFAULT 'is',
-															  `rule_keyword` varchar(255) DEFAULT NULL,
-															  PRIMARY KEY (`aec_id`)
-															) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."email_logic_conditions (
+												    		  aec_id int NOT NULL IDENTITY(1,1),
+															  form_id int NOT NULL,
+															  target_rule_id int NOT NULL,
+															  element_name varchar(50) NOT NULL DEFAULT '',
+															  rule_condition varchar(15) NOT NULL DEFAULT 'is',
+															  rule_keyword varchar(255) DEFAULT NULL,
+															  PRIMARY KEY (aec_id)
+															);";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -3163,11 +3310,11 @@ EOT;
 
 		
 		//3. Alter ap_forms table. Add new columns
-		$query = "ALTER TABLE `".MF_TABLE_PREFIX."forms` 
-														  ADD COLUMN `form_disabled_message` text,
-														  ADD COLUMN `payment_enable_tax` int(1) NOT NULL DEFAULT '0',
-														  ADD COLUMN `payment_tax_rate` decimal(62,2) NOT NULL DEFAULT '0.00',
-														  ADD COLUMN `logic_email_enable` tinyint(1) NOT NULL DEFAULT '0';";
+		$query = "ALTER TABLE ".MF_TABLE_PREFIX."forms 
+														  ADD COLUMN form_disabled_message nvarchar(255),
+														  ADD COLUMN payment_enable_tax int NOT NULL DEFAULT '0',
+														  ADD COLUMN payment_tax_rate decimal(38,2) NOT NULL DEFAULT '0.00',
+														  ADD COLUMN logic_email_enable tinyint NOT NULL DFAULT '0';";
 														  
 		$params = array();
 		$sth = $dbh->prepare($query);
@@ -3178,9 +3325,9 @@ EOT;
 		}
 
 		//4. Alter ap_form_elements table. Add new columns
-		$query = "ALTER TABLE `".MF_TABLE_PREFIX."form_elements` 
-														  ADD COLUMN `element_number_enable_quantity` int(1) NOT NULL DEFAULT '0',
-														  ADD COLUMN `element_number_quantity_link` varchar(15) DEFAULT NULL;";
+		$query = "ALTER TABLE ".MF_TABLE_PREFIX."form_elements 
+														  ADD COLUMN element_number_enable_quantity int NOT NULL DEFAULT '0',
+														  ADD COLUMN element_number_quantity_link varchar(15) DEFAULT NULL;";
 														  
 		$params = array();
 		$sth = $dbh->prepare($query);
@@ -3193,7 +3340,7 @@ EOT;
 		//5. Update ap_forms records, set the value of 'form_disabled_message' to be coming from the language setting for each form 
 		$form_language_settings = array();
 
-		$query  = "select `form_id`,`form_language` from ".MF_TABLE_PREFIX."forms";
+		$query  = "select form_id,form_language from ".MF_TABLE_PREFIX."forms";
 		$params = array();
 		$sth 	= mf_do_query($query,$params,$dbh);
 	
@@ -3214,7 +3361,7 @@ EOT;
 				
 				mf_set_language($value['form_language']);
 
-				$query = "UPDATE `".MF_TABLE_PREFIX."forms` SET `form_disabled_message`=? where form_id=?";
+				$query = "UPDATE ".MF_TABLE_PREFIX."forms SET form_disabled_message=? where form_id=?";
 				
 				$params = array($mf_lang['form_inactive'],$value['form_id']);
 				$sth = $dbh->prepare($query);
@@ -3277,21 +3424,21 @@ EOT;
 		$mf_settings = mf_get_settings($dbh);
 
 		//1. Create table ap_webhook_options
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."webhook_options` (
-												    		  `awo_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-															  `form_id` int(11) NOT NULL,
-															  `rule_id` int(11) NOT NULL DEFAULT '0',
-															  `webhook_url` text,
-															  `webhook_method` varchar(4) NOT NULL DEFAULT 'post',
-															  `webhook_format` varchar(10) NOT NULL DEFAULT 'key-value',
-															  `webhook_raw_data` mediumtext,
-															  `enable_http_auth` int(1) DEFAULT '0',
-															  `http_username` varchar(255) DEFAULT NULL,
-															  `http_password` varchar(255) DEFAULT NULL,
-															  `enable_custom_http_headers` int(1) NOT NULL DEFAULT '0',
-															  `custom_http_headers` text,
-															  PRIMARY KEY (`awo_id`)
-															) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."webhook_options (
+												    		  awo_id int NOT NULL IDENTITY(1,1),
+															  form_id int NOT NULL,
+															  rule_id int NOT NULL DEFAULT '0',
+															  webhook_url varchar(1024),
+															  webhook_method varchar(4) NOT NULL DEFAULT 'post',
+															  webhook_format varchar(10) NOT NULL DEFAULT 'key-value',
+															  webhook_raw_data varchar(4000),
+															  enable_http_auth int DEFAULT '0',
+															  http_username varchar(255) DEFAULT NULL,
+															  http_password varchar(255) DEFAULT NULL,
+															  enable_custom_http_headers int NOT NULL DEFAULT '0',
+															  custom_http_headers varchar(1024),
+															  PRIMARY KEY (awo_id)
+															);";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -3301,14 +3448,14 @@ EOT;
 		}
 
 		//2. Create table ap_webhook_parameters
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."webhook_parameters` (
-												    		  `awp_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-															  `form_id` int(11) NOT NULL,
-															  `rule_id` int(11) NOT NULL DEFAULT '0',
-															  `param_name` text,
-															  `param_value` text,
-															  PRIMARY KEY (`awp_id`)
-															) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."webhook_parameters (
+												    		  awp_id int NOT NULL IDENTITY(1,1),
+															  form_id int NOT NULL,
+															  rule_id int NOT NULL DEFAULT '0',
+															  param_name varchar(255),
+															  param_value varchar(1024),
+															  PRIMARY KEY (awp_id)
+															);";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -3318,63 +3465,70 @@ EOT;
 		}
 
 		//3. Create table ap_reports
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."reports` (
-												    		  `form_id` int(11) NOT NULL,
-															  `report_access_key` varchar(100) DEFAULT NULL,
-															  PRIMARY KEY (`form_id`),
-															  KEY `report_access_key` (`report_access_key`)
-															) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."reports (
+												    		  form_id int NOT NULL,
+															  report_access_key varchar(100) DEFAULT NULL,
+															  PRIMARY KEY (form_id)
+															);";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
 			$sth->execute($params);
 		}catch(PDOException $e) {
 			$post_install_error .= $e->getMessage().'<br/><br/>';
+		}
+
+		$query = "CREATE INDEX report_access_key ON ".MF_TABLE_PREFIX."reports (report_access_key)";
+		$params = array();
+		$sth = $dbh->prepare($query);
+		try{
+			$sth->execute($params);
+		}catch(PDOException $e) {
+			return $e->getMessage().'<br/><br/>';
 		}
 
 		//4. Create table ap_report_elements
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."report_elements` (
-												    		  `access_key` varchar(100) DEFAULT NULL,
-															  `form_id` int(11) NOT NULL,
-															  `chart_id` int(11) NOT NULL,
-															  `chart_position` int(11) NOT NULL DEFAULT '0',
-															  `chart_status` int(1) NOT NULL DEFAULT '1',
-															  `chart_datasource` varchar(25) NOT NULL DEFAULT '',
-															  `chart_type` varchar(25) NOT NULL DEFAULT '',
-															  `chart_enable_filter` int(1) NOT NULL DEFAULT '0',
-															  `chart_filter_type` varchar(5) NOT NULL DEFAULT 'all',
-															  `chart_title` text,
-															  `chart_title_position` varchar(10) NOT NULL DEFAULT 'top',
-															  `chart_title_align` varchar(10) NOT NULL DEFAULT 'center',
-															  `chart_width` int(11) NOT NULL DEFAULT '0',
-															  `chart_height` int(11) NOT NULL DEFAULT '400',
-															  `chart_background` varchar(8) DEFAULT NULL,
-															  `chart_theme` varchar(25) NOT NULL DEFAULT 'blueopal',
-															  `chart_legend_visible` int(1) NOT NULL DEFAULT '1',
-															  `chart_legend_position` varchar(10) NOT NULL DEFAULT 'right',
-															  `chart_labels_visible` int(1) NOT NULL DEFAULT '1',
-															  `chart_labels_position` varchar(10) NOT NULL DEFAULT 'outsideEnd',
-															  `chart_labels_template` varchar(255) NOT NULL DEFAULT '#= category #',
-															  `chart_labels_align` varchar(10) NOT NULL DEFAULT 'circle',
-															  `chart_tooltip_visible` int(1) NOT NULL DEFAULT '1',
-															  `chart_tooltip_template` varchar(255) NOT NULL DEFAULT '#= category # - #= dataItem.entry # - #= kendo.format(''{0:P}'', percentage)#',
-															  `chart_gridlines_visible` int(1) NOT NULL DEFAULT '1',
-															  `chart_bar_color` varchar(8) DEFAULT NULL,
-															  `chart_is_stacked` int(1) NOT NULL DEFAULT '0',
-															  `chart_is_vertical` int(1) NOT NULL DEFAULT '0',
-															  `chart_line_style` varchar(6) NOT NULL DEFAULT 'smooth',
-															  `chart_axis_is_date` int(1) NOT NULL DEFAULT '0',
-															  `chart_date_range` varchar(6) NOT NULL DEFAULT 'all' COMMENT 'all,period,custom',
-															  `chart_date_period_value` int(11) NOT NULL DEFAULT '1',
-															  `chart_date_period_unit` varchar(5) NOT NULL DEFAULT 'day',
-															  `chart_date_axis_baseunit` varchar(5) DEFAULT NULL,
-															  `chart_date_range_start` date DEFAULT NULL,
-															  `chart_date_range_end` date DEFAULT NULL,
-															  `chart_grid_page_size` int(11) NOT NULL DEFAULT '10',
-															  `chart_grid_max_length` int(11) NOT NULL DEFAULT '100',
-															  PRIMARY KEY (`form_id`,`chart_id`),
-															  KEY `access_key` (`access_key`)
-															) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."report_elements (
+												    		  access_key varchar(100) DEFAULT NULL,
+															  form_id int NOT NULL,
+															  chart_id int NOT NULL,
+															  chart_position int NOT NULL DEFAULT '0',
+															  chart_status int NOT NULL DEFAULT '1',
+															  chart_datasource varchar(25) NOT NULL DEFAULT '',
+															  chart_type varchar(25) NOT NULL DEFAULT '',
+															  chart_enable_filter int NOT NULL DEFAULT '0',
+															  chart_filter_type varchar(5) NOT NULL DEFAULT 'all',
+															  chart_title nvarchar(255),
+															  chart_title_position varchar(10) NOT NULL DEFAULT 'top',
+															  chart_title_align varchar(10) NOT NULL DEFAULT 'center',
+															  chart_width int NOT NULL DEFAULT '0',
+															  chart_height int NOT NULL DEFAULT '400',
+															  chart_background varchar(8) DEFAULT NULL,
+															  chart_theme varchar(25) NOT NULL DEFAULT 'blueopal',
+															  chart_legend_visible int NOT NULL DEFAULT '1',
+															  chart_legend_position varchar(10) NOT NULL DEFAULT 'right',
+															  chart_labels_visible int NOT NULL DEFAULT '1',
+															  chart_labels_position varchar(10) NOT NULL DEFAULT 'outsideEnd',
+															  chart_labels_template varchar(255) NOT NULL DEFAULT '#= category #',
+															  chart_labels_align varchar(10) NOT NULL DEFAULT 'circle',
+															  chart_tooltip_visible int NOT NULL DEFAULT '1',
+															  chart_tooltip_template nvarchar(255) NOT NULL DEFAULT '#= category # - #= dataItem.entry # - #= kendo.format(''{0:P}'', percentage)#',
+															  chart_gridlines_visible int NOT NULL DEFAULT '1',
+															  chart_bar_color varchar(8) DEFAULT NULL,
+															  chart_is_stacked int NOT NULL DEFAULT '0',
+															  chart_is_vertical int NOT NULL DEFAULT '0',
+															  chart_line_style varchar(6) NOT NULL DEFAULT 'smooth',
+															  chart_axis_is_date int NOT NULL DEFAULT '0',
+															  chart_date_range varchar(6) NOT NULL DEFAULT 'all',
+															  chart_date_period_value int NOT NULL DEFAULT '1',
+															  chart_date_period_unit varchar(5) NOT NULL DEFAULT 'day',
+															  chart_date_axis_baseunit varchar(5) DEFAULT NULL,
+															  chart_date_range_start date DEFAULT NULL,
+															  chart_date_range_end date DEFAULT NULL,
+															  chart_grid_page_size int NOT NULL DEFAULT '10',
+															  chart_grid_max_length int NOT NULL DEFAULT '100',
+															  PRIMARY KEY (form_id,chart_id)
+															);";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -3383,34 +3537,54 @@ EOT;
 			$post_install_error .= $e->getMessage().'<br/><br/>';
 		}
 
+		$query = "CREATE INDEX access_key ON ".MF_TABLE_PREFIX."report_elements (access_key)";
+		$params = array();
+		$sth = $dbh->prepare($query);
+		try{
+			$sth->execute($params);
+		}catch(PDOException $e) {
+			return $e->getMessage().'<br/><br/>';
+		}
+
+		add_MS_Description($dbh,'all,period,custom', MF_TABLE_PREFIX."report_elements", "chart_date_range");
+
 		//5. Create table ap_report_filters
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."report_filters` (
-												    		  `arf_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-															  `form_id` int(11) NOT NULL,
-															  `chart_id` int(11) NOT NULL,
-															  `element_name` varchar(50) NOT NULL DEFAULT '',
-															  `filter_condition` varchar(15) NOT NULL DEFAULT 'is',
-															  `filter_keyword` varchar(255) DEFAULT NULL,
-															  PRIMARY KEY (`arf_id`),
-															  KEY `form_id` (`form_id`,`chart_id`)
-															) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."report_filters (
+												    		  arf_id int NOT NULL IDENTITY(1,1),
+															  form_id int NOT NULL,
+															  chart_id int NOT NULL,
+															  element_name varchar(50) NOT NULL DEFAULT '',
+															  filter_condition varchar(15) NOT NULL DEFAULT 'is',
+															  filter_keyword varchar(255) DEFAULT NULL,
+															  PRIMARY KEY (arf_id)
+															);";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
 			$sth->execute($params);
 		}catch(PDOException $e) {
 			$post_install_error .= $e->getMessage().'<br/><br/>';
+		}
+
+
+		$query = "CREATE INDEX form_id ON ".MF_TABLE_PREFIX."report_filters (form_id)";
+		$params = array();
+		$sth = $dbh->prepare($query);
+		try{
+			$sth->execute($params);
+		}catch(PDOException $e) {
+			return $e->getMessage().'<br/><br/>';
 		}
 
 		//6. Create table ap_grid_columns
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."grid_columns` (
-												    		  `agc_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-															  `form_id` int(11) NOT NULL,
-															  `chart_id` int(11) NOT NULL,
-															  `element_name` varchar(255) NOT NULL DEFAULT '',
-															  `position` int(11) NOT NULL,
-															  PRIMARY KEY (`agc_id`)
-															) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE ".MF_TABLE_PREFIX."grid_columns (
+												    		  agc_id int NOT NULL IDENTITY(1,1),
+															  form_id int NOT NULL,
+															  chart_id int NOT NULL,
+															  element_name varchar(255) NOT NULL DEFAULT '',
+															  position int NOT NULL,
+															  PRIMARY KEY (agc_id)
+															);";
 		$params = array();
 		$sth = $dbh->prepare($query);
 		try{
@@ -3420,37 +3594,37 @@ EOT;
 		}
 		
 		//7. Alter ap_forms table. Add new columns
-		$query = "ALTER TABLE `".MF_TABLE_PREFIX."forms` 
-														  ADD COLUMN `payment_enable_discount` int(1) NOT NULL DEFAULT '0',
-														  ADD COLUMN `payment_discount_type` varchar(12) NOT NULL DEFAULT 'percent_off',
-														  ADD COLUMN `payment_discount_amount` decimal(62,2) NOT NULL DEFAULT '0.00',
-														  ADD COLUMN `payment_discount_code` text,
-														  ADD COLUMN `payment_discount_element_id` int(11) DEFAULT NULL,
-														  ADD COLUMN `payment_discount_max_usage` int(11) NOT NULL DEFAULT '0',
-														  ADD COLUMN `payment_discount_expiry_date` date DEFAULT NULL,
-														  ADD COLUMN `webhook_enable` tinyint(1) NOT NULL DEFAULT '0',
-														  ADD COLUMN `webhook_url` text,
-														  ADD COLUMN `webhook_method` varchar(4) NOT NULL DEFAULT 'post',
-														  ADD COLUMN `payment_paypal_rest_live_clientid` varchar(100) DEFAULT NULL,
-														  ADD COLUMN `payment_paypal_rest_live_secret_key` varchar(100) DEFAULT NULL,
-														  ADD COLUMN `payment_paypal_rest_test_clientid` varchar(100) DEFAULT NULL,
-														  ADD COLUMN `payment_paypal_rest_test_secret_key` varchar(100) DEFAULT NULL,
-														  ADD COLUMN `payment_paypal_rest_enable_test_mode` int(1) NOT NULL DEFAULT '0',
-														  ADD COLUMN `payment_authorizenet_live_apiloginid` varchar(50) DEFAULT NULL,
-														  ADD COLUMN `payment_authorizenet_live_transkey` varchar(50) DEFAULT NULL,
-														  ADD COLUMN `payment_authorizenet_test_apiloginid` varchar(50) DEFAULT NULL,
-														  ADD COLUMN `payment_authorizenet_test_transkey` varchar(50) DEFAULT NULL,
-														  ADD COLUMN `payment_authorizenet_enable_test_mode` int(1) NOT NULL DEFAULT '0',
-														  ADD COLUMN `payment_authorizenet_save_cc_data` int(1) NOT NULL DEFAULT '0',
-														  ADD COLUMN `payment_braintree_live_merchant_id` varchar(50) DEFAULT NULL,
-														  ADD COLUMN `payment_braintree_live_public_key` varchar(50) DEFAULT NULL,
-														  ADD COLUMN `payment_braintree_live_private_key` varchar(50) DEFAULT NULL,
-														  ADD COLUMN `payment_braintree_live_encryption_key` text,
-														  ADD COLUMN `payment_braintree_test_merchant_id` varchar(50) DEFAULT NULL,
-														  ADD COLUMN `payment_braintree_test_public_key` varchar(50) DEFAULT NULL,
-														  ADD COLUMN `payment_braintree_test_private_key` varchar(50) DEFAULT NULL,
-														  ADD COLUMN `payment_braintree_test_encryption_key` text,
-														  ADD COLUMN `payment_braintree_enable_test_mode` int(1) NOT NULL DEFAULT '0';";
+		$query = "ALTER TABLE ".MF_TABLE_PREFIX."forms 
+														  ADD COLUMN payment_enable_discount int NOT NULL DEFAULT '0',
+														  ADD COLUMN payment_discount_type varchar(12) NOT NULL DEFAULT 'percent_off',
+														  ADD COLUMN payment_discount_amount decimal(38,2) NOT NULL DEFAULT '0.00',
+														  ADD COLUMN payment_discount_code nvarchar(1000),
+														  ADD COLUMN payment_discount_element_id int DEFAULT NULL,
+														  ADD COLUMN payment_discount_max_usage int NOT NULL DEFAULT '0',
+														  ADD COLUMN payment_discount_expiry_date date DEFAULT NULL,
+														  ADD COLUMN webhook_enable tinyint NOT NULL DEFAULT '0',
+														  ADD COLUMN webhook_url nvarchar(1024),
+														  ADD COLUMN webhook_method varchar(4) NOT NULL DEFAULT 'post',
+														  ADD COLUMN payment_paypal_rest_live_clientid varchar(100) DEFAULT NULL,
+														  ADD COLUMN payment_paypal_rest_live_secret_key varchar(100) DEFAULT NULL,
+														  ADD COLUMN payment_paypal_rest_test_clientid varchar(100) DEFAULT NULL,
+														  ADD COLUMN payment_paypal_rest_test_secret_key varchar(100) DEFAULT NULL,
+														  ADD COLUMN payment_paypal_rest_enable_test_mode int NOT NULL DEFAULT '0',
+														  ADD COLUMN payment_authorizenet_live_apiloginid varchar(50) DEFAULT NULL,
+														  ADD COLUMN payment_authorizenet_live_transkey varchar(50) DEFAULT NULL,
+														  ADD COLUMN payment_authorizenet_test_apiloginid varchar(50) DEFAULT NULL,
+														  ADD COLUMN payment_authorizenet_test_transkey varchar(50) DEFAULT NULL,
+														  ADD COLUMN payment_authorizenet_enable_test_mode int NOT NULL DEFAULT '0',
+														  ADD COLUMN payment_authorizenet_save_cc_data int NOT NULL DEFAULT '0',
+														  ADD COLUMN payment_braintree_live_merchant_id varchar(50) DEFAULT NULL,
+														  ADD COLUMN payment_braintree_live_public_key varchar(50) DEFAULT NULL,
+														  ADD COLUMN payment_braintree_live_private_key varchar(50) DEFAULT NULL,
+														  ADD COLUMN payment_braintree_live_encryption_key nvarchar(1000),
+														  ADD COLUMN payment_braintree_test_merchant_id varchar(50) DEFAULT NULL,
+														  ADD COLUMN payment_braintree_test_public_key varchar(50) DEFAULT NULL,
+														  ADD COLUMN payment_braintree_test_private_key varchar(50) DEFAULT NULL,
+														  ADD COLUMN payment_braintree_test_encryption_key nvarchar(1000),
+														  ADD COLUMN payment_braintree_enable_test_mode int NOT NULL DEFAULT '0';";
 																							  
 		$params = array();
 		$sth = $dbh->prepare($query);
@@ -3461,10 +3635,10 @@ EOT;
 		}
 
 		//8. Alter ap_entries_preferences table. Add new columns
-		$query = "ALTER TABLE `".MF_TABLE_PREFIX."entries_preferences` 
-														  ADD COLUMN `entries_incomplete_sort_by` varchar(100) NOT NULL DEFAULT 'id-desc',
-														  ADD COLUMN `entries_incomplete_enable_filter` int(1) NOT NULL DEFAULT '0',
-														  ADD COLUMN `entries_incomplete_filter_type` varchar(5) NOT NULL DEFAULT 'all' COMMENT 'all or any';";
+		$query = "ALTER TABLE ".MF_TABLE_PREFIX."entries_preferences 
+														  ADD COLUMN entries_incomplete_sort_by varchar(100) NOT NULL DEFAULT 'id-desc',
+														  ADD COLUMN entries_incomplete_enable_filter int NOT NULL DEFAULT '0',
+														  ADD COLUMN entries_incomplete_filter_type varchar(5) NOT NULL DEFAULT 'all' COMMENT 'all or any';";
 														  																				  
 		$params = array();
 		$sth = $dbh->prepare($query);
@@ -3475,8 +3649,8 @@ EOT;
 		}
 		
 		//9. Alter ap_form_filters table. Add new columns
-		$query = "ALTER TABLE `".MF_TABLE_PREFIX."form_filters` 
-														  ADD COLUMN `incomplete_entries` int(1) NOT NULL DEFAULT '0';";
+		$query = "ALTER TABLE ".MF_TABLE_PREFIX."form_filters 
+														  ADD COLUMN incomplete_entries int NOT NULL DEFAULT '0';";
 														  																				  
 		$params = array();
 		$sth = $dbh->prepare($query);
@@ -3487,8 +3661,8 @@ EOT;
 		}
 
 		//10. Alter ap_column_preferences table. Add new columns
-		$query = "ALTER TABLE `".MF_TABLE_PREFIX."column_preferences` 
-														  ADD COLUMN `incomplete_entries` int(1) NOT NULL DEFAULT '0';";
+		$query = "ALTER TABLE ".MF_TABLE_PREFIX."column_preferences 
+														  ADD COLUMN incomplete_entries int NOT NULL DEFAULT '0';";
 														  																				  
 		$params = array();
 		$sth = $dbh->prepare($query);
@@ -3499,7 +3673,7 @@ EOT;
 		}
 
 		//11. Loop through each form CSS file and add new CSS code
-		$query  = "select `form_id` from ".MF_TABLE_PREFIX."forms";
+		$query  = "select form_id from ".MF_TABLE_PREFIX."forms";
 		$params = array();
 		$sth 	= mf_do_query($query,$params,$dbh);
 	
@@ -3627,6 +3801,19 @@ EOT;
 		//only the version number need to be changed
 
 		return '';
+	}
+
+
+	function add_MS_Description($dbh, $description, $table, $column)
+	{
+		$query = "exec sp_addextendedproperty  'MS_Description', '". $description ."','schema', 'dbo', 'table', '". $table ."', 'column', '". $column ."'";
+		$params = array();
+		$sth = $dbh->prepare($query);
+		try{
+			$sth->execute($params);
+		}catch(PDOException $e) {
+			return $e->getMessage().'<br/><br/>';
+		}
 	}
 
 ?>

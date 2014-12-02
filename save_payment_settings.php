@@ -75,15 +75,15 @@
 	if(!empty($field_prices)){
 		foreach ($field_prices as $element_data){
 			if($element_data['element_type'] == 'price'){ //if this is price field
-				$query = "insert into ".MF_TABLE_PREFIX."element_prices(form_id,element_id,option_id,`price`) values(?,?,?,?)";
+				$query = "insert into ".MF_TABLE_PREFIX."element_prices(form_id,element_id,option_id,[price]) values(?,?,?,?)";
 				$params = array($form_id,$element_data['element_id'],$element_data['option_id'],$element_data['price']);
 				mf_do_query($query,$params,$dbh);
 			}else{
 				foreach($element_data as $values){
-					$element_id = (int) $values['element_id'];
-					
+					$element_id = (isset($values['element_id']))? (int) $values['element_id']: null;		
+								
 					if(!empty($element_id)){
-						$query = "insert into ".MF_TABLE_PREFIX."element_prices(form_id,element_id,option_id,`price`) values(?,?,?,?)";
+						$query = "insert into ".MF_TABLE_PREFIX."element_prices(form_id,element_id,option_id,[price]) values(?,?,?,?)";
 						$params = array($form_id,$values['element_id'],$values['option_id'],$values['price']);
 						mf_do_query($query,$params,$dbh);
 					}	

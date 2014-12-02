@@ -103,7 +103,7 @@
 	/***************************************************************************************************************/	
 	/* 3. Get element id for this new element												   					   */
 	/***************************************************************************************************************/
-	$query = "select ifnull(max(`element_id`),0) + 1 as new_element_id from ".MF_TABLE_PREFIX."form_elements where form_id = ?";
+	$query = "select isnull(max(element_id),0) + 1 as new_element_id from ".MF_TABLE_PREFIX."form_elements where form_id = ?";
 	$params = array($form_id);
 	
 	$sth = mf_do_query($query,$params,$dbh);
@@ -139,8 +139,8 @@
 		$element_properties['address_hideline2'] = 0; //don't hide address line 2
 		$element_properties['address_us_only'] 	 = 0; //don't display US states dropdown
 		$element_properties['date_enable_range'] = 0;
-		$element_properties['date_range_min'] 	 = '0000-00-00';
-		$element_properties['date_range_max'] 	 = '0000-00-00';
+		$element_properties['date_range_min'] 	 = '0001-01-01';
+		$element_properties['date_range_max'] 	 = '0001-01-01';
 		$element_properties['date_enable_selection_limit'] = 0;
 		$element_properties['date_selection_max'] 	 = 1;
 		$element_properties['date_past_future'] 	 = 'p'; //possible values: 'p' - past; 'f' - future
@@ -265,17 +265,17 @@
 			continue; //don't insert this property, only being used as helper for the form builder preview
 		}
 		
-		$field_list    .= "`element_{$key}`,";
+		$field_list    .= "element_{$key},";
 		$field_values  .= ":element_{$key},";
 		$params[':element_'.$key] = $value;
 	}
 			
-	$field_list   .= "`form_id`";
+	$field_list   .= "form_id";
 	$field_values .= ":form_id";
 	$params[':form_id'] = $form_id;
 		
 	//insert into ap_form_elements  table
-	$query = "INSERT INTO `".MF_TABLE_PREFIX."form_elements` ($field_list) VALUES ($field_values);"; 
+	$query = "INSERT INTO ".MF_TABLE_PREFIX."form_elements ($field_list) VALUES ($field_values);"; 
 	mf_do_query($query,$params,$dbh);
 	
 	//if this is matrix field and a new field being added, we need to insert the children rows as separate elements
@@ -309,17 +309,17 @@
 						continue; //don't insert this property, only being used as helper for the form builder preview
 					}
 					
-					$field_list    .= "`element_{$key}`,";
+					$field_list    .= "element_{$key},";
 					$field_values  .= ":element_{$key},";
 					$params[':element_'.$key] = $value;
 				}
 						
-				$field_list   .= "`form_id`";
+				$field_list   .= "form_id";
 				$field_values .= ":form_id";
 				$params[':form_id'] = $form_id;
 					
 				//insert into ap_form_elements  table
-				$query = "INSERT INTO `".MF_TABLE_PREFIX."form_elements` ($field_list) VALUES ($field_values);"; 
+				$query = "INSERT INTO ".MF_TABLE_PREFIX."form_elements ($field_list) VALUES ($field_values);"; 
 				mf_do_query($query,$params,$dbh);
 				
 				$matrix_element_id_array[] = $element_properties['id'];
@@ -353,17 +353,17 @@
 						continue; //don't insert this property, only being used as helper for the form builder preview
 					}
 					
-					$field_list    .= "`element_{$key}`,";
+					$field_list    .= "element_{$key},";
 					$field_values  .= ":element_{$key},";
 					$params[':element_'.$key] = $value;
 				}
 						
-				$field_list   .= "`form_id`";
+				$field_list   .= "form_id";
 				$field_values .= ":form_id";
 				$params[':form_id'] = $form_id;
 					
 				//insert into ap_form_elements  table
-				$query = "INSERT INTO `".MF_TABLE_PREFIX."form_elements` ($field_list) VALUES ($field_values);"; 
+				$query = "INSERT INTO ".MF_TABLE_PREFIX."form_elements ($field_list) VALUES ($field_values);"; 
 				mf_do_query($query,$params,$dbh);
 				
 				$i++;
@@ -396,8 +396,8 @@
 			if(in_array($element_type,array('radio','checkbox','select'))){
 				for($i=1;$i<=3;$i++){
 					$query = "INSERT INTO 
-										`".MF_TABLE_PREFIX."element_options` 
-											(`form_id`,`element_id`,`option_id`,`position`,`option`,`option_is_default`,`live`) 
+										".MF_TABLE_PREFIX."element_options 
+											(form_id,element_id,option_id,position,[option],option_is_default,live) 
 								   VALUES ( ? , ? , ? , ? , ? ,'0','2');"; 
 					$params = array($form_id,$element_id,$i,$i,$default_option_labels[$i]);
 					mf_do_query($query,$params,$dbh);
@@ -419,8 +419,8 @@
 					
 					for($i=1;$i<=4;$i++){
 						$query = "INSERT INTO 
-										`".MF_TABLE_PREFIX."element_options` 
-											(`form_id`,`element_id`,`option_id`,`position`,`option`,`option_is_default`,`live`) 
+										".MF_TABLE_PREFIX."element_options 
+											(form_id,element_id,option_id,position,[option],option_is_default,live) 
 								   VALUES ( ? , ? , ? , ? , ? ,'0','2');"; 
 						$params = array($form_id,$m_element_id,$i,$i,$matrix_row_labels[$i]);
 						mf_do_query($query,$params,$dbh);
@@ -434,9 +434,9 @@
 			//simpy duplicate the records from the original field and change the new element_id, also set the 'live' field to '2' (draft status)
 			if(in_array($element_type,array('radio','checkbox','select'))){
 				$query = "INSERT INTO 
-									 ".MF_TABLE_PREFIX."element_options (`form_id`,`element_id`,`option_id`,`position`,`option`,`option_is_default`,`live`)
+									 ".MF_TABLE_PREFIX."element_options (form_id,element_id,option_id,position,[option],option_is_default,live)
 						  	   SELECT 
-						  	   		 `form_id`, '{$element_id}' as new_element_id,`option_id`,`position`,`option`,`option_is_default`,'2' as `live` 
+						  	   		 form_id, '{$element_id}' as new_element_id,option_id,position,[option],option_is_default,'2' as live 
 						  	   	 FROM 
 						  	   	 	 ".MF_TABLE_PREFIX."element_options 
 						  	   	WHERE 
@@ -447,9 +447,9 @@
 			}else if($element_type == 'matrix'){
 				foreach($matrix_element_id_pair as $source_element_id=>$dest_element_id){
 					$query = "INSERT INTO 
-										 ".MF_TABLE_PREFIX."element_options (`form_id`,`element_id`,`option_id`,`position`,`option`,`option_is_default`,`live`)
+										 ".MF_TABLE_PREFIX."element_options (form_id,element_id,option_id,position,[option],option_is_default,live)
 							  	   SELECT 
-							  	   		 `form_id`, '{$dest_element_id}' as new_element_id,`option_id`,`position`,`option`,`option_is_default`,'2' as `live` 
+							  	   		 form_id, '{$dest_element_id}' as new_element_id,option_id,position,[option],option_is_default,'2' as live 
 							  	   	 FROM 
 							  	   	 	 ".MF_TABLE_PREFIX."element_options 
 							  	   	WHERE 

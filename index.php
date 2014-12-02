@@ -34,14 +34,14 @@
 	//first we need to check if the user has "remember me" cookie or not
 	if(!empty($_COOKIE['mf_remember']) && empty($_SESSION['mf_logged_in'])){
 		$query  = "SELECT 
-						`user_id`,
-						`priv_administer`,
-						`priv_new_forms`,
-						`priv_new_themes` 
+						[user_id],
+						[priv_administer],
+						[priv_new_forms],
+						[priv_new_themes] 
 					FROM 
-						`".MF_TABLE_PREFIX."users` 
+						[".MF_TABLE_PREFIX."users] 
 					WHERE 
-						`cookie_hash`=? and `status`=1";
+						[cookie_hash]=? and [status]=1";
 		$params = array($_COOKIE['mf_remember']);
 		$sth = mf_do_query($query,$params,$dbh);
 		$row = mf_do_fetch_result($sth);
@@ -78,15 +78,15 @@
 
 			//get the password hash from the database
 			$query  = "SELECT 
-							`user_password`,
-							`user_id`,
-							`priv_administer`,
-							`priv_new_forms`,
-							`priv_new_themes` 
+							user_password,
+							user_id,
+							priv_administer,
+							priv_new_forms,
+							priv_new_themes 
 						FROM 
-							`".MF_TABLE_PREFIX."users` 
+							".MF_TABLE_PREFIX."users 
 					   WHERE 
-					   		`user_email`=? and `status`=1";
+					   		user_email=? and status=1";
 			$params = array($username);
 			$sth = mf_do_query($query,$params,$dbh);
 			$row = mf_do_fetch_result($sth);
@@ -120,7 +120,7 @@
 				$last_login_date = date("Y-m-d H:i:s");
 				$last_ip_address = $_SERVER['REMOTE_ADDR'];
 
-				$query  = "UPDATE ".MF_TABLE_PREFIX."users set last_login_date=?,last_ip_address=? WHERE `user_id`=?";
+				$query  = "UPDATE ".MF_TABLE_PREFIX."users set last_login_date=?,last_ip_address=? WHERE user_id=?";
 				$params = array($last_login_date,$last_ip_address,$user_id);
 				mf_do_query($query,$params,$dbh);
 
@@ -130,7 +130,7 @@
 				if(!empty($remember_me)){
 					$cookie_hash = $hasher->HashPassword(mt_rand()); //generate random hash and save it into ap_users table
 
-					$query = "update ".MF_TABLE_PREFIX."users set cookie_hash=? where `user_id`=?";
+					$query = "update ".MF_TABLE_PREFIX."users set cookie_hash=? where user_id=?";
 		   			$params = array($cookie_hash,$user_id);
 		   			mf_do_query($query,$params,$dbh);
 

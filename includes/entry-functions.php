@@ -27,7 +27,7 @@
 						 element_matrix_allow_multiselect,
 						 element_time_24hour 
 				     from 
-				     	 `".MF_TABLE_PREFIX."form_elements` 
+				     	 [".MF_TABLE_PREFIX."form_elements] 
 				    where 
 				    	 form_id=? 
 				 order by 
@@ -46,7 +46,7 @@
 		}
 		
 		//get whole entry for current id
-		$query  = "select * from `".MF_TABLE_PREFIX."form_{$form_id}{$table_suffix}` where id=? limit 1";
+		$query  = "select top 1 * from [".MF_TABLE_PREFIX."form_{$form_id}{$table_suffix}] where id=?";
 		$params = array($entry_id);
 		
 		$sth = mf_do_query($query,$params,$dbh);
@@ -60,7 +60,7 @@
 		
 		
 		//get form element options
-		$query = "select element_id,option_id,`option` from ".MF_TABLE_PREFIX."element_options where form_id=? and live=1";
+		$query = "select element_id,option_id,[option] from ".MF_TABLE_PREFIX."element_options where form_id=? and live=1";
 		$params = array($form_id);
 		
 		$sth = mf_do_query($query,$params,$dbh);
@@ -230,7 +230,7 @@
 								   where 
 								   		form_id=? and element_id=? and live=1 
 								order by 
-										`position` asc";
+										[position] asc";
 						$params = array($form_id,$mc_element_id);
 							
 						$sub_sth = mf_do_query($sub_query,$params,$dbh);
@@ -250,6 +250,8 @@
 				}
 			}else if('signature' == $element_type){ 
 				$form_values['element_'.$element_id]['default_value'] = htmlspecialchars_decode($entry_data['element_'.$element_id],ENT_QUOTES);
+			}else if('number' == $element_type){ 
+				$form_values['element_'.$element_id]['default_value'] = $entry_data['element_'.$element_id]? (float)$entry_data['element_'.$element_id]: $entry_data['element_'.$element_id];
 			}else{ //element with only 1 input
 				$form_values['element_'.$element_id]['default_value'] = $entry_data['element_'.$element_id];
 			}
@@ -292,8 +294,10 @@
 						 element_time_24hour,
 						 element_section_display_in_email,
 						 element_guidelines,
-						 (select if(element_matrix_parent_id=0,
-							 		element_matrix_allow_multiselect,
+						 (select CASE WHEN element_matrix_parent_id=0 
+						 	THEN
+							 		element_matrix_allow_multiselect 
+							ELSE
 									(select 
 											B.element_matrix_allow_multiselect 
 									   from 
@@ -301,11 +305,11 @@
 									  where 
 									  		B.form_id=A.form_id and 
 									  		B.element_id=A.element_matrix_parent_id
-									)
 								 )
+							END
 						 ) matrix_multiselect_status  
 					 from 
-					 	 `".MF_TABLE_PREFIX."form_elements` A
+					 	 [".MF_TABLE_PREFIX."form_elements] A
 					where 
 						 form_id=? and 
 						 element_status = 1 
@@ -346,7 +350,7 @@
 		}
 		
 		
-		$query  = "select * from `".MF_TABLE_PREFIX."form_{$form_id}{$table_suffix}` where id=? limit 1";
+		$query  = "select top 1 * from [".MF_TABLE_PREFIX."form_{$form_id}{$table_suffix}] where id=?";
 		$params = array($entry_id);
 		
 		$sth = mf_do_query($query,$params,$dbh);
@@ -358,7 +362,7 @@
 		
 		
 		//get form element options
-		$query = "select element_id,option_id,`option` from ".MF_TABLE_PREFIX."element_options where form_id=? and live=1 order by position asc";
+		$query = "select element_id,option_id,[option] from ".MF_TABLE_PREFIX."element_options where form_id=? and live=1 order by position asc";
 		$params = array($form_id);
 		
 		$sth = mf_do_query($query,$params,$dbh);
@@ -373,16 +377,16 @@
 		$query = "select 
 						A.element_id,
 						A.option_id,
-						(select if(B.element_matrix_parent_id=0,A.option,
+						(select CASE WHEN B.element_matrix_parent_id=0 THEN A.[option] ELSE 
 							(select 
-									C.`option` 
+									C.[option] 
 							   from 
 							   		".MF_TABLE_PREFIX."element_options C 
 							  where 
 							  		C.element_id=B.element_matrix_parent_id and 
 							  		C.form_id=A.form_id and 
 							  		C.live=1 and 
-							  		C.option_id=A.option_id))
+							  		C.option_id=A.option_id) END
 						) 'option_label'
 					from 
 						".MF_TABLE_PREFIX."element_options A left join ".MF_TABLE_PREFIX."form_elements B on (A.element_id=B.element_id and A.form_id=B.form_id)
@@ -684,6 +688,10 @@
 					$entry_details[$i]['value'] = htmlspecialchars_decode($entry_data['element_'.$element_id],ENT_QUOTES);
 					$entry_details[$i]['element_size'] = $element_size;
 				}
+			}else if('number' == $element_type){ 
+				if(isset($entry_data['element_'.$element_id])){
+					$entry_details[$i]['value'] = $entry_data['element_'.$element_id]? (float)$entry_data['element_'.$element_id]: $entry_data['element_'.$element_id];
+				}
 			}else{ //element with only 1 input
 				if(isset($entry_data['element_'.$element_id])){
 					$entry_details[$i]['value'] = $entry_data['element_'.$element_id];
@@ -726,7 +734,7 @@
 		$query = "select 
 						element_id,
 						option_id,
-						`option`
+						[option]
 					from 
 						".MF_TABLE_PREFIX."element_options 
 				   where 
@@ -747,16 +755,17 @@
 		$query = "select 
 						A.element_id,
 						A.option_id,
-						(select if(B.element_matrix_parent_id=0,A.option,
+						(select CASE WHEN B.element_matrix_parent_id=0 THEN A.[option] ELSE
 							(select 
-									C.`option` 
+									C.[option] 
 							   from 
 							   		".MF_TABLE_PREFIX."element_options C 
 							  where 
 							  		C.element_id=B.element_matrix_parent_id and 
 							  		C.form_id=A.form_id and 
 							  		C.live=1 and 
-							  		C.option_id=A.option_id))
+							  		C.option_id=A.option_id)
+							END
 						) 'option_label'
 					from 
 						".MF_TABLE_PREFIX."element_options A left join ".MF_TABLE_PREFIX."form_elements B on (A.element_id=B.element_id and A.form_id=B.form_id)
@@ -779,9 +788,9 @@
 						  A.element_id,
 						  A.element_matrix_parent_id,
 						  A.element_matrix_allow_multiselect,
-						  (select if(A.element_matrix_parent_id=0,A.element_matrix_allow_multiselect,
+						  (select CASE WHEN A.element_matrix_parent_id=0 THEN A.element_matrix_allow_multiselect ELSE
 						  			 (select B.element_matrix_allow_multiselect from ".MF_TABLE_PREFIX."form_elements B where B.form_id=A.form_id and B.element_id=A.element_matrix_parent_id)
-						  			)
+						  			END
 						  ) 'multiselect' 
 					  from 
 					 	  ".MF_TABLE_PREFIX."form_elements A
@@ -830,7 +839,7 @@
 						 element_time_24hour,
 						 element_matrix_allow_multiselect  
 				     from 
-				         `".MF_TABLE_PREFIX."form_elements` 
+				         [".MF_TABLE_PREFIX."form_elements] 
 				    where 
 				    	 form_id=? and element_status=1 and element_type not in('section','page_break')
 				 order by 
@@ -1045,34 +1054,34 @@
 			}
 
 			if(!empty($column_prefs_temp)){
-				$column_prefs_joined = ',`'.implode("`,`",$column_prefs_temp).'`';
+				$column_prefs_joined = ',['.implode("],[",$column_prefs_temp).']';
 			}
 
 			//build the query to ap_form_payments table
 			$payment_table_query = '';
 			foreach ($payment_columns_prefs as $column_name) {
 				if($column_name == 'payment_status'){
-					$payment_table_query .= ",ifnull((select 
-													`{$column_name}` 
+					$payment_table_query .= ",isnull((select top 1
+													[{$column_name}] 
 												 from ".MF_TABLE_PREFIX."form_payments 
 												where 
-													 form_id='{$form_id}' and record_id=A.id 
+													 form_id={$form_id} and record_id=A.id 
 											 order by 
-											 		 afp_id desc limit 1),'unpaid') {$column_name}";
+											 		 afp_id desc),'unpaid') {$column_name}";
 				}else{
-					$payment_table_query .= ",(select 
-													`{$column_name}` 
+					$payment_table_query .= ",(select top 1
+													[{$column_name}] 
 												 from ".MF_TABLE_PREFIX."form_payments 
 												where 
-													 form_id='{$form_id}' and record_id=A.id 
+													 form_id={$form_id} and record_id=A.id 
 											 order by 
-											 		 afp_id desc limit 1) {$column_name}";
+											 		 afp_id desc) {$column_name}";
 				}
 			}
 
 		}else{
 			//there is no column from ap_form_payments
-			$column_prefs_joined = ',`'.implode("`,`",$column_prefs).'`';
+			$column_prefs_joined = ',['.implode("],[",$column_prefs).']';
 		}
 		
 
@@ -1082,16 +1091,16 @@
 			foreach($element_radio_has_other as $element_name=>$value){
 				$radio_has_other_array[] = $element_name.'_other';
 			}
-			$radio_has_other_joined = '`'.implode("`,`",$radio_has_other_array).'`';
+			$radio_has_other_joined = '['.implode("],[",$radio_has_other_array).']';
 			$column_prefs_joined = $column_prefs_joined.','.$radio_has_other_joined;
 		}
 		
 		if($display_incomplete_entries === true){
 			//only display incomplete entries
-			$status_clause = "`status`=2";
+			$status_clause = "A.[status]=2";
 		}else{
 			//only display completed entries
-			$status_clause = "`status`=1";
+			$status_clause = "A.[status]=1";
 		}
 
 		//check for filter data and build the filter query
@@ -1119,21 +1128,21 @@
 				//we need to replace $element_name with the subquery to ap_form_payments table
 				if(!empty($payment_columns_prefs) && in_array($element_name, $payment_table_columns)){
 					if($element_name == 'payment_status'){
-						$element_name = "ifnull((select 
-													`{$element_name}` 
+						$element_name = "isnull((select top 1
+													[{$element_name}] 
 												 from ".MF_TABLE_PREFIX."form_payments 
 												where 
-													 form_id='{$form_id}' and record_id=A.id 
+													 form_id={$form_id} and record_id=A.id 
 											 order by 
-											 		 afp_id desc limit 1),'unpaid')";
+											 		 afp_id desc),'unpaid')";
 					}else{
-						$element_name = "(select 
-													`{$element_name}` 
+						$element_name = "(select top 1
+													[{$element_name}] 
 												 from ".MF_TABLE_PREFIX."form_payments 
 												where 
-													 form_id='{$form_id}' and record_id=A.id 
+													 form_id={$form_id} and record_id=A.id 
 											 order by 
-											 		 afp_id desc limit 1)";
+											 		 afp_id desc)";
 					}
 				}
 				
@@ -1196,7 +1205,7 @@
 							   		form_id=? and
 							   		element_id=? and
 							   		live=1 and 
-							   		`option` {$where_operand} {$where_keyword}";
+							   		[option] {$where_operand} {$where_keyword}";
 					
 					$params = array($form_id,$element_id);
 			
@@ -1241,6 +1250,7 @@
 					$date_exploded = explode('/', $filter_keyword); //the filter_keyword has format mm/dd/yyyy
 
 					$filter_keyword = $date_exploded[2].'-'.$date_exploded[0].'-'.$date_exploded[1];
+					$filter_keyword = (date('Y-m-d',strtotime($filter_keyword)) == $filter_keyword)? $filter_keyword: '';
 
 					if($filter_condition == 'is'){
 						$where_operand = '=';
@@ -1253,20 +1263,58 @@
 						$where_keyword = "'{$filter_keyword}'";
 					}
 
-					$where_clause_array[] = "date({$element_name}) {$where_operand} {$where_keyword}"; 
+					$where_clause_array[] = "CONVERT(date,{$element_name}) {$where_operand} {$where_keyword}"; 
 				}else{
 					$null_clause = '';
 
 					if($filter_condition == 'is'){
-						$where_operand = '=';
-						$where_keyword = "'{$filter_keyword}'";
+						if(in_array($filter_element_type, array('time','time_noseconds','time_24hour_noseconds','time_24hour'))){
+							$date = date_parse($filter_keyword);
+							if (!empty($filter_keyword)  && $date["error_count"] == 0) {
+								$where_operand = '=';
+								$where_keyword = "'{$filter_keyword}'";
+							}elseif($filter_keyword == ""){
+								$where_operand = 'is';
+								$where_keyword ="null";
+							}else{
+								$where_operand = '=';
+								$where_keyword ="null";
+							}
+						}else{
+							$where_operand = '=';
+							$where_keyword = "'{$filter_keyword}'";
+						}
+
+						if(in_array($filter_element_type, array('number','money','money_dollar')) && (empty(trim($filter_keyword, " ")) || !is_numeric($filter_keyword))){
+							$where_operand = '=';
+							$where_keyword = "'0'";
+						}
 
 						if(empty($filter_keyword)){
 							$null_clause = "OR {$element_name} IS NULL";
 						}
 					}else if($filter_condition == 'is_not'){
-						$where_operand = '<>';
-						$where_keyword = "'{$filter_keyword}'";
+						if(in_array($filter_element_type, array('time','time_noseconds','time_24hour_noseconds','time_24hour'))){
+							$date = date_parse($filter_keyword);
+							if (!empty($filter_keyword)  && $date["error_count"] == 0) {
+								$where_operand = '<>';
+								$where_keyword = "'{$filter_keyword}'";
+							}elseif($filter_keyword == ""){
+								$where_operand = 'is not';
+								$where_keyword ="null";
+							}else{
+								$where_operand = 'NOT LIKE';
+								$where_keyword ="'{$filter_keyword}'";
+							}
+						}else{
+							$where_operand = '<>';
+							$where_keyword = "'{$filter_keyword}'";
+						}
+
+						if(in_array($filter_element_type, array('number','money','money_dollar')) && (empty(trim($filter_keyword, " ")) || !is_numeric($filter_keyword))){
+							$where_operand = '<>';
+							$where_keyword = "'0'";
+						}
 
 						if(!empty($filter_keyword)){
 							$null_clause = "OR {$element_name} IS NULL";
@@ -1300,11 +1348,21 @@
 							$null_clause = "OR {$element_name} IS NULL";
 						}
 					}else if($filter_condition == 'less_than' || $filter_condition == 'is_before'){
-						$where_operand = '<';
-						$where_keyword = "'{$filter_keyword}'";
+						if(in_array($filter_element_type, array('number','money','money_dollar')) && (empty(trim($filter_keyword, " ")) || !is_numeric($filter_keyword))){
+							$where_operand = '<';
+							$where_keyword = "'0'";
+						}else{
+							$where_operand = '<';
+							$where_keyword = "'{$filter_keyword}'";
+						}
 					}else if($filter_condition == 'greater_than' || $filter_condition == 'is_after'){
-						$where_operand = '>';
-						$where_keyword = "'{$filter_keyword}'";
+						if(in_array($filter_element_type, array('number','money','money_dollar')) && (empty(trim($filter_keyword, " ")) || !is_numeric($filter_keyword))){
+							$where_operand = '>';
+							$where_keyword = "'0'";
+						}else{
+							$where_operand = '>';
+							$where_keyword = "'{$filter_keyword}'";
+						}
 					}else if($filter_condition == 'is_one'){
 						$where_operand = '=';
 						$where_keyword = "'1'";
@@ -1339,6 +1397,7 @@
 		//if the element type is radio, select or matrix_radio, we need to add a sub query to the main query
 		//so that the fields can be sorted properly (the sub query need to get values from ap_element_options table)
 		$sort_element_type = $column_type_lookup[$sort_element];
+		$sort_query_element = $sort_element;
 		if(in_array($sort_element_type, array('radio','select','matrix_radio'))){
 			if($sort_element_type == 'radio' && !empty($radio_has_other_array)){
 				if(in_array($sort_element.'_other', $radio_has_other_array)){
@@ -1351,48 +1410,70 @@
 
 			if($sort_radio_has_other){ //if this is radio button field with 'other' enabled
 				$sorting_query = ",(	
-										select if(A.{$sort_element}=0,A.{$sort_element}_other,
+										select CASE WHEN A.{$sort_element}=0 THEN A.{$sort_element}_other ELSE
 													(select 
-															`option` 
+															[option] 
 														from ".MF_TABLE_PREFIX."element_options 
 													   where 
-													   		form_id='{$form_id}' and 
+													   		form_id={$form_id} and 
 													   		element_id='{$sort_element_id}' and 
 													   		option_id=A.{$sort_element} and 
 													   		live=1)
-									   	)
+									   	END
 								   ) {$sort_element}_key";
+				$sort_query_element = "(	
+											select CASE WHEN A.{$sort_element}=0 THEN A.{$sort_element}_other ELSE
+													(select 
+															[option] 
+														from ".MF_TABLE_PREFIX."element_options 
+													   where 
+													   		form_id={$form_id} and 
+													   		element_id='{$sort_element_id}' and 
+													   		option_id=A.{$sort_element} and 
+													   		live=1)
+									   		END
+								   )";
 			}else{
 				$sorting_query = ",(
 									select 
-											`option` 
+											[option] 
 										from ".MF_TABLE_PREFIX."element_options 
 									   where 
 									   		form_id='{$form_id}' and 
 									   		element_id='{$sort_element_id}' and 
-									   		option_id=A.{$sort_element} and 
+									   		option_id={$sort_element} and 
 									   		live=1
 								 ) {$sort_element}_key";
+
+				$sort_query_element = "(
+										select 
+											[option] 
+										from ".MF_TABLE_PREFIX."element_options 
+									    where 
+									   		form_id='{$form_id}' and 
+									   		element_id='{$sort_element_id}' and 
+									   		option_id={$sort_element} and 
+									   		live=1
+								 )";	   			
 			}
 
 			//override the $sort_element
 			$sort_element .= '_key';
 		}
 
-
 		/** pagination **/
 		//identify how many database rows are available
 		$query = "select count(*) total_row from (select 
-						`id`,
-						`id` as `row_num`
-						{$column_prefs_joined} 
-						{$sorting_query} 
+						[id],
+						[id] as row_num
+						{$column_prefs_joined}  
+						{$sorting_query}
 						{$payment_table_query} 
 				    from 
 				    	".MF_TABLE_PREFIX."form_{$form_id} A 
 				    	{$where_clause} ) B ";
 		$params = array();
-			
+		
 		$sth = mf_do_query($query,$params,$dbh);
 		$row = mf_do_fetch_result($sth);
 		
@@ -1413,30 +1494,33 @@
 							
 		//construct the LIMIT clause for the sql SELECT statement
 		if(!empty($numrows)){
-			$limit = 'LIMIT ' .($pageno - 1) * $rows_per_page .',' .$rows_per_page;
+			$limit = 'WHERE RowNumber BETWEEN ' . (($pageno - 1) * $rows_per_page + 1) .' AND ' . (($pageno - 1) * $rows_per_page + $rows_per_page);
 		}
 		/** end pagination **/
 
-		$query = "select 
-						`id`,
-						`id` as `row_num`
-						{$column_prefs_joined} 
-						{$sorting_query} 
-						{$payment_table_query} 
-				    from 
-				    	".MF_TABLE_PREFIX."form_{$form_id} A 
-				    	{$where_clause} 
-				order by 
-						{$sort_element} {$sort_order}
-						{$limit}";
-		
+		$query = "select id
+					, row_num
+					{$column_prefs_joined} 
+					{$sorting_query}
+					{$payment_table_query} 
+					FROM (
+						select 
+							id as row_num
+							, ROW_NUMBER() OVER (ORDER BY {$sort_query_element} {$sort_order}) AS 'RowNumber'
+							, A.*
+					    from 
+					    	".MF_TABLE_PREFIX."form_{$form_id} A 
+					    	left join ".MF_TABLE_PREFIX."form_payments C on C.form_id={$form_id} and C.record_id=A.id
+					    	{$where_clause} 
+				) A {$limit}
+				order by {$sort_element} {$sort_order}";
 		$params = array();
 		$sth = mf_do_query($query,$params,$dbh);
 		$i=0;
 		
 		//prepend "id" and "row_num" into the column preferences
 		array_unshift($column_prefs,"id","row_num");
-		
+
 		while($row = mf_do_fetch_result($sth)){
 			$j=0;
 			foreach($column_prefs as $column_name){
@@ -1550,7 +1634,11 @@
 						$form_data[$i][$j]  = date('d M Y',strtotime($row[$column_name]));
 					}
 				}elseif($column_type_lookup[$column_name] == 'number'){ 
-					$form_data[$i][$j] = $row[$column_name];
+					if($column_name == 'id' || $column_name == 'row_num'){
+						$form_data[$i][$j] = $row[$column_name];
+					}else{
+						$form_data[$i][$j] = $row[$column_name]? (float) $row[$column_name]: $row[$column_name];
+					}
 				}elseif (in_array($column_type_lookup[$column_name],array('radio','select'))){ //multiple choice or dropdown
 					$exploded = array();
 					$exploded = explode('_',$column_name);
@@ -1855,7 +1943,7 @@
 		$query = "select 
 						element_id,
 						option_id,
-						`option`
+						[option]
 					from 
 						".MF_TABLE_PREFIX."element_options 
 				   where 
@@ -1876,16 +1964,17 @@
 		$query = "select 
 						A.element_id,
 						A.option_id,
-						(select if(B.element_matrix_parent_id=0,A.option,
+						(select CASE WHEN B.element_matrix_parent_id=0 THEN A.[option] ELSE
 							(select 
-									C.`option` 
+									C.[option] 
 							   from 
 							   		".MF_TABLE_PREFIX."element_options C 
 							  where 
 							  		C.element_id=B.element_matrix_parent_id and 
 							  		C.form_id=A.form_id and 
 							  		C.live=1 and 
-							  		C.option_id=A.option_id))
+							  		C.option_id=A.option_id)
+							END
 						) 'option_label'
 					from 
 						".MF_TABLE_PREFIX."element_options A left join ".MF_TABLE_PREFIX."form_elements B on (A.element_id=B.element_id and A.form_id=B.form_id)
@@ -1908,9 +1997,9 @@
 						  A.element_id,
 						  A.element_matrix_parent_id,
 						  A.element_matrix_allow_multiselect,
-						  (select if(A.element_matrix_parent_id=0,A.element_matrix_allow_multiselect,
+						  (select CASE WHEN A.element_matrix_parent_id=0 THEN A.element_matrix_allow_multiselect ELSE 
 						  			 (select B.element_matrix_allow_multiselect from ".MF_TABLE_PREFIX."form_elements B where B.form_id=A.form_id and B.element_id=A.element_matrix_parent_id)
-						  			)
+						  			END
 						  ) 'multiselect' 
 					  from 
 					 	  ".MF_TABLE_PREFIX."form_elements A
@@ -1949,7 +2038,7 @@
 						 element_time_24hour,
 						 element_matrix_allow_multiselect  
 				     from 
-				         `".MF_TABLE_PREFIX."form_elements` 
+				         [".MF_TABLE_PREFIX."form_elements] 
 				    where 
 				    	 form_id=? and element_status=1 and element_type not in('section','page_break')
 				 order by 
@@ -2102,7 +2191,7 @@
 					from 
 						".MF_TABLE_PREFIX."form_filters
 				   where
-				   		`form_id` = ? and `user_id` = ? and incomplete_entries = ? 
+				   		form_id = ? and user_id = ? and incomplete_entries = ? 
 				order by 
 				   		aff_id asc";
 		$params = array($form_id,$_SESSION['mf_user_id'],$incomplete_status);
@@ -2123,7 +2212,7 @@
 				     from 
 				     	 ".MF_TABLE_PREFIX."entries_preferences 
 				    where 
-				    	 form_id = ? and `user_id` = ?";
+				    	 form_id = ? and user_id = ?";
 		$params = array($form_id,$_SESSION['mf_user_id']);
 		
 		$sth = mf_do_query($query,$params,$dbh);
@@ -2153,7 +2242,7 @@
 		$query = "select 
 						element_id,
 						option_id,
-						`option`
+						[option]
 					from 
 						".MF_TABLE_PREFIX."element_options 
 				   where 
@@ -2174,16 +2263,17 @@
 		$query = "select 
 						A.element_id,
 						A.option_id,
-						(select if(B.element_matrix_parent_id=0,A.option,
+						(select CASE WHEN B.element_matrix_parent_id=0 THEN A.[option] ELSE
 							(select 
-									C.`option` 
+									C.[option] 
 							   from 
 							   		".MF_TABLE_PREFIX."element_options C 
 							  where 
 							  		C.element_id=B.element_matrix_parent_id and 
 							  		C.form_id=A.form_id and 
 							  		C.live=1 and 
-							  		C.option_id=A.option_id))
+							  		C.option_id=A.option_id)
+							END
 						) 'option_label'
 					from 
 						".MF_TABLE_PREFIX."element_options A left join ".MF_TABLE_PREFIX."form_elements B on (A.element_id=B.element_id and A.form_id=B.form_id)
@@ -2206,9 +2296,9 @@
 						  A.element_id,
 						  A.element_matrix_parent_id,
 						  A.element_matrix_allow_multiselect,
-						  (select if(A.element_matrix_parent_id=0,A.element_matrix_allow_multiselect,
+						  (select CASE WHEN A.element_matrix_parent_id=0 THEN A.element_matrix_allow_multiselect ELSE
 						  			 (select B.element_matrix_allow_multiselect from ".MF_TABLE_PREFIX."form_elements B where B.form_id=A.form_id and B.element_id=A.element_matrix_parent_id)
-						  			)
+						  			END
 						  ) 'multiselect' 
 					  from 
 					 	  ".MF_TABLE_PREFIX."form_elements A
@@ -2252,7 +2342,7 @@
 						 element_time_24hour,
 						 element_matrix_allow_multiselect  
 				     from 
-				         `".MF_TABLE_PREFIX."form_elements` 
+				         [".MF_TABLE_PREFIX."form_elements] 
 				    where 
 				    	 form_id=? and element_status=1 and element_type not in('section','page_break')
 				 order by 
@@ -2419,33 +2509,33 @@
 				$column_prefs_temp[] = $value;
 			}
 
-			$column_prefs_joined = '`'.implode("`,`",$column_prefs_temp).'`';
+			$column_prefs_joined = '['.implode("],[",$column_prefs_temp).']';
 
 			//build the query to ap_form_payments table
 			$payment_table_query = '';
 			foreach ($payment_columns_prefs as $column_name) {
 				if($column_name == 'payment_status'){
-					$payment_table_query .= ",ifnull((select 
-													`{$column_name}` 
+					$payment_table_query .= ",isnull((select top 1
+													[{$column_name}] 
 												 from ".MF_TABLE_PREFIX."form_payments 
 												where 
-													 form_id='{$form_id}' and record_id=A.id 
+													 form_id={$form_id} and record_id=A.id 
 											 order by 
-											 		 afp_id desc limit 1),'unpaid') {$column_name}";
+											 		 afp_id desc),'unpaid') {$column_name}";
 				}else{
-					$payment_table_query .= ",(select 
-													`{$column_name}` 
+					$payment_table_query .= ",(select top 1
+													[{$column_name}] 
 												 from ".MF_TABLE_PREFIX."form_payments 
 												where 
-													 form_id='{$form_id}' and record_id=A.id 
+													 form_id={$form_id} and record_id=A.id 
 											 order by 
-											 		 afp_id desc limit 1) {$column_name}";
+											 		 afp_id desc) {$column_name}";
 				}
 			}
 
 		}else{
 			//there is no column from ap_form_payments
-			$column_prefs_joined = '`'.implode("`,`",$column_prefs).'`';
+			$column_prefs_joined = '['.implode("],[",$column_prefs).']';
 		}
 
 		//if there is any radio fields which has 'other', we need to query that field as well
@@ -2454,16 +2544,16 @@
 			foreach($element_radio_has_other as $element_name=>$value){
 				$radio_has_other_array[] = $element_name.'_other';
 			}
-			$radio_has_other_joined = '`'.implode("`,`",$radio_has_other_array).'`';
+			$radio_has_other_joined = '['.implode("],[",$radio_has_other_array).']';
 			$column_prefs_joined = $column_prefs_joined.','.$radio_has_other_joined;
 		}
 
 		if($is_incomplete_entry){
 			//only display incomplete entries
-			$status_clause = "`status`=2";
+			$status_clause = "A.[status]=2";
 		}else{
 			//only display completed entries
-			$status_clause = "`status`=1";
+			$status_clause = "A.[status]=1";
 		}
 
 		//check for filter data and build the filter query
@@ -2491,21 +2581,21 @@
 				//we need to replace $element_name with the subquery to ap_form_payments table
 				if(!empty($payment_columns_prefs) && in_array($element_name, $payment_table_columns)){
 					if($element_name == 'payment_status'){
-						$element_name = "ifnull((select 
-													`{$element_name}` 
+						$element_name = "isnull((select top 1
+													[{$element_name}] 
 												 from ".MF_TABLE_PREFIX."form_payments 
 												where 
-													 form_id='{$form_id}' and record_id=A.id 
+													 form_id={$form_id} and record_id=A.id 
 											 order by 
-											 		 afp_id desc limit 1),'unpaid')";
+											 		 afp_id desc),'unpaid')";
 					}else{
-						$element_name = "(select 
-													`{$element_name}` 
+						$element_name = "(select top 1
+													[{$element_name}] 
 												 from ".MF_TABLE_PREFIX."form_payments 
 												where 
-													 form_id='{$form_id}' and record_id=A.id 
+													 form_id={$form_id} and record_id=A.id 
 											 order by 
-											 		 afp_id desc limit 1)";
+											 		 afp_id desc)";
 					}
 				}
 				
@@ -2567,7 +2657,7 @@
 							   		form_id=? and 
 									element_id=? and
 							   		live=1 and 
-							   		`option` {$where_operand} {$where_keyword}";
+							   		[option] {$where_operand} {$where_keyword}";
 					$params = array($form_id,$element_id);
 			
 					$filtered_option_id_array = array();
@@ -2593,6 +2683,7 @@
 							$where_clause_array[] = "({$element_name}_other {$where_operand} {$where_keyword} {$null_clause})";
 						}
 					}else{//otherwise, for the rest of the field types
+
 						if(!empty($filtered_option_id_array)){							
 							if(!empty($null_clause)){
 								$where_clause_array[] = "({$element_name} IN('{$filtered_option_id}') {$null_clause})";
@@ -2612,6 +2703,7 @@
 					$date_exploded = explode('/', $filter_keyword); //the filter_keyword has format mm/dd/yyyy
 
 					$filter_keyword = $date_exploded[2].'-'.$date_exploded[0].'-'.$date_exploded[1];
+					$filter_keyword = (date('Y-m-d',strtotime($filter_keyword)) == $filter_keyword)? $filter_keyword: '';
 
 					if($filter_condition == 'is'){
 						$where_operand = '=';
@@ -2624,20 +2716,58 @@
 						$where_keyword = "'{$filter_keyword}'";
 					}
 
-					$where_clause_array[] = "date({$element_name}) {$where_operand} {$where_keyword}"; 
+					$where_clause_array[] = "CONVERT(date,{$element_name}) {$where_operand} {$where_keyword}"; 
 				}else{
 					$null_clause = '';
 
 					if($filter_condition == 'is'){
-						$where_operand = '=';
-						$where_keyword = "'{$filter_keyword}'";
+						if(in_array($filter_element_type, array('time','time_noseconds','time_24hour_noseconds','time_24hour'))){
+							$date = date_parse($filter_keyword);
+							if (!empty($filter_keyword)  && $date["error_count"] == 0) {
+								$where_operand = '=';
+								$where_keyword = "'{$filter_keyword}'";
+							}elseif($filter_keyword == ""){
+								$where_operand = 'is';
+								$where_keyword ="null";
+							}else{
+								$where_operand = '=';
+								$where_keyword ="null";
+							}
+						}else{
+							$where_operand = '=';
+							$where_keyword = "'{$filter_keyword}'";
+						}
+
+						if(in_array($filter_element_type, array('number','money','money_dollar')) && (empty(trim($filter_keyword, " ")) || !is_numeric($filter_keyword))){
+							$where_operand = '=';
+							$where_keyword = "'0'";
+						}
 
 						if(empty($filter_keyword)){
 							$null_clause = "OR {$element_name} IS NULL";
 						}
 					}else if($filter_condition == 'is_not'){
-						$where_operand = '<>';
-						$where_keyword = "'{$filter_keyword}'";
+						if(in_array($filter_element_type, array('time','time_noseconds','time_24hour_noseconds','time_24hour'))){
+							$date = date_parse($filter_keyword);
+							if (!empty($filter_keyword)  && $date["error_count"] == 0) {
+								$where_operand = '<>';
+								$where_keyword = "'{$filter_keyword}'";
+							}elseif($filter_keyword == ""){
+								$where_operand = 'is not';
+								$where_keyword ="null";
+							}else{
+								$where_operand = 'NOT LIKE';
+								$where_keyword ="'{$filter_keyword}'";
+							}
+						}else{
+							$where_operand = '<>';
+							$where_keyword = "'{$filter_keyword}'";
+						}
+
+						if(in_array($filter_element_type, array('number','money','money_dollar')) && (empty(trim($filter_keyword, " ")) || !is_numeric($filter_keyword))){
+							$where_operand = '<>';
+							$where_keyword = "'0'";
+						}
 
 						if(!empty($filter_keyword)){
 							$null_clause = "OR {$element_name} IS NULL";
@@ -2671,11 +2801,21 @@
 							$null_clause = "OR {$element_name} IS NULL";
 						}
 					}else if($filter_condition == 'less_than' || $filter_condition == 'is_before'){
-						$where_operand = '<';
-						$where_keyword = "'{$filter_keyword}'";
+						if(in_array($filter_element_type, array('number','money','money_dollar')) && (empty(trim($filter_keyword, " ")) || !is_numeric($filter_keyword))){
+							$where_operand = '<';
+							$where_keyword = "'0'";
+						}else{
+							$where_operand = '<';
+							$where_keyword = "'{$filter_keyword}'";
+						}
 					}else if($filter_condition == 'greater_than' || $filter_condition == 'is_after'){
-						$where_operand = '>';
-						$where_keyword = "'{$filter_keyword}'";
+						if(in_array($filter_element_type, array('number','money','money_dollar')) && (empty(trim($filter_keyword, " ")) || !is_numeric($filter_keyword))){
+							$where_operand = '>';
+							$where_keyword = "'0'";
+						}else{
+							$where_operand = '>';
+							$where_keyword = "'{$filter_keyword}'";
+						}
 					}else if($filter_condition == 'is_one'){
 						$where_operand = '=';
 						$where_keyword = "'1'";
@@ -2722,24 +2862,24 @@
 
 			if($sort_radio_has_other){ //if this is radio button field with 'other' enabled
 				$sorting_query = ",(	
-										select if(A.{$sort_element}=0,A.{$sort_element}_other,
+										select CASE WHEN A.{$sort_element}=0 THEN A.{$sort_element}_other ELSE
 													(select 
-															`option` 
+															[option] 
 														from ".MF_TABLE_PREFIX."element_options 
 													   where 
-													   		form_id='{$form_id}' and 
+													   		form_id={$form_id} and 
 													   		element_id='{$sort_element_id}' and 
 													   		option_id=A.{$sort_element} and 
 													   		live=1)
-									   	)
+									   	END
 								   ) {$sort_element}_key";
 			}else{
 				$sorting_query = ",(
 									select 
-											`option` 
+											[option] 
 										from ".MF_TABLE_PREFIX."element_options 
 									   where 
-									   		form_id='{$form_id}' and 
+									   		form_id={$form_id} and 
 									   		element_id='{$sort_element_id}' and 
 									   		option_id=A.{$sort_element} and 
 									   		live=1
@@ -2751,8 +2891,8 @@
 		}
 
 		$query = "select 
-						`id`,
-						`id` as `row_num`,
+						id,
+						id as row_num,
 						{$column_prefs_joined}
 						{$sorting_query} 
 						{$payment_table_query} 

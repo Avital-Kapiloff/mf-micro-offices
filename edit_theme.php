@@ -125,9 +125,9 @@
 		//this is editing existing theme, load the values from the database
 		$query = "SELECT
 						theme_name,
-						`status`,
+						[status],
 						logo_type,
-						ifnull(logo_custom_image,'') logo_custom_image,
+						isnull(logo_custom_image,'') logo_custom_image,
 						logo_custom_height,
 						logo_default_image,
 						wallpaper_bg_type,
@@ -209,9 +209,9 @@
 						theme_is_private,
 						user_id
 					FROM
-						`".MF_TABLE_PREFIX."form_themes`
+						".MF_TABLE_PREFIX."form_themes
 				   WHERE
-				   		theme_id=? and `status`=1";
+				   		theme_id=? and [status]=1";
 		$params = array($theme_id);
 		
 		$sth = mf_do_query($query,$params,$dbh);
@@ -811,9 +811,9 @@
 						theme_name,
 						theme_id,
 						theme_is_private,
-						`status`,
+						[status],
 						logo_type,
-						ifnull(logo_custom_image,'') logo_custom_image,
+						isnull(logo_custom_image,'') logo_custom_image,
 						logo_custom_height,
 						logo_default_image,
 						wallpaper_bg_type,
@@ -893,9 +893,9 @@
 						advanced_css,
 						theme_built_in
 					FROM
-						`".MF_TABLE_PREFIX."form_themes`
+						".MF_TABLE_PREFIX."form_themes
 				   WHERE
-				   		theme_built_in=1 and `status`=1
+				   		theme_built_in=1 and [status]=1
 				ORDER BY 
 						theme_name ASC";
 	$params = array();

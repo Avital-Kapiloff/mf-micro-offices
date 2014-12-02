@@ -32,7 +32,7 @@
 
 	//check current license usage, if this is Standard or Professional
 	if($mf_settings['license_key'][0] == 'S' || $mf_settings['license_key'][0] == 'P'){
-		$query = "select count(user_id) user_total from ".MF_TABLE_PREFIX."users where `status` > 0";
+		$query = "select count(user_id) user_total from ".MF_TABLE_PREFIX."users where status > 0";
 		
 		$params = array();
 		$sth = mf_do_query($query,$params,$dbh);
@@ -132,7 +132,7 @@
 				$error_messages['user_email'] = 'Please enter a valid email address.';
 			}else{
 				//check for duplicate
-				$query = "select count(user_email) total_user from `".MF_TABLE_PREFIX."users` where user_email = ? and `status` > 0";
+				$query = "select count(user_email) total_user from ".MF_TABLE_PREFIX."users where user_email = ? and status > 0";
 				
 				$params = array($user_input['user_email']);
 				$sth = mf_do_query($query,$params,$dbh);
@@ -159,14 +159,14 @@
 			$password_hash = $hasher->HashPassword($user_input['user_password']);
 
 			$query = "INSERT INTO 
-								`".MF_TABLE_PREFIX."users`( 
-											`user_email`, 
-											`user_password`, 
-											`user_fullname`, 
-											`priv_administer`, 
-											`priv_new_forms`, 
-											`priv_new_themes`, 
-											`status`) 
+								".MF_TABLE_PREFIX."users( 
+											user_email, 
+											user_password, 
+											user_fullname, 
+											priv_administer, 
+											priv_new_forms, 
+											priv_new_themes, 
+											status) 
 						  VALUES (?, ?, ?, ?, ?, ?, ?);";
 			$params = array(
 							$user_input['user_email'],
@@ -201,12 +201,12 @@
 								$user_input['perm_viewentries_'.$form_id]);
 
 				$query = "INSERT INTO 
-									`".MF_TABLE_PREFIX."permissions` (
-															`form_id`, 
-															`user_id`, 
-															`edit_form`, 
-															`edit_entries`, 
-															`view_entries`) 
+									".MF_TABLE_PREFIX."permissions (
+															form_id, 
+															user_id, 
+															edit_form, 
+															edit_entries, 
+															view_entries) 
 								VALUES (?, ?, ?, ?, ?);";
 				mf_do_query($query,$params,$dbh);
 			}

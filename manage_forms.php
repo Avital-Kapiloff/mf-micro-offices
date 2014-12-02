@@ -122,7 +122,7 @@
 		$jquery_data_code .= "\$('#liform_{$row['form_id']}').data('form_disabled_message',{$form_disabled_message});\n";
 
 		//get todays entries count
-		$sub_query = "select count(*) today_entry from `".MF_TABLE_PREFIX."form_{$row['form_id']}` where `status`=1 and date_created >= date_format(curdate(),'%Y-%m-%d 00:00:00') ";
+		$sub_query = "select count(*) today_entry from [".MF_TABLE_PREFIX."form_{$row['form_id']}] where [status]=1 and DATEDIFF(day,date_created,getdate()) < 1 --date_created >= dateadd(month, datediff(month, 0, getdate()), 0) ";
 		$sub_sth = mf_do_query($sub_query,array(),$dbh);
 		$sub_row = mf_do_fetch_result($sub_sth);
 		
@@ -130,7 +130,7 @@
 		
 		//get latest entry timing
 		if(!empty($sub_row['today_entry'])){
-			$sub_query = "select date_created from `".MF_TABLE_PREFIX."form_{$row['form_id']}` order by id desc limit 1";
+			$sub_query = "select top 1 date_created from [".MF_TABLE_PREFIX."form_{$row['form_id']}] order by id desc";
 			$sub_sth = mf_do_query($sub_query,array(),$dbh);
 			$sub_row = mf_do_fetch_result($sub_sth);
 			
@@ -139,7 +139,7 @@
 		
 		//get total entries count
 		if($form_sort_by == 'total_entries'){
-			$sub_query = "select count(*) total_entry from `".MF_TABLE_PREFIX."form_{$row['form_id']}` where `status`=1";
+			$sub_query = "select count(*) total_entry from [".MF_TABLE_PREFIX."form_{$row['form_id']}] where [status]=1";
 			$sub_sth = mf_do_query($sub_query,array(),$dbh);
 			$sub_row = mf_do_fetch_result($sub_sth);
 			

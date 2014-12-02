@@ -34,19 +34,19 @@
 	$dbh = mf_connect_db();
 	
 	//first delete all previous filter
-	$query = "delete from `".MF_TABLE_PREFIX."form_filters` where form_id=? and user_id=? and incomplete_entries=?";
+	$query = "delete from [".MF_TABLE_PREFIX."form_filters] where form_id=? and user_id=? and incomplete_entries=?";
 	$params = array($form_id,$user_id,$incomplete_entries);
 	mf_do_query($query,$params,$dbh);
 	
 	//save the new filters
-	$query = "insert into `".MF_TABLE_PREFIX."form_filters`(form_id,user_id,element_name,filter_condition,filter_keyword,incomplete_entries) values(?,?,?,?,?,?)";
+	$query = "insert into [".MF_TABLE_PREFIX."form_filters](form_id,user_id,element_name,filter_condition,filter_keyword,incomplete_entries) values(?,?,?,?,?,?)";
 
 	foreach($filter_properties_array as $data){
 		$params = array($form_id,$user_id,$data['element_name'],$data['condition'],$data['keyword'],$incomplete_entries);
 		mf_do_query($query,$params,$dbh);
 	}
 
-	$query = "select count(user_id) pref_count from ".MF_TABLE_PREFIX."entries_preferences where form_id=? and `user_id`=?";
+	$query = "select count(user_id) pref_count from ".MF_TABLE_PREFIX."entries_preferences where form_id=? and [user_id]=?";
 		
 	$params = array($form_id,$user_id);
 	$sth = mf_do_query($query,$params,$dbh);
@@ -66,9 +66,9 @@
 		mf_do_query($query,$params,$dbh);
 	}else{ //insert new one
 		if(empty($incomplete_entries)){
-			$query = "insert into ".MF_TABLE_PREFIX."entries_preferences(`entries_enable_filter`,`entries_filter_type`,`form_id`,`user_id`) values(?,?,?,?)";
+			$query = "insert into ".MF_TABLE_PREFIX."entries_preferences([entries_enable_filter],[entries_filter_type],[form_id],[user_id]) values(?,?,?,?)";
 		}else{
-			$query = "insert into ".MF_TABLE_PREFIX."entries_preferences(`entries_incomplete_enable_filter`,`entries_incomplete_filter_type`,`form_id`,`user_id`) values(?,?,?,?)";
+			$query = "insert into ".MF_TABLE_PREFIX."entries_preferences([entries_incomplete_enable_filter],[entries_incomplete_filter_type],[form_id],[user_id]) values(?,?,?,?)";
 		}
 
 		$params = array(1,$filter_type,$form_id,$user_id);

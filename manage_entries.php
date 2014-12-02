@@ -47,9 +47,9 @@
 	
 	$query = "select 
 					A.form_name,
-					ifnull(B.entries_sort_by,'id-desc') entries_sort_by,
-					ifnull(B.entries_filter_type,'all') entries_filter_type,
-					ifnull(B.entries_enable_filter,0) entries_enable_filter			  
+					isnull(B.entries_sort_by,'id-desc') entries_sort_by,
+					isnull(B.entries_filter_type,'all') entries_filter_type,
+					isnull(B.entries_enable_filter,0) entries_enable_filter			  
 				from 
 					".MF_TABLE_PREFIX."forms A left join ".MF_TABLE_PREFIX."entries_preferences B 
 				  on 
@@ -82,7 +82,7 @@
 		$sort_by = $row['entries_sort_by'];
 	}else{
 		//if sort by parameter exist, save it into the database
-		$query = "select count(user_id) sort_count from ".MF_TABLE_PREFIX."entries_preferences where form_id=? and `user_id`=?";
+		$query = "select count(user_id) sort_count from ".MF_TABLE_PREFIX."entries_preferences where form_id=? and [user_id]=?";
 		
 		$params = array($form_id,$_SESSION['mf_user_id']);
 		$sth = mf_do_query($query,$params,$dbh);
@@ -91,11 +91,11 @@
 		$sort_count = $row['sort_count'];
 
 		if(!empty($sort_count)){ //update existing record
-			$query = "update ".MF_TABLE_PREFIX."entries_preferences set entries_sort_by = ? where form_id = ? and `user_id` = ?";
+			$query = "update ".MF_TABLE_PREFIX."entries_preferences set entries_sort_by = ? where form_id = ? and [user_id] = ?";
 			$params = array($sort_by,$form_id,$_SESSION['mf_user_id']);
 			mf_do_query($query,$params,$dbh);
 		}else{ //insert new one
-			$query = "insert into ".MF_TABLE_PREFIX."entries_preferences(`entries_sort_by`,`form_id`,`user_id`) values(?,?,?)";
+			$query = "insert into ".MF_TABLE_PREFIX."entries_preferences([entries_sort_by],[form_id],[user_id]) values(?,?,?)";
 			$params = array($sort_by,$form_id,$_SESSION['mf_user_id']);
 			mf_do_query($query,$params,$dbh);
 		}
@@ -133,7 +133,7 @@
 
 	//if the form has "resume" enable, calculate any incomplete entries
 	if(!empty($form_properties['form_resume_enable'])){
-		$query = "select count(*) total_row from `".MF_TABLE_PREFIX."form_{$form_id}` where `status`=2 and `resume_key` is not null";
+		$query = "select count(*) total_row from [".MF_TABLE_PREFIX."form_{$form_id}] where [status]=2 and [resume_key] is not null";
 		$params = array();
 				
 		$sth = mf_do_query($query,$params,$dbh);
@@ -143,7 +143,7 @@
 	}
 
 	//check if the table has entries or not
-	$query = "select count(*) total_row from `".MF_TABLE_PREFIX."form_{$form_id}` where `status`=1";
+	$query = "select count(*) total_row from [".MF_TABLE_PREFIX."form_{$form_id}] where [status]=1";
 	$params = array();
 			
 	$sth = mf_do_query($query,$params,$dbh);

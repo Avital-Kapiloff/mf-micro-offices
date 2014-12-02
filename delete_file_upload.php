@@ -44,7 +44,7 @@
 		}
 
 		//check if the file exist within the db or not
-		$query = "select `element_{$element_id}` as file_record from ".MF_TABLE_PREFIX."form_{$form_id}{$table_suffix} where `id` = :entry_id and element_{$element_id} like :filename";
+		$query = "select element_{$element_id} as file_record from ".MF_TABLE_PREFIX."form_{$form_id}{$table_suffix} where id = :entry_id and element_{$element_id} like :filename";
 		$params = array('entry_id' => $entry_id,'filename' => '%'.$filename.'%');
 
 		$sth = mf_do_query($query,$params,$dbh);
@@ -95,7 +95,7 @@
 				
 				//update the data within the table
 				$new_files_joined = implode('|',$new_files);
-				$query = "update ".MF_TABLE_PREFIX."form_{$form_id}{$table_suffix} set `element_{$element_id}` = ? where `id` = ?";
+				$query = "update ".MF_TABLE_PREFIX."form_{$form_id}{$table_suffix} set element_{$element_id} = ? where id = ?";
 				$params = array($new_files_joined,$entry_id);
 				mf_do_query($query,$params,$dbh);
 				

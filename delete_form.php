@@ -138,12 +138,12 @@
 		mf_do_query($query,$params,$dbh);
 		
 		//remove review table
-		$query = "drop table if exists `".MF_TABLE_PREFIX."form_{$form_id}_review`";
+		$query = "IF OBJECT_ID('".MF_TABLE_PREFIX."form_{$form_id}_review', 'U') IS NOT NULL DROP TABLE [".MF_TABLE_PREFIX."form_{$form_id}_review]";
 		$params = array();
 		mf_do_query($query,$params,$dbh);
 		
 		//remove the actual form table
-		$query = "drop table if exists `".MF_TABLE_PREFIX."form_{$form_id}`";
+		$query = "IF OBJECT_ID('".MF_TABLE_PREFIX."form_{$form_id}', 'U') IS NOT NULL DROP TABLE [".MF_TABLE_PREFIX."form_{$form_id}]";
 		$params = array();
 		mf_do_query($query,$params,$dbh);
 		

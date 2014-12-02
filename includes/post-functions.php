@@ -34,12 +34,12 @@
 						logic_field_enable,
 						logic_page_enable 
 					from 
-						`".MF_TABLE_PREFIX."forms` where form_id=?";
+						[".MF_TABLE_PREFIX."forms] where form_id=?";
 		$params = array($form_id);
 		
 		$sth = mf_do_query($query,$params,$dbh);
 		$row = mf_do_fetch_result($sth);
-		
+
 		$form_review 	    = $row['form_review'];
 		$form_page_total    = (int) $row['form_page_total'];
 		$logic_field_enable = (int) $row['logic_field_enable'];
@@ -58,7 +58,7 @@
 		//if this form require password and no session has been set
 		if($require_password && (empty($_SESSION['user_authenticated']) || $_SESSION['user_authenticated'] != $form_id)){ 
 			
-			$query = "select count(form_id) valid_password from `".MF_TABLE_PREFIX."forms` where form_id=? and form_password=?";
+			$query = "select count(form_id) valid_password from [".MF_TABLE_PREFIX."forms] where form_id=? and form_password=?";
 			$params = array($form_id,$input['password']);
 		
 			$sth = mf_do_query($query,$params,$dbh);
@@ -222,7 +222,7 @@
 								   where 
 								   		form_id=? and element_id=? and live=1 
 								order by 
-										`position` asc";
+										[position] asc";
 					$params = array($form_id,$row['element_id']);
 					
 					$sub_sth = mf_do_query($sub_query,$params,$dbh);
@@ -244,7 +244,7 @@
 									   where 
 									   		form_id=? and element_id=? and live=1 
 									order by 
-											`position` asc";
+											[position] asc";
 							$params = array($form_id,$mc_element_id);
 							
 							$sub_sth = mf_do_query($sub_query,$params,$dbh);
@@ -337,13 +337,13 @@
 			
 			if(!empty($_SESSION['review_id'])){
 				$current_session_id = $_SESSION['review_id'];
-				$query = "select {$existing_file_id_list} from ".MF_TABLE_PREFIX."form_{$form_id}_review where `id`=?";
+				$query = "select {$existing_file_id_list} from ".MF_TABLE_PREFIX."form_{$form_id}_review where [id]=?";
 			}else if($is_edit_page === true){ //if this is edit_entry.php page
 				$current_session_id = $edit_id;
-				$query = "select {$existing_file_id_list} from ".MF_TABLE_PREFIX."form_{$form_id} where `id`=?";
+				$query = "select {$existing_file_id_list} from ".MF_TABLE_PREFIX."form_{$form_id} where [id]=?";
 			}else{
 				$current_session_id = session_id();
-				$query = "select {$existing_file_id_list} from ".MF_TABLE_PREFIX."form_{$form_id}_review where `session_id`=?";
+				$query = "select {$existing_file_id_list} from ".MF_TABLE_PREFIX."form_{$form_id}_review where [session_id]=?";
 			}
 
 			$params = array($current_session_id);
@@ -1302,14 +1302,14 @@
 					//if this is edit entry page, bypass the date selection limit rule when the selection being made is the same
 					$disabled_date_where_clause = '';
 					if(!empty($edit_id) && ($_SESSION['mf_logged_in'] === true)){
-						$disabled_date_where_clause = "AND `id` <> {$edit_id}";
+						$disabled_date_where_clause = "AND [id] <> {$edit_id}";
 					}
 					
 					$sub_query = "select 
 										selected_date 
 									from (
 											select 
-												  date_format(element_{$element_id},'%Y-%c-%e') as selected_date,
+												  REPLACE(CONVERT(VARCHAR, element_{$element_id}, 111), '/', '-') as selected_date,
 												  count(element_{$element_id}) as total_selection 
 										      from 
 										      	  ".MF_TABLE_PREFIX."form_{$form_id} 
@@ -1601,7 +1601,7 @@
 						 webhook_enable,
 						 payment_enable_merchant,
 						 payment_merchant_type,
-						 ifnull(payment_paypal_email,'') payment_paypal_email,
+						 isnull(payment_paypal_email,'') payment_paypal_email,
 						 payment_paypal_language,
 						 payment_currency,
 						 payment_show_total,
@@ -1614,7 +1614,7 @@
 						 payment_price_name,
 						 logic_email_enable
 				     from 
-				     	 `".MF_TABLE_PREFIX."forms` 
+				     	 [".MF_TABLE_PREFIX."forms] 
 				    where 
 				    	 form_id=?";
 		
@@ -1700,7 +1700,7 @@
 		//check for ip address
 		if($check_unique_ip === true){
 			//if ip address checking enabled, compare user ip address with value in db
-			$query = "select count(id) total_ip from `".MF_TABLE_PREFIX."form_{$form_id}` where ip_address=? and `status`=1";
+			$query = "select count(id) total_ip from [".MF_TABLE_PREFIX."form_{$form_id}] where ip_address=? and [status]=1";
 			$params = array($user_ip_address);
 			
 			$sth = mf_do_query($query,$params,$dbh);
@@ -1821,7 +1821,7 @@
 					continue;
 				}
 				
-				$field_list    .= "`{$key}`,";
+				$field_list    .= "[{$key}],";
 				$field_values  .= ":{$key},";
 				$params_table_data[':'.$key] = $value;
 				
@@ -1853,16 +1853,16 @@
 						$file_uploads_array[] = 'element_'.$row['element_id'];
 					}
 					
-					$file_uploads_column = implode('`,`',$file_uploads_array);
-					$file_uploads_column = '`'.$file_uploads_column.'`';
+					$file_uploads_column = implode('],[',$file_uploads_array);
+					$file_uploads_column = '['.$file_uploads_column.']';
 					
 					if(!empty($file_uploads_array)){
 						
 						if(!empty($_SESSION['review_id'])){ //if this is single page form and has review enabled
-							$query = "SELECT {$file_uploads_column} FROM `".MF_TABLE_PREFIX."form_{$form_id}_review` where id=?";
+							$query = "SELECT {$file_uploads_column} FROM [".MF_TABLE_PREFIX."form_{$form_id}_review] where id=?";
 							$params = array($_SESSION['review_id']);
 						}elseif ($form_page_total > 1){ //if this is multi page form
-							$query = "SELECT {$file_uploads_column} FROM `".MF_TABLE_PREFIX."form_{$form_id}_review` where session_id=?";
+							$query = "SELECT {$file_uploads_column} FROM [".MF_TABLE_PREFIX."form_{$form_id}_review] where session_id=?";
 							$params = array($session_id);
 						}
 						
@@ -1880,7 +1880,7 @@
 				
 				//add session_id to query if 'form review' enabled 
 				
-				$field_list    .= "`session_id`,";
+				$field_list    .= "[session_id],";
 				$field_values  .= ":session_id,";
 				$params_table_data[':session_id'] = $session_id;
 			}
@@ -1900,19 +1900,21 @@
 					
 					unset($table_data['date_created']);
 					$table_data['date_updated'] = date("Y-m-d H:i:s");
-								
+							
+
+					$columns_type = mf_mysql_columns_type(MF_TABLE_PREFIX."form_{$form_id}", $dbh);
 					foreach ($table_data as $key=>$value){
-						$update_values .= "`$key`=:$key,";
-						$params_update[':'.$key] = $value;
+						$update_values .= "[$key]=:$key,";
+						$params_update[':'.$key] = typecast($value, $columns_type[$key]);
 					}
 					$params_update[':id'] = $edit_id;
 								
 					$update_values = substr($update_values,0,-1);
 								
-					$query = "UPDATE `".MF_TABLE_PREFIX."form_{$form_id}` set 
+					$query = "UPDATE [".MF_TABLE_PREFIX."form_{$form_id}] set 
 												$update_values
 										  where 
-									  	  		`id`=:id;";			
+									  	  		[id]=:id;";			
 					mf_do_query($query,$params_update,$dbh);
 
 					$record_insert_id = $edit_id;
@@ -1926,7 +1928,7 @@
 							
 							if($input['page_number'] == 1){
 								$session_id = session_id();
-								$query = "SELECT count(`id`) as total_row from ".MF_TABLE_PREFIX."form_{$form_id}_review where session_id=?";
+								$query = "SELECT count([id]) as total_row from ".MF_TABLE_PREFIX."form_{$form_id}_review where session_id=?";
 								$params = array($session_id);
 								
 								$sth = mf_do_query($query,$params,$dbh);
@@ -1939,7 +1941,7 @@
 							
 							//if this is the first page, do insert
 							if($do_review_insert){
-								$query = "INSERT INTO `".MF_TABLE_PREFIX."form_{$form_id}_review` ($field_list) VALUES ($field_values);";
+								$query = "INSERT INTO [".MF_TABLE_PREFIX."form_{$form_id}_review] ($field_list) VALUES ($field_values);";
 								mf_do_query($query,$params_table_data,$dbh);
 								
 								$record_insert_id = (int) $dbh->lastInsertId();
@@ -1948,23 +1950,25 @@
 								//dynamically create the sql update string, based on the input given
 								$update_values = '';
 								$params_update = array();
+
+								$columns_type = mf_mysql_columns_type(MF_TABLE_PREFIX."form_{$form_id}_review", $dbh);
 								foreach ($table_data as $key=>$value){
-									$update_values .= "`$key`=:$key,";
-									$params_update[':'.$key] = $value;
+									$update_values .= "[$key]=:$key,";
+									$params_update[':'.$key] =  typecast($value, $columns_type[$key]);
 								}
 								
 								$update_values = substr($update_values,0,-1);
 								
 								$params_update[':session_id'] = $session_id;
 								
-								$query = "UPDATE `".MF_TABLE_PREFIX."form_{$form_id}_review` set 
+								$query = "UPDATE [".MF_TABLE_PREFIX."form_{$form_id}_review] set 
 															$update_values
 													  where 
 												  	  		session_id=:session_id;";
-								
+							
 								mf_do_query($query,$params_update,$dbh);
 								
-								$query = "SELECT `id` from `".MF_TABLE_PREFIX."form_{$form_id}_review` where session_id=?";
+								$query = "SELECT [id] from [".MF_TABLE_PREFIX."form_{$form_id}_review] where session_id=?";
 								$params = array($session_id);
 								
 								$sth = mf_do_query($query,$params,$dbh);
@@ -1982,7 +1986,7 @@
 										//pass the current page number, so the user could go back from the preview page
 										$process_result['origin_page_number'] = $input['page_number'];
 									}else{
-										$query = "SELECT `id` from `".MF_TABLE_PREFIX."form_{$form_id}_review` where session_id=?";
+										$query = "SELECT [id] from [".MF_TABLE_PREFIX."form_{$form_id}_review] where session_id=?";
 										$params = array($session_id);
 								
 										$sth = mf_do_query($query,$params,$dbh);
@@ -2005,7 +2009,7 @@
 								
 							}
 						}else{
-							$query = "SELECT `id` from `".MF_TABLE_PREFIX."form_{$form_id}_review` where session_id=?";
+							$query = "SELECT [id] from [".MF_TABLE_PREFIX."form_{$form_id}_review] where session_id=?";
 							$params = array($session_id);
 								
 							$sth = mf_do_query($query,$params,$dbh);
@@ -2014,7 +2018,7 @@
 							$record_insert_id = $row['id'];
 							
 							if(empty($record_insert_id)){
-								$query = "INSERT INTO `".MF_TABLE_PREFIX."form_{$form_id}_review` ($field_list) VALUES ($field_values);";
+								$query = "INSERT INTO [".MF_TABLE_PREFIX."form_{$form_id}_review] ($field_list) VALUES ($field_values);";
 								mf_do_query($query,$params_table_data,$dbh);
 								
 								$record_insert_id = (int) $dbh->lastInsertId();
@@ -2022,25 +2026,26 @@
 								$update_values = '';
 								$params_update = array();
 								
+								$columns_type = mf_mysql_columns_type(MF_TABLE_PREFIX."form_{$form_id}_review", $dbh);
 								foreach ($table_data as $key=>$value){
-									$update_values .= "`$key`=:$key,";
-									$params_update[':'.$key] = $value;
+									$update_values .= "[$key]=:$key,";
+									$params_update[':'.$key] = typecast($value, $columns_type[$key]);
 								}
 								$params_update[':id'] = $record_insert_id;
 								
 								$update_values = substr($update_values,0,-1);
 								
-								$query = "UPDATE `".MF_TABLE_PREFIX."form_{$form_id}_review` set 
+								$query = "UPDATE [".MF_TABLE_PREFIX."form_{$form_id}_review] set 
 															$update_values
 													  where 
-												  	  		`id`=:id;";
-								
+												  	  		[id]=:id;";
+
 								mf_do_query($query,$params_update,$dbh);
 								
 							}
 						}
 					}else{ 
-						$query = "INSERT INTO `".MF_TABLE_PREFIX."form_{$form_id}` ($field_list) VALUES ($field_values);";
+						$query = "INSERT INTO [".MF_TABLE_PREFIX."form_{$form_id}] ($field_list) VALUES ($field_values);";
 						mf_do_query($query,$params_table_data,$dbh);
 								
 						$record_insert_id = (int) $dbh->lastInsertId(); 
@@ -2124,7 +2129,7 @@
 					}
 					$uploaded_element_names_joined = implode(',',$uploaded_element_names);
 				
-					$query = "SELECT {$uploaded_element_names_joined} from `".MF_TABLE_PREFIX."form_{$form_id}` where `id`=?";
+					$query = "SELECT {$uploaded_element_names_joined} from [".MF_TABLE_PREFIX."form_{$form_id}] where [id]=?";
 					$params = array($edit_id);
 					
 					$sth = mf_do_query($query,$params,$dbh);
@@ -2197,7 +2202,7 @@
 				//update the table with the file name list
 				$update_values = '';
 				$params_update = array();
-				
+
 				foreach ($file_list_joined as $element_id=>$file_joined){
 					$file_joined = mf_sanitize($file_joined);
 					$update_values .= "element_{$element_id}=:element_{$element_id},";
@@ -2282,10 +2287,11 @@
 					$update_values .= "element_{$element_id}=:element_{$element_id},";
 					$params_update[':element_'.$element_id] = $file_joined;
 				}
+
 				$update_values = rtrim($update_values,',');
 				
 				$params_update[':id'] = $record_insert_id;
-				
+
 				$query = "update ".MF_TABLE_PREFIX."form_{$form_id}_review set {$update_values} where id=:id";
 				mf_do_query($query,$params_update,$dbh);
 				
@@ -2302,7 +2308,7 @@
 				$uploaded_element_names 	   = array_keys($uploaded_file_lookup);
 				$uploaded_element_names_joined = implode(',',$uploaded_element_names);
 				
-				$query = "SELECT {$uploaded_element_names_joined} from `".MF_TABLE_PREFIX."form_{$form_id}_review` where `id`=?";
+				$query = "SELECT {$uploaded_element_names_joined} from [".MF_TABLE_PREFIX."form_{$form_id}_review] where [id]=?";
 				$params = array($record_insert_id);
 				
 				$sth = mf_do_query($query,$params,$dbh);
@@ -2350,11 +2356,11 @@
 				$update_clause = '';
 				foreach ($merged_files_data as $element_name=>$filename){
 					$filename = addslashes(mf_sanitize($filename));
-					$update_clause .= "`{$element_name}`='{$filename}',";
+					$update_clause .= "[{$element_name}]='{$filename}',";
 				}
 				$update_clause = rtrim($update_clause,",");
 				
-				$query = "UPDATE `".MF_TABLE_PREFIX."form_{$form_id}_review` SET {$update_clause} WHERE id=?";
+				$query = "UPDATE [".MF_TABLE_PREFIX."form_{$form_id}_review] SET {$update_clause} WHERE id=?";
 				$params = array($record_insert_id);
 				
 				mf_do_query($query,$params,$dbh);
@@ -2389,7 +2395,7 @@
 							FROM 
 								".MF_TABLE_PREFIX."page_logic 
 						   WHERE 
-								form_id = ? and (page_id > {$page_number} or page_id in('payment','review','success'))  
+								form_id = ? and (page_id > '{$page_number}' or page_id in('payment','review','success'))  
 						ORDER BY 
 								page_id asc";
 				$params = array($form_id);
@@ -2424,8 +2430,14 @@
 									   	where 
 									   			B.form_id=A.form_id and 
 									   			B.element_id = (substring(A.element_name,
-									   												locate('_',A.element_name)+1, 
-									   												(if((locate('_',A.element_name, locate('_',A.element_name)+1)) = 0,100,(locate('_',A.element_name, locate('_',A.element_name)+1)))) - (locate('_',A.element_name)+1))) and 
+									   												CHARINDEX('_',A.element_name)+1, 
+									   												(
+									   													case when
+									   														(CHARINDEX('_',A.element_name, CHARINDEX('_',A.element_name)+1)) = 0
+									   														then 100
+									   														else (CHARINDEX('_',A.element_name, CHARINDEX('_',A.element_name)+1))
+									   													end
+																					) - (CHARINDEX('_',A.element_name)+1))) and 
 									   	B.element_status = 1
 								  		) as element_page_number 
 								    FROM 
@@ -2438,7 +2450,6 @@
 						
 						$conditions_exist = false;
 						while($row = mf_do_fetch_result($sth)){
-							
 							$condition_params = array();
 							$condition_params['form_id']		= $form_id;
 							$condition_params['element_name'] 	= $row['element_name'];
@@ -2504,7 +2515,7 @@
 									}
 
 									$session_id = session_id();
-									$query = "SELECT `id` from `".MF_TABLE_PREFIX."form_{$form_id}_review` where session_id=?";
+									$query = "SELECT [id] from [".MF_TABLE_PREFIX."form_{$form_id}_review] where session_id=?";
 									$params = array($session_id);
 									
 									$sth = mf_do_query($query,$params,$dbh);
@@ -2690,7 +2701,7 @@
 					if(!$has_invalid_resume_email){
 						
 						//get all column name except session_id and id
-						$query  = "SELECT * FROM `".MF_TABLE_PREFIX."form_{$form_id}_review` WHERE session_id=?";
+						$query  = "SELECT * FROM [".MF_TABLE_PREFIX."form_{$form_id}_review] WHERE session_id=?";
 						$params = array($session_id);
 						
 						$sth = mf_do_query($query,$params,$dbh);
@@ -2703,8 +2714,8 @@
 							}
 						}	
 						
-						$columns_joined = implode("`,`",$columns);
-						$columns_joined = '`'.$columns_joined.'`';
+						$columns_joined = implode("],[",$columns);
+						$columns_joined = '['.$columns_joined.']';
 						
 						//if there is no resume key, generate new one
 						if(empty($row['resume_key'])){
@@ -2714,26 +2725,26 @@
 						}
 
 						//delete previous entry on ap_form_x table
-						$query = "DELETE from `".MF_TABLE_PREFIX."form_{$form_id}` WHERE resume_key=? and status=2";
+						$query = "DELETE from [".MF_TABLE_PREFIX."form_{$form_id}] WHERE resume_key=? and status=2";
 						$params = array($form_resume_key);
 							
 						mf_do_query($query,$params,$dbh);
 						
 						//copy from ap_form_x_review to ap_form_x
-						$query = "INSERT INTO `".MF_TABLE_PREFIX."form_{$form_id}`($columns_joined) SELECT {$columns_joined} from `".MF_TABLE_PREFIX."form_{$form_id}_review` WHERE session_id=?";
+						$query = "INSERT INTO [".MF_TABLE_PREFIX."form_{$form_id}]($columns_joined) SELECT {$columns_joined} from [".MF_TABLE_PREFIX."form_{$form_id}_review] WHERE session_id=?";
 						$params = array($session_id);
 						
 						mf_do_query($query,$params,$dbh);
 						
 						$new_record_id = (int) $dbh->lastInsertId();
 						
-						$query = "UPDATE `".MF_TABLE_PREFIX."form_{$form_id}` set `status`=2,resume_key='{$form_resume_key}' where `id`=?";
+						$query = "UPDATE [".MF_TABLE_PREFIX."form_{$form_id}] set [status]=2,resume_key='{$form_resume_key}' where [id]=?";
 						$params = array($new_record_id);
 						
 						mf_do_query($query,$params,$dbh);
 
 						//delete from ap_form_x_review table
-						$query = "DELETE from `".MF_TABLE_PREFIX."form_{$form_id}_review` WHERE session_id=?";
+						$query = "DELETE from [".MF_TABLE_PREFIX."form_{$form_id}_review] WHERE session_id=?";
 						$params = array($session_id);
 						
 						mf_do_query($query,$params,$dbh);
@@ -2856,7 +2867,7 @@
 		}
 		//move data from ap_form_x_review table to ap_form_x table
 		//get all column name except session_id and id
-		$query  = "SELECT * FROM `".MF_TABLE_PREFIX."form_{$form_id}_review` WHERE id=?";
+		$query  = "SELECT * FROM [".MF_TABLE_PREFIX."form_{$form_id}_review] WHERE id=?";
 		$params = array($record_id);
 				
 		$sth = mf_do_query($query,$params,$dbh);
@@ -2869,11 +2880,11 @@
 			}
 		}	
 		
-		$columns_joined = implode("`,`",$columns);
-		$columns_joined = '`'.$columns_joined.'`';
+		$columns_joined = implode("],[",$columns);
+		$columns_joined = '['.$columns_joined.']';
 		
 		//copy data from review table
-		$query = "INSERT INTO `".MF_TABLE_PREFIX."form_{$form_id}`($columns_joined) SELECT {$columns_joined} from `".MF_TABLE_PREFIX."form_{$form_id}_review` WHERE id=?";
+		$query = "INSERT INTO [".MF_TABLE_PREFIX."form_{$form_id}]($columns_joined) SELECT {$columns_joined} from [".MF_TABLE_PREFIX."form_{$form_id}_review] WHERE id=?";
 		$params = array($record_id);
 		
 		mf_do_query($query,$params,$dbh);
@@ -2882,14 +2893,14 @@
 		
 		//check for resume_key from the review table
 		//if there is resume_key, we need to delete the incomplete record within ap_form_x table which contain that resume_key
-		$query = "SELECT `resume_key` FROM `".MF_TABLE_PREFIX."form_{$form_id}_review` WHERE id=?";
+		$query = "SELECT [resume_key] FROM [".MF_TABLE_PREFIX."form_{$form_id}_review] WHERE id=?";
 		$params = array($record_id);
 		
 		$sth = mf_do_query($query,$params,$dbh);
 		$row = mf_do_fetch_result($sth);
 		
 		if(!empty($row['resume_key'])){
-			$query = "DELETE from `".MF_TABLE_PREFIX."form_{$form_id}` where resume_key=? and `status`=2";
+			$query = "DELETE from [".MF_TABLE_PREFIX."form_{$form_id}] where resume_key=? and [status]=2";
 			$params = array($row['resume_key']);
 			
 			mf_do_query($query,$params,$dbh);
@@ -2916,10 +2927,10 @@
 		}
 		
 		if(!empty($file_uploads_array)){
-			$file_uploads_column = implode('`,`',$file_uploads_array);
-			$file_uploads_column = '`'.$file_uploads_column.'`';
+			$file_uploads_column = implode('],[',$file_uploads_array);
+			$file_uploads_column = '['.$file_uploads_column.']';
 			
-			$query = "SELECT {$file_uploads_column} FROM `".MF_TABLE_PREFIX."form_{$form_id}_review` where id=?";
+			$query = "SELECT {$file_uploads_column} FROM [".MF_TABLE_PREFIX."form_{$form_id}_review] where id=?";
 			$params = array($record_id);
 			
 			$sth = mf_do_query($query,$params,$dbh);
@@ -2959,12 +2970,12 @@
 				
 				//build update query
 				$file_joined_value  = rtrim($file_joined_value,'|');
-				$file_update_query .= "`{$element_name}`='{$file_joined_value}',";
+				$file_update_query .= "[{$element_name}]='{$file_joined_value}',";
 			}
 			
 			$file_update_query = rtrim($file_update_query,',');
 			if(!empty($file_update_query)){
-				$query = "UPDATE `".MF_TABLE_PREFIX."form_{$form_id}` SET {$file_update_query} WHERE id=?";
+				$query = "UPDATE [".MF_TABLE_PREFIX."form_{$form_id}] SET {$file_update_query} WHERE id=?";
 				$params = array($new_record_id);
 				
 				mf_do_query($query,$params,$dbh);
@@ -2996,7 +3007,7 @@
 						 logic_email_enable,
 						 webhook_enable 
 				     from 
-				     	 `".MF_TABLE_PREFIX."forms` 
+				     	 [".MF_TABLE_PREFIX."forms] 
 				    where 
 				    	 form_id=?";
 		$params = array($form_id);
@@ -3149,7 +3160,7 @@
 
 		//delete all entry from this user in review table
 		$session_id = session_id();
-		$query = "DELETE FROM `".MF_TABLE_PREFIX."form_{$form_id}_review` where id=? or session_id=?";
+		$query = "DELETE FROM [".MF_TABLE_PREFIX."form_{$form_id}_review] where id=? or session_id=?";
 		$params = array($record_id,$session_id);
 		
 		mf_do_query($query,$params,$dbh);
@@ -3237,7 +3248,7 @@
 		$query 	= "select 
 						 payment_enable_merchant,
 						 payment_merchant_type,
-						 ifnull(payment_paypal_email,'') payment_paypal_email,
+						 isnull(payment_paypal_email,'') payment_paypal_email,
 						 payment_paypal_language,
 						 payment_currency,
 						 payment_show_total,
@@ -3263,7 +3274,7 @@
 						 payment_discount_amount,
 						 payment_discount_element_id
 				     from 
-				     	 `".MF_TABLE_PREFIX."forms` 
+				     	 [".MF_TABLE_PREFIX."forms] 
 				    where 
 				    	 form_id=?";
 		
@@ -3320,7 +3331,7 @@
 
 		//if the discount element for the current entry_id having any value, we can be certain that the discount code has been validated and applicable
 		if(!empty($payment_enable_discount)){
-			$query = "select element_{$payment_discount_element_id} coupon_element from ".MF_TABLE_PREFIX."form_{$form_id} where `id` = ? and `status` = 1";
+			$query = "select element_{$payment_discount_element_id} coupon_element from ".MF_TABLE_PREFIX."form_{$form_id} where [id] = ? and [status] = 1";
 			$params = array($entry_id);
 			
 			$sth = mf_do_query($query,$params,$dbh);
@@ -3341,7 +3352,7 @@
 				if($payment_merchant_type == 'paypal_standard'){
 
 					//get current entry timestamp
-					$query = "select unix_timestamp(date_created) entry_timestamp from ".MF_TABLE_PREFIX."form_{$form_id} where `id` = ? and `status` = 1";
+					$query = "select DATEDIFF(SECOND,{d '1970-01-01'}, date_created) entry_timestamp from ".MF_TABLE_PREFIX."form_{$form_id} where [id] = ? and [status] = 1";
 					$params = array($entry_id);
 		
 					$sth = mf_do_query($query,$params,$dbh);
@@ -3424,7 +3435,7 @@
 											A.price,
 											B.element_title,
 											B.element_type,
-											(select `option` from ".MF_TABLE_PREFIX."element_options where form_id=A.form_id and element_id=A.element_id and option_id=A.option_id and live=1 limit 1) option_title
+											(select TOP 1 [option] from ".MF_TABLE_PREFIX."element_options where form_id=A.form_id and element_id=A.element_id and option_id=A.option_id and live=1) option_title
 										from
 											".MF_TABLE_PREFIX."element_prices A left join ".MF_TABLE_PREFIX."form_elements B on (A.form_id=B.form_id and A.element_id=B.element_id)
 										where
@@ -3474,7 +3485,7 @@
 									   		element_number_enable_quantity = 1 and
 									   		element_number_quantity_link is not null
 									group by 
-											element_number_quantity_link 
+											element_number_quantity_link, element_id
 									order by
 									   		element_id asc";
 							$params = array($form_id);
@@ -3491,7 +3502,7 @@
 							}
 							
 							//check the value of the price fields from the ap_form_x table
-							$query = "select {$price_field_columns_joined} from ".MF_TABLE_PREFIX."form_{$form_id} where `id`=?";
+							$query = "select {$price_field_columns_joined} from ".MF_TABLE_PREFIX."form_{$form_id} where [id]=?";
 							$params = array($entry_id);
 							$sth = mf_do_query($query,$params,$dbh);
 							$row = mf_do_fetch_result($sth);
@@ -3645,7 +3656,7 @@
 											A.price,
 											B.element_title,
 											B.element_type,
-											(select `option` from ".MF_TABLE_PREFIX."element_options where form_id=A.form_id and element_id=A.element_id and option_id=A.option_id and live=1 limit 1) option_title
+											(select TOP 1 [option] from ".MF_TABLE_PREFIX."element_options where form_id=A.form_id and element_id=A.element_id and option_id=A.option_id and live=1) option_title
 										from
 											".MF_TABLE_PREFIX."element_prices A left join ".MF_TABLE_PREFIX."form_elements B on (A.form_id=B.form_id and A.element_id=B.element_id)
 										where
@@ -3699,7 +3710,7 @@
 									   		element_number_enable_quantity = 1 and
 									   		element_number_quantity_link is not null
 									group by 
-											element_number_quantity_link 
+											element_number_quantity_link, element_id
 									order by
 									   		element_id asc";
 							$params = array($form_id);
@@ -3716,7 +3727,7 @@
 							}
 							
 							//check the value of the price fields from the ap_form_x table
-							$query = "select {$price_field_columns_joined} from ".MF_TABLE_PREFIX."form_{$form_id} where `id`=?";
+							$query = "select {$price_field_columns_joined} from ".MF_TABLE_PREFIX."form_{$form_id} where [id]=?";
 							$params = array($entry_id);
 							$sth = mf_do_query($query,$params,$dbh);
 							$row = mf_do_fetch_result($sth);
@@ -3885,7 +3896,7 @@
 						A.price,
 						B.element_title,
 						B.element_type,
-						(select `option` from ".MF_TABLE_PREFIX."element_options where form_id=A.form_id and element_id=A.element_id and option_id=A.option_id and live=1 limit 1) option_title
+						(select TOP 1 [option] from ".MF_TABLE_PREFIX."element_options where form_id=A.form_id and element_id=A.element_id and option_id=A.option_id and live=1) option_title
 					from
 						".MF_TABLE_PREFIX."element_prices A left join ".MF_TABLE_PREFIX."form_elements B on (A.form_id=B.form_id and A.element_id=B.element_id)
 				   where
@@ -3941,7 +3952,7 @@
 				   		element_number_enable_quantity = 1 and
 				   		element_number_quantity_link is not null
 				group by 
-						element_number_quantity_link 
+						element_number_quantity_link, element_id
 				order by
 				   		element_id asc";
 		$params = array($form_id);
@@ -3959,9 +3970,9 @@
 						
 		//check the value of the price fields from the ap_form_x_review or ap_form_x table
 		if($target_table == 'review'){
-			$query = "select {$price_field_columns_joined} from ".MF_TABLE_PREFIX."form_{$form_id}_review where `session_id`=?";
+			$query = "select {$price_field_columns_joined} from ".MF_TABLE_PREFIX."form_{$form_id}_review where [session_id]=?";
 		}else{
-			$query = "select {$price_field_columns_joined} from ".MF_TABLE_PREFIX."form_{$form_id} where `id`=?";
+			$query = "select {$price_field_columns_joined} from ".MF_TABLE_PREFIX."form_{$form_id} where [id]=?";
 		}
 
 		$params = array($record_id);
@@ -4037,7 +4048,7 @@
 						A.price,
 						B.element_title,
 						B.element_type,
-						(select `option` from ".MF_TABLE_PREFIX."element_options where form_id=A.form_id and element_id=A.element_id and option_id=A.option_id and live=1 limit 1) option_title
+						(select TOP 1 [option] from ".MF_TABLE_PREFIX."element_options where form_id=A.form_id and element_id=A.element_id and option_id=A.option_id and live=1) option_title
 					from
 						".MF_TABLE_PREFIX."element_prices A left join ".MF_TABLE_PREFIX."form_elements B on (A.form_id=B.form_id and A.element_id=B.element_id)
 				   where
@@ -4092,7 +4103,7 @@
 				   		element_number_enable_quantity = 1 and
 				   		element_number_quantity_link is not null
 				group by 
-						element_number_quantity_link 
+						element_number_quantity_link, element_id
 				order by
 				   		element_id asc";
 		$params = array($form_id);
@@ -4138,7 +4149,7 @@
 				//get the choices for the field
 				$sub_query = "select 
 									option_id,
-									`option` 
+									[option] 
 								from 
 									".MF_TABLE_PREFIX."element_options 
 							   where 
@@ -4146,7 +4157,7 @@
 							   		live=1 and 
 							   		element_id=? 
 							order by 
-									`position` asc";
+									[position] asc";
 				$sub_params = array($form_id,$element_id);
 				$sub_sth = mf_do_query($sub_query,$sub_params,$dbh);
 				$i=0;
@@ -4160,9 +4171,9 @@
 
 		//check the value of the price fields from the ap_form_x_review or ap_form_x table
 		if($target_table == 'review'){
-			$query = "select {$price_field_columns_joined} from ".MF_TABLE_PREFIX."form_{$form_id}_review where `session_id`=?";
+			$query = "select {$price_field_columns_joined} from ".MF_TABLE_PREFIX."form_{$form_id}_review where [session_id]=?";
 		}else{
-			$query = "select {$price_field_columns_joined} from ".MF_TABLE_PREFIX."form_{$form_id} where `id`=?";
+			$query = "select {$price_field_columns_joined} from ".MF_TABLE_PREFIX."form_{$form_id} where [id]=?";
 		}
 
 		$params = array($record_id);
@@ -4282,14 +4293,14 @@
 						A.element_name,
 						A.rule_condition,
 						A.rule_keyword,
-						trim(leading 'element_' from substring_index(A.element_name,'_',2)) as condition_element_id,
+						replace (dbo.SubstringIndex(A.element_name,'_',2),'element_','') as condition_element_id,
 						(select 
 							   B.element_page_number 
 						   from 
 						   	   ".MF_TABLE_PREFIX."form_elements B 
 						  where 
 						  		form_id=A.form_id and 
-						  		element_id=condition_element_id
+						  		element_id= replace (dbo.SubstringIndex(A.element_name,'_',2),'element_','')
 						) condition_element_page_number,
 						(select 
 							   C.element_type 
@@ -4297,7 +4308,7 @@
 						   	   ".MF_TABLE_PREFIX."form_elements C 
 						  where 
 						  		form_id=A.form_id and 
-						  		element_id=condition_element_id
+						  		element_id= replace (dbo.SubstringIndex(A.element_name,'_',2),'element_','')
 						) condition_element_type
 					FROM 
 						".MF_TABLE_PREFIX."field_logic_conditions A 

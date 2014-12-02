@@ -337,7 +337,7 @@ EOT;
 		$query = "SELECT
 						theme_name,
 						logo_type,
-						ifnull(logo_custom_image,'') logo_custom_image,
+						isnull(logo_custom_image,'') logo_custom_image,
 						logo_custom_height,
 						logo_default_image,
 						wallpaper_bg_type,
@@ -416,9 +416,9 @@ EOT;
 						form_button_image,
 						advanced_css
 					FROM
-						`".MF_TABLE_PREFIX."form_themes`
+						".MF_TABLE_PREFIX."form_themes
 				   WHERE
-				   		theme_id=? and `status`=1";
+				   		theme_id=? and [status]=1";
 		$params = array($theme_id);
 		
 		$sth = mf_do_query($query,$params,$dbh);
@@ -938,9 +938,9 @@ EOT;
 						section_desc_font_type,
 						field_text_font_type
 					FROM
-						`".MF_TABLE_PREFIX."form_themes`
+						".MF_TABLE_PREFIX."form_themes
 				   WHERE
-				   		theme_id=? and `status`=1";
+				   		theme_id=? and [status]=1";
 		$params = array($theme_id);
 		
 		$sth = mf_do_query($query,$params,$dbh);

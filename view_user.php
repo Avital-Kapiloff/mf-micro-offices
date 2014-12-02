@@ -70,11 +70,11 @@
 					priv_new_themes,
 					last_login_date,
 					last_ip_address,
-					`status` 
+					[status] 
 			    FROM 
 					".MF_TABLE_PREFIX."users 
 			   WHERE 
-			   		user_id=? and `status` > 0";
+			   		user_id=? and [status] > 0";
 	$params = array($user_id);
 			
 	$sth = mf_do_query($query,$params,$dbh);

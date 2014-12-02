@@ -85,7 +85,7 @@
 		$user_input = mf_sanitize($user_input);
 
 		//get chart_id for this new widget
-		$query = "select ifnull(max(`chart_id`),0) + 1 as new_chart_id from ".MF_TABLE_PREFIX."report_elements where form_id = ?";
+		$query = "select isnull(max(chart_id),0) + 1 as new_chart_id from ".MF_TABLE_PREFIX."report_elements where form_id = ?";
 		$params = array($form_id);
 		
 		$sth = mf_do_query($query,$params,$dbh);
@@ -159,41 +159,41 @@
 		$widget_params[":chart_date_range_end"] 	= '';
 
 		$query = "INSERT INTO 
-							`".MF_TABLE_PREFIX."report_elements` (
-										`access_key`, 
-										`form_id`, 
-										`chart_id`, 
-										`chart_datasource`, 
-										`chart_type`, 
-										`chart_enable_filter`, 
-										`chart_filter_type`, 
-										`chart_title`, 
-										`chart_title_position`, 
-										`chart_title_align`, 
-										`chart_width`, 
-										`chart_height`, 
-										`chart_background`, 
-										`chart_theme`, 
-										`chart_legend_visible`, 
-										`chart_legend_position`, 
-										`chart_labels_visible`, 
-										`chart_labels_position`, 
-										`chart_labels_template`, 
-										`chart_labels_align`, 
-										`chart_tooltip_visible`, 
-										`chart_tooltip_template`, 
-										`chart_gridlines_visible`, 
-										`chart_bar_color`, 
-										`chart_is_stacked`, 
-										`chart_is_vertical`, 
-										`chart_line_style`, 
-										`chart_axis_is_date`, 
-										`chart_date_range`, 
-										`chart_date_period_value`, 
-										`chart_date_period_unit`, 
-										`chart_date_axis_baseunit`, 
-										`chart_date_range_start`, 
-										`chart_date_range_end`) 
+							".MF_TABLE_PREFIX."report_elements (
+										access_key, 
+										form_id, 
+										chart_id, 
+										chart_datasource, 
+										chart_type, 
+										chart_enable_filter, 
+										chart_filter_type, 
+										chart_title, 
+										chart_title_position, 
+										chart_title_align, 
+										chart_width, 
+										chart_height, 
+										chart_background, 
+										chart_theme, 
+										chart_legend_visible, 
+										chart_legend_position, 
+										chart_labels_visible, 
+										chart_labels_position, 
+										chart_labels_template, 
+										chart_labels_align, 
+										chart_tooltip_visible, 
+										chart_tooltip_template, 
+										chart_gridlines_visible, 
+										chart_bar_color, 
+										chart_is_stacked, 
+										chart_is_vertical, 
+										chart_line_style, 
+										chart_axis_is_date, 
+										chart_date_range, 
+										chart_date_period_value, 
+										chart_date_period_unit, 
+										chart_date_axis_baseunit, 
+										chart_date_range_start, 
+										chart_date_range_end) 
 								VALUES (
 										:access_key, 
 										:form_id, 

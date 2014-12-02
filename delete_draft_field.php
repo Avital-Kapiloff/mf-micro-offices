@@ -34,7 +34,7 @@
 	
 	if($element_type == 'page_break'){
 		//exception for page break, we can ignore the element status, live or draft field can be deleted immediately
-		$query  = "delete from `".MF_TABLE_PREFIX."form_elements` where form_id = ? and element_id = ?";
+		$query  = "delete from ".MF_TABLE_PREFIX."form_elements where form_id = ? and element_id = ?";
 		$params = array($form_id,$element_id);
 		
 		mf_do_query($query,$params,$dbh);
@@ -87,13 +87,13 @@
 		}
 		
 		//update ap_forms page_total
-		$query  = "update `".MF_TABLE_PREFIX."forms` set form_page_total = ? where form_id = ?";
+		$query  = "update ".MF_TABLE_PREFIX."forms set form_page_total = ? where form_id = ?";
 		$params = array($total_page,$form_id); 
 		mf_do_query($query,$params,$dbh);
 		
 	}else if($element_type == 'matrix'){
 		//delete the main element and all child rows
-		$query  = "delete from `".MF_TABLE_PREFIX."form_elements` where form_id = ? and element_id = ? and element_status=2";
+		$query  = "delete from ".MF_TABLE_PREFIX."form_elements where form_id = ? and element_id = ? and element_status=2";
 		$params = array($form_id,$element_id);
 		mf_do_query($query,$params,$dbh);
 		
@@ -101,7 +101,7 @@
 		$child_element_ids = array();
 		$child_placeholders = array();
 		
-		$query = "select element_id from `".MF_TABLE_PREFIX."form_elements` where form_id = ? and element_matrix_parent_id = ? and element_type='matrix' and element_status=2";
+		$query = "select element_id from ".MF_TABLE_PREFIX."form_elements where form_id = ? and element_matrix_parent_id = ? and element_type='matrix' and element_status=2";
 		$params = array($form_id,$element_id);
 		
 		$sth = mf_do_query($query,$params,$dbh);
@@ -115,16 +115,16 @@
 		
 		$child_placeholders_joined = implode(',',$child_placeholders);
 		
-		$query = "delete from `".MF_TABLE_PREFIX."element_options` where form_id = ? and live = 2 and element_id in({$child_placeholders_joined})";
+		$query = "delete from ".MF_TABLE_PREFIX."element_options where form_id = ? and live = 2 and element_id in({$child_placeholders_joined})";
 		$params = array_merge((array) $form_id,$child_element_ids);
 		mf_do_query($query,$params,$dbh);
 		
 		//delete child rows from ap_form_elements table
-		$query = "delete from `".MF_TABLE_PREFIX."form_elements` where form_id = ? and element_matrix_parent_id = ? and element_type='matrix' and element_status=2";
+		$query = "delete from ".MF_TABLE_PREFIX."form_elements where form_id = ? and element_matrix_parent_id = ? and element_type='matrix' and element_status=2";
 		$params = array($form_id,$element_id);
 		mf_do_query($query,$params,$dbh);
 	}else{
-		$query  = "delete from `".MF_TABLE_PREFIX."form_elements` where form_id = :form_id and element_id = :element_id and element_status=2";
+		$query  = "delete from ".MF_TABLE_PREFIX."form_elements where form_id = :form_id and element_id = :element_id and element_status=2";
 		$params = array(':form_id'=>$form_id,':element_id'=>$element_id);
 		
 		mf_do_query($query,$params,$dbh);

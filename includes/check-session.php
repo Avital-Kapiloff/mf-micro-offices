@@ -14,14 +14,14 @@
 	if(!empty($_COOKIE['mf_remember']) && empty($_SESSION['mf_logged_in'])){
 		$dbh	= mf_connect_db();
 		$query  = "SELECT 
-						`user_id`,
-						`priv_administer`,
-						`priv_new_forms`,
-						`priv_new_themes` 
+						user_id,
+						priv_administer,
+						priv_new_forms,
+						priv_new_themes 
 					FROM 
-						`".MF_TABLE_PREFIX."users` 
+						".MF_TABLE_PREFIX."users 
 					WHERE 
-						`cookie_hash`=? and `status`=1";
+						cookie_hash=? and [status]=1";
 		$params = array($_COOKIE['mf_remember']);
 		
 		$sth = mf_do_query($query,$params,$dbh);

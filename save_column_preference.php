@@ -32,12 +32,12 @@
 	$dbh = mf_connect_db();
 	
 	//first delete all previous preferences
-	$query = "delete from `".MF_TABLE_PREFIX."column_preferences` where form_id=? and user_id=? and incomplete_entries=?";
+	$query = "delete from [".MF_TABLE_PREFIX."column_preferences] where form_id=? and user_id=? and incomplete_entries=?";
 	$params = array($form_id,$user_id,$incomplete_entries);
 	mf_do_query($query,$params,$dbh);
 
 	//save the new preference
-	$query = "insert into `".MF_TABLE_PREFIX."column_preferences`(form_id,user_id,element_name,position,incomplete_entries) values(?,?,?,?,?)";
+	$query = "insert into [".MF_TABLE_PREFIX."column_preferences](form_id,user_id,element_name,position,incomplete_entries) values(?,?,?,?,?)";
 
 	$position = 1;
 	if(!empty($column_preferences)){

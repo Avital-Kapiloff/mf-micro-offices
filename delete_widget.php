@@ -40,7 +40,7 @@
 		mf_do_query($query,$params,$dbh);
 	}else{
 		//set the status on ap_form_elements table to 0
-		$query = "update `".MF_TABLE_PREFIX."report_elements` set chart_status = 0 where form_id = ? and chart_id = ?";
+		$query = "update ".MF_TABLE_PREFIX."report_elements set chart_status = 0 where form_id = ? and chart_id = ?";
 		$params = array($form_id,$chart_id);
 		mf_do_query($query,$params,$dbh);
 		

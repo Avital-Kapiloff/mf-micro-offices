@@ -23,7 +23,6 @@
 	//validation for unique checking on db table
 	function mf_validate_unique($value){
 		global $mf_lang;
-
 		$input_value  = $value[0]; 
 	
 		$exploded = explode('#',$value[1]);
@@ -34,13 +33,13 @@
 		
 		if(!empty($_SESSION['edit_entry']) && ($_SESSION['edit_entry']['form_id'] == $form_id)){
 			//if admin is editing through edit_entry.php, bypass the unique checking if the new entry is the same as previous
-			$query = "select count($element_name) total from ".MF_TABLE_PREFIX."form_{$form_id} where {$element_name}=? and `id` != ? and {$element_name} is not null and {$element_name} <> '' and `status` = 1";
+			$query = "select count($element_name) total from ".MF_TABLE_PREFIX."form_{$form_id} where {$element_name} like ? and id != ? and {$element_name} is not null and {$element_name} <> '' and [status] = 1";
 			$params = array($input_value,$_SESSION['edit_entry']['entry_id']);
 			
 			$sth = mf_do_query($query,$params,$dbh);
 			$row = mf_do_fetch_result($sth);
 		}else{
-			$query = "select count($element_name) total from ".MF_TABLE_PREFIX."form_{$form_id} where {$element_name}=? and resume_key is null and `status`= 1";
+			$query = "select count($element_name) total from ".MF_TABLE_PREFIX."form_{$form_id} where {$element_name} like ? and resume_key is null and [status]= 1";
 			$params = array($input_value);
 			
 			$sth = mf_do_query($query,$params,$dbh);
@@ -92,7 +91,7 @@
 		
 		//make sure entered coupon code is within the max usage
 		if(!empty($discount_max_usage)){
-			$query = "select count(*) coupon_usage from ".MF_TABLE_PREFIX."form_{$form_id} where element_{$discount_element_id} = ? and `status` = 1";
+			$query = "select count(*) coupon_usage from ".MF_TABLE_PREFIX."form_{$form_id} where element_{$discount_element_id} = ? and [status] = 1";
 
 			$params = array($input_coupon_code);
 			

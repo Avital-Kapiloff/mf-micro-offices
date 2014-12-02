@@ -38,7 +38,7 @@
 					 element_status,
 					 element_matrix_parent_id 
 				from 
-					 `".MF_TABLE_PREFIX."form_elements` 
+					 [".MF_TABLE_PREFIX."form_elements] 
 			   where 
 			   		 form_id=? and 
 		 			 element_id=?";
@@ -50,17 +50,17 @@
 	$element_matrix_parent_id = $row['element_matrix_parent_id'];
 	
 	if($row['element_status'] == 2){ //if this is just a draft row
-		$query = "delete from `".MF_TABLE_PREFIX."form_elements` where form_id = ? and element_id = ? and element_status=2";	
+		$query = "delete from [".MF_TABLE_PREFIX."form_elements] where form_id = ? and element_id = ? and element_status=2";	
 		$params = array($form_id,$element_id);
 		mf_do_query($query,$params,$dbh);
 		
-		$query = "delete from `".MF_TABLE_PREFIX."element_options` where form_id = ? and element_id = ?";
+		$query = "delete from [".MF_TABLE_PREFIX."element_options] where form_id = ? and element_id = ?";
 		$params = array($form_id,$element_id);
 		mf_do_query($query,$params,$dbh);
 	}else{
 		$table_is_empty = false;
 
-		$query = "select count(*) total_row from `".MF_TABLE_PREFIX."form_{$form_id}` where `status`=1";
+		$query = "select count(*) total_row from [".MF_TABLE_PREFIX."form_{$form_id}] where [status]=1";
 		$params = array($form_id,$element_id);
 		
 		$sth = mf_do_query($query,$params,$dbh);
@@ -73,7 +73,7 @@
 		//delete permanently if true_delete is turned on or the table is still empty (having no entries)
 		if(MF_CONF_TRUE_DELETE === true || $table_is_empty === true){
 			//check if this is checkbox matrix or radio button matrix
-			$query = "select element_matrix_allow_multiselect from `".MF_TABLE_PREFIX."form_elements` where form_id = ? and element_id = ?";
+			$query = "select element_matrix_allow_multiselect from [".MF_TABLE_PREFIX."form_elements] where form_id = ? and element_id = ?";
 			$params = array($form_id,$element_matrix_parent_id);
 			
 			$sth = mf_do_query($query,$params,$dbh);
@@ -97,36 +97,36 @@
 				}
 						
 				//delete each option from the form table
-				$query = "ALTER TABLE `".MF_TABLE_PREFIX."form_{$form_id}` ";
+				$query = "ALTER TABLE [".MF_TABLE_PREFIX."form_{$form_id}] ";
 				foreach ($option_id_array as $option_id){
-					$query .= " DROP COLUMN `element_{$element_id}_{$option_id}`,";
+					$query .= " DROP COLUMN [element_{$element_id}_{$option_id}],";
 				}
 						
 				$query = rtrim($query,',');
 				$params = array();
 				mf_do_query($query,$params,$dbh);
 			}else{ //if this is radio button matrix
-				$query = "ALTER TABLE `".MF_TABLE_PREFIX."form_{$form_id}` DROP COLUMN `element_{$element_id}`";
+				$query = "ALTER TABLE [".MF_TABLE_PREFIX."form_{$form_id}] DROP COLUMN [element_{$element_id}]";
 				mf_do_query($query,array(),$dbh);
 			}
 
 			//delete on table ap_form_elements
-			$query = "delete from `".MF_TABLE_PREFIX."form_elements` where form_id = ? and element_id = ?";
+			$query = "delete from [".MF_TABLE_PREFIX."form_elements] where form_id = ? and element_id = ?";
 			$params = array($form_id,$element_id);
 			mf_do_query($query,$params,$dbh);
 							
 			//delete on table ap_element_options
-			$query = "delete from `".MF_TABLE_PREFIX."element_options` where form_id = ? and element_id = ?";
+			$query = "delete from [".MF_TABLE_PREFIX."element_options] where form_id = ? and element_id = ?";
 			$params = array($form_id,$m_element_id);
 			mf_do_query($query,$params,$dbh);
 
 		}else{		
 			//update the status of the deleted row
-			$query = "update `".MF_TABLE_PREFIX."form_elements` set element_status=0 where form_id = ? and element_id = ?";
+			$query = "update [".MF_TABLE_PREFIX."form_elements] set element_status=0 where form_id = ? and element_id = ?";
 			$params = array($form_id,$element_id);
 			mf_do_query($query,$params,$dbh);
 			
-			$query = "update `".MF_TABLE_PREFIX."element_options` set `live`=0 where form_id = ? and element_id = ?";
+			$query = "update [".MF_TABLE_PREFIX."element_options] set [live]=0 where form_id = ? and element_id = ?";
 			$params = array($form_id,$element_id);
 			mf_do_query($query,$params,$dbh);
 		}
@@ -145,7 +145,7 @@
 	unset($element_constraint_array[$key]);
 
 	$element_constraint_joined = implode(',', $element_constraint_array);
-	$query = "update `".MF_TABLE_PREFIX."form_elements` set element_constraint=? where form_id = ? and element_id = ?";
+	$query = "update [".MF_TABLE_PREFIX."form_elements] set element_constraint=? where form_id = ? and element_id = ?";
 	$params = array($element_constraint_joined,$form_id,$element_matrix_parent_id);
 	mf_do_query($query,$params,$dbh);
 

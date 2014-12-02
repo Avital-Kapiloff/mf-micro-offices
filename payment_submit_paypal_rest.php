@@ -138,7 +138,7 @@
 
 	//if the discount element for the current entry_id having any value, we can be certain that the discount code has been validated and applicable
 	if(!empty($payment_enable_discount)){
-		$query = "select element_{$payment_discount_element_id} coupon_element from ".MF_TABLE_PREFIX."form_{$form_id} where `id` = ? and `status` = 1";
+		$query = "select element_{$payment_discount_element_id} coupon_element from ".MF_TABLE_PREFIX."form_{$form_id} where [id] = ? and [status] = 1";
 		$params = array($payment_record_id);
 		
 		$sth = mf_do_query($query,$params,$dbh);
@@ -412,30 +412,30 @@ EOT;
 		$payment_data['status']			  = 1;
 		$payment_data['payment_status']   = 'paid'; 
 
-		$query = "INSERT INTO `".MF_TABLE_PREFIX."form_payments`(
-								`form_id`, 
-								`record_id`, 
-								`payment_id`, 
-								`date_created`, 
-								`payment_date`, 
-								`payment_status`, 
-								`payment_fullname`, 
-								`payment_amount`, 
-								`payment_currency`, 
-								`payment_test_mode`,
-								`payment_merchant_type`, 
-								`status`, 
-								`billing_street`, 
-								`billing_city`, 
-								`billing_state`, 
-								`billing_zipcode`, 
-								`billing_country`, 
-								`same_shipping_address`, 
-								`shipping_street`, 
-								`shipping_city`, 
-								`shipping_state`, 
-								`shipping_zipcode`, 
-								`shipping_country`) 
+		$query = "INSERT INTO [".MF_TABLE_PREFIX."form_payments](
+								[form_id], 
+								[record_id], 
+								[payment_id], 
+								[date_created], 
+								[payment_date], 
+								[payment_status], 
+								[payment_fullname], 
+								[payment_amount], 
+								[payment_currency], 
+								[payment_test_mode],
+								[payment_merchant_type], 
+								[status], 
+								[billing_street], 
+								[billing_city], 
+								[billing_state], 
+								[billing_zipcode], 
+								[billing_country], 
+								[same_shipping_address], 
+								[shipping_street], 
+								[shipping_city], 
+								[shipping_state], 
+								[shipping_zipcode], 
+								[shipping_country]) 
 						VALUES (
 								:form_id, 
 								:record_id, 

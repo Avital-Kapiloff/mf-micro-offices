@@ -50,7 +50,7 @@
 	}
 	
 	//get element id for this new element
-	$query  = "select ifnull(max(`element_id`),0) + 1 as new_element_id from ".MF_TABLE_PREFIX."form_elements where form_id = ?";
+	$query  = "select isnull(max(element_id),0) + 1 as new_element_id from ".MF_TABLE_PREFIX."form_elements where form_id = ?";
 	$params = array($form_id);
 	
 	$sth = mf_do_query($query,$params,$dbh);
@@ -100,29 +100,29 @@
 		//dynamically create the field list and field values, based on the input given
 		$params = array();
 		foreach ($element_properties as $key=>$value){
-			$field_list    .= "`element_{$key}`,";
+			$field_list    .= "element_{$key},";
 			$field_values  .= ":element_{$key},";
 			$params[':element_'.$key] = $value;
 		}
 			
-		$field_list   .= "`form_id`";
+		$field_list   .= "form_id";
 		$field_values .= ":form_id";
 		$params[':form_id'] = $form_id;
 		
 		//insert into ap_form_elements  table
-		$query = "INSERT INTO `".MF_TABLE_PREFIX."form_elements` ($field_list) VALUES ($field_values);"; 
+		$query = "INSERT INTO ".MF_TABLE_PREFIX."form_elements ($field_list) VALUES ($field_values);"; 
 		mf_do_query($query,$params,$dbh);
 		
 		//insert into ap_element_options table, depends on the number of columns
 		$query = "INSERT INTO 
-							`".MF_TABLE_PREFIX."element_options` 
-								(`form_id`,
-								 `element_id`,
-								 `option_id`,
-								 `position`,
-								 `option`,
-								 `option_is_default`,
-								 `live`) 
+							".MF_TABLE_PREFIX."element_options 
+								(form_id,
+								 element_id,
+								 option_id,
+								 position,
+								 [option],
+								 option_is_default,
+								 live) 
 					  VALUES (:form_id,
 							  :element_id,
 							  :option_id,

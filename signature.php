@@ -30,7 +30,7 @@
 
 	$dbh = mf_connect_db();
 
-	$query 	= "select {$field_name} from `".MF_TABLE_PREFIX."form_{$form_id}` where id=?";
+	$query 	= "select {$field_name} from [".MF_TABLE_PREFIX."form_{$form_id}] where id=?";
 	$params = array($id);
 
 	$sth = mf_do_query($query,$params,$dbh);

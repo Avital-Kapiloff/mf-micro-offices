@@ -75,7 +75,7 @@
 	//check current license usage, if this is Standard or Professional
 	$is_user_max = false;
 	if($mf_settings['license_key'][0] == 'S' || $mf_settings['license_key'][0] == 'P'){
-		$query = "select count(user_id) user_total from ".MF_TABLE_PREFIX."users where `status` > 0";
+		$query = "select count(user_id) user_total from ".MF_TABLE_PREFIX."users where [status] > 0";
 		
 		$params = array();
 		$sth = mf_do_query($query,$params,$dbh);

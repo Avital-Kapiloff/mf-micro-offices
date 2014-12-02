@@ -581,7 +581,7 @@ EOT;
 						//get all selected checkboxes
 						$query = "select 
 										option_id,
-										`option` option_title 
+										[option] option_title 
 									from 
 										".MF_TABLE_PREFIX."element_options 
 								   where 
@@ -599,7 +599,7 @@ EOT;
 
 						$checkbox_element_names_joined = implode(',', $checkbox_element_names_array);
 
-						$query = "select {$checkbox_element_names_joined} from ".MF_TABLE_PREFIX."form_{$form_id} where `id`=?";
+						$query = "select {$checkbox_element_names_joined} from ".MF_TABLE_PREFIX."form_{$form_id} where id=?";
 						$params = array($entry_id);
 						$sth = mf_do_query($query,$params,$dbh);
 						$row = mf_do_fetch_result($sth);
@@ -626,13 +626,13 @@ EOT;
 
 					}else{
 		    			$query = "select 
-										B.`option` selected_value 
+										B.[option] selected_value 
 									from 
 										".MF_TABLE_PREFIX."form_{$form_id} A left join ".MF_TABLE_PREFIX."element_options B 
 									  on 
 									    B.form_id=? and A.element_{$hook_element_id}=B.option_id and B.live=1 and B.element_id=?
 									where 
-										A.`id`=?";
+										A.id=?";
 		    			$params = array($form_id,$hook_element_id,$entry_id);
 						$sth = mf_do_query($query,$params,$dbh);	
 						$row = mf_do_fetch_result($sth);
@@ -699,7 +699,7 @@ EOT;
 						 logic_email_enable,
 						 webhook_enable
 				     from 
-				     	 `".MF_TABLE_PREFIX."forms` 
+				     	 ".MF_TABLE_PREFIX."forms 
 				    where 
 				    	 form_id=?";
 		$params = array($form_id);
@@ -980,7 +980,7 @@ EOT;
 										 esr_content,
 										 esr_plain_text
 								     from 
-								     	 `".MF_TABLE_PREFIX."forms` 
+								     	 ".MF_TABLE_PREFIX."forms 
 								    where 
 								    	 form_id=?";
 						$params = array($form_id);
@@ -1219,7 +1219,7 @@ EOT;
     	$mf_settings = mf_get_settings($dbh);
 
     	//get user information
-    	$query = "select user_fullname,user_email from ".MF_TABLE_PREFIX."users where user_id=? and `status`=1";
+    	$query = "select user_fullname,user_email from ".MF_TABLE_PREFIX."users where user_id=? and [status]=1";
     	
     	$params = array($user_id);
 		$sth = mf_do_query($query,$params,$dbh);
@@ -1380,14 +1380,14 @@ EOT;
 						A.element_name,
 						A.rule_condition,
 						A.rule_keyword,
-						trim(leading 'element_' from substring_index(A.element_name,'_',2)) as condition_element_id,
+						replace (dbo.SubstringIndex(element_name,'_',2),'element_','') as [condition_element_id],
 						(select 
 							   B.element_page_number 
 						   from 
 						   	   ".MF_TABLE_PREFIX."form_elements B 
 						  where 
 						  		form_id=A.form_id and 
-						  		element_id=condition_element_id
+						  		element_id= replace (dbo.SubstringIndex(element_name,'_',2),'element_','')
 						) condition_element_page_number,
 						(select 
 							   C.element_type 
@@ -1395,7 +1395,7 @@ EOT;
 						   	   ".MF_TABLE_PREFIX."form_elements C 
 						  where 
 						  		form_id=A.form_id and 
-						  		element_id=condition_element_id
+						  		element_id= replace (dbo.SubstringIndex(element_name,'_',2),'element_','')
 						) condition_element_type
 					FROM 
 						".MF_TABLE_PREFIX."field_logic_conditions A 
@@ -1987,12 +1987,12 @@ EOT;
 
 			//get the entered value on the table
 			$query = "select 
-							count(`id`) total_row 
+							count(id) total_row 
 						from 
 							".MF_TABLE_PREFIX."form_{$form_id}{$table_suffix} 
 					   where 
-					   		`{$element_name}` {$where_operand} {$where_keyword} 
-					   		and `{$record_name}` = ?";
+					   		{$element_name} {$where_operand} {$where_keyword} 
+					   		and {$record_name} = ?";
 			$params = array($record_id);
 			$sth 	= mf_do_query($query,$params,$dbh);
 			$row 	= mf_do_fetch_result($sth);
@@ -2028,9 +2028,9 @@ EOT;
 							count(B.element_title) total_row 
 					    FROM(
 							 SELECT 
-								   A.`{$element_name}`,
+								   A.{$element_name},
 								   (select 
-								   		  `option` 
+								   		  [option] 
 								   	  from 
 								   	  	  ".MF_TABLE_PREFIX."element_options 
 								   	 where 
@@ -2041,7 +2041,7 @@ EOT;
 							   FROM 
 							  	   ".MF_TABLE_PREFIX."form_{$form_id}{$table_suffix} A
 							  WHERE 
-							  	   `{$record_name}` = ?
+							  	   {$record_name} = ?
 							) B 
 					   WHERE 
 					   		B.element_title {$where_operand} {$where_keyword}";
@@ -2060,12 +2060,12 @@ EOT;
 							count(B.element_title) total_row 
 					    FROM(
 							 SELECT 
-								   A.`element_{$element_id}`,
+								   A.element_{$element_id},
 								   (select element_choice_other_label from ".MF_TABLE_PREFIX."form_elements where form_id = ? and element_id = ?) element_title	 
 							   FROM 
 								   ".MF_TABLE_PREFIX."form_{$form_id}{$table_suffix} A
 							  WHERE
-								   A.`{$record_name}` = ? and
+								   A.{$record_name} = ? and
 								   A.element_{$element_id} = 0 and
 								   A.element_{$element_id}_other is not null and
 								   A.element_{$element_id}_other <> ''
@@ -2120,12 +2120,12 @@ EOT;
 
 			//get the entered value on the table
 			$query = "select 
-							count(`id`) total_row 
+							count(id) total_row 
 						from 
 							".MF_TABLE_PREFIX."form_{$form_id}{$table_suffix} 
 					   where 
-					   		time(`{$element_name}`) {$where_operand} {$where_keyword} 
-					   		and `{$record_name}` = ?";
+					   		CONVERT(VARCHAR(9),{$element_name}, 8) {$where_operand} {$where_keyword} 
+					   		and {$record_name} = ?";
 			
 			$params = array($record_id);
 			$sth 	= mf_do_query($query,$params,$dbh);
@@ -2136,25 +2136,27 @@ EOT;
 			}
 		}else if($element_type == 'money' || $element_type == 'number'){
 
+			$rule_keyword = (((int)$rule_keyword) === $rule_keyword)? $rule_keyword: 'null';
+
 			if($rule_condition == 'is'){
 				$where_operand = '=';
-				$where_keyword = "'{$rule_keyword}'";
+				$where_keyword = "{$rule_keyword}";
 			}else if($rule_condition == 'less_than'){
 				$where_operand = '<';
-				$where_keyword = "'{$rule_keyword}'";
+				$where_keyword = "{$rule_keyword}";
 			}else if($rule_condition == 'greater_than'){
 				$where_operand = '>';
-				$where_keyword = "'{$rule_keyword}'";
+				$where_keyword = "{$rule_keyword}";
 			}
 
 			//get the entered value on the table
 			$query = "select 
-							count(`id`) total_row 
+							count(id) total_row 
 						from 
 							".MF_TABLE_PREFIX."form_{$form_id}{$table_suffix} 
 					   where 
-					   		`{$element_name}` {$where_operand} {$where_keyword} 
-					   		and `{$record_name}` = ?";
+					   		{$element_name} {$where_operand} {$where_keyword} 
+					   		and {$record_name} = ?";
 			
 			$params = array($record_id);
 			$sth 	= mf_do_query($query,$params,$dbh);
@@ -2190,9 +2192,9 @@ EOT;
 							count(B.element_title) total_row 
 					    FROM(
 							 SELECT 
-								   A.`{$element_name}`,
+								   A.{$element_name},
 								   (select 
-								   		  `option` 
+								   		  [option] 
 								   	  from 
 								   	  	  ".MF_TABLE_PREFIX."element_options 
 								   	 where 
@@ -2203,7 +2205,7 @@ EOT;
 							   FROM 
 							  	   ".MF_TABLE_PREFIX."form_{$form_id}{$table_suffix} A
 							  WHERE 
-							  	   `{$record_name}` = ?
+							  	   {$record_name} = ?
 							) B 
 					   WHERE 
 					   		B.element_title {$where_operand} {$where_keyword}";
@@ -2232,12 +2234,12 @@ EOT;
 
 			//get the entered value on the table
 			$query = "select 
-							count(`id`) total_row 
+							count(id) total_row 
 						from 
 							".MF_TABLE_PREFIX."form_{$form_id}{$table_suffix} 
 					   where 
-					   		`{$element_name}` {$where_operand} {$where_keyword} 
-					   		and `{$record_name}` = ?";
+					   		{$element_name} {$where_operand} {$where_keyword} 
+					   		and {$record_name} = ?";
 			
 			$params = array($record_id);
 			$sth 	= mf_do_query($query,$params,$dbh);
@@ -2253,6 +2255,7 @@ EOT;
 			$exploded = explode('/', $rule_keyword); //rule keyword format -> mm/dd/yyyy
 
 			$rule_keyword = $exploded[2].'-'.$exploded[0].'-'.$exploded[1]; //this should be yyyy-mm-dd
+			$rule_keyword = (date('Y-m-d',strtotime($rule_keyword)) == $rule_keyword)? $rule_keyword: '';
 
 			if($rule_condition == 'is'){
 				$where_operand = '=';
@@ -2267,12 +2270,12 @@ EOT;
 
 			//get the entered value on the table
 			$query = "select 
-							count(`id`) total_row 
+							count(id) total_row 
 						from 
 							".MF_TABLE_PREFIX."form_{$form_id}{$table_suffix} 
 					   where 
-					   		date(`{$element_name}`) {$where_operand} {$where_keyword} 
-					   		and `{$record_name}` = ?";
+					   		CONVERT(date,{$element_name}) {$where_operand} {$where_keyword} 
+					   		and {$record_name} = ?";
 			
 			$params = array($record_id);
 			$sth 	= mf_do_query($query,$params,$dbh);
@@ -2396,7 +2399,7 @@ EOT;
 		}else if($element_type == 'radio' || $element_type == 'select'){
 			
 			$query = "select 
-							`option` 
+							[option] 
 						from 
 							".MF_TABLE_PREFIX."element_options 
 					   where 
@@ -2547,7 +2550,7 @@ EOT;
 
 		}else if($element_type == 'matrix_radio'){
 			$query = "select 
-							`option` 
+							[option] 
 						from 
 							".MF_TABLE_PREFIX."element_options 
 					   where 
@@ -2660,10 +2663,10 @@ EOT;
     function mf_get_form_properties($dbh,$form_id,$columns=array()){
     	
     	if(!empty($columns)){
-    		$columns_joined = implode("`,`",$columns);
+    		$columns_joined = implode(",",$columns);
     	}else{
     		//if no columns array specified, get all columns of ap_forms table
-    		$query = "show columns from ".MF_TABLE_PREFIX."forms";
+    		$query = "SELECT COLUMN_NAME as [Field] FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '".MF_TABLE_PREFIX."forms'";
 			$params = array();
 			
 			$sth = mf_do_query($query,$params,$dbh);
@@ -2674,10 +2677,10 @@ EOT;
 				$columns[] = $row['Field'];
 			}
 			
-			$columns_joined = implode("`,`",$columns);
+			$columns_joined = implode(",",$columns);
     	}
     	
-    	$query = "select `{$columns_joined}` from ".MF_TABLE_PREFIX."forms where form_id = ?";
+    	$query = "select {$columns_joined} from ".MF_TABLE_PREFIX."forms where form_id = ?";
     	$params = array($form_id);
 
     	$sth = mf_do_query($query,$params,$dbh);
@@ -2765,7 +2768,7 @@ EOT;
 
 		//if the discount element for the current entry_id having any value, we can be certain that the discount code has been validated and applicable
 		if(!empty($payment_enable_discount)){
-			$query = "select element_{$payment_discount_element_id} coupon_element from ".MF_TABLE_PREFIX."form_{$form_id} where `id` = ? and `status` = 1";
+			$query = "select element_{$payment_discount_element_id} coupon_element from ".MF_TABLE_PREFIX."form_{$form_id} where id = ? and [status] = 1";
 			$params = array($entry_id);
 			
 			$sth = mf_do_query($query,$params,$dbh);
@@ -2777,34 +2780,33 @@ EOT;
 		}
 
 		if(!empty($payment_enable_merchant)){
-			$query = "SELECT 
-							`payment_id`,
-							 date_format(payment_date,'%e %b %Y - %r') payment_date, 
-							`payment_status`, 
-							`payment_fullname`, 
-							`payment_amount`, 
-							`payment_currency`, 
-							`payment_test_mode`,
-							`payment_merchant_type`, 
-							`status`, 
-							`billing_street`, 
-							`billing_city`, 
-							`billing_state`, 
-							`billing_zipcode`, 
-							`billing_country`, 
-							`same_shipping_address`, 
-							`shipping_street`, 
-							`shipping_city`, 
-							`shipping_state`, 
-							`shipping_zipcode`, 
-							`shipping_country`
+			$query = "SELECT TOP 1
+							payment_id,
+							CONVERT(VARCHAR(19),payment_date, 106) + ' ' + CONVERT(VARCHAR(19),payment_date, 8) payment_date, 
+							payment_status, 
+							payment_fullname, 
+							payment_amount, 
+							payment_currency, 
+							payment_test_mode,
+							payment_merchant_type, 
+							[status], 
+							billing_street, 
+							billing_city, 
+							billing_state, 
+							billing_zipcode, 
+							billing_country, 
+							same_shipping_address, 
+							shipping_street, 
+							shipping_city, 
+							shipping_state, 
+							shipping_zipcode, 
+							shipping_country
 						FROM
 							".MF_TABLE_PREFIX."form_payments
 					   WHERE
-					   		form_id = ? and record_id = ? and `status` = 1
+					   		form_id = ? and record_id = ? and [status] = 1
 					ORDER BY
-							payment_date DESC
-					   LIMIT 1";
+							payment_date DESC";
 			
 			$params = array($form_id,$entry_id);
 			
@@ -3071,7 +3073,7 @@ EOT;
 						 element_id,
 						 element_type 
 				     from
-				     	 `".MF_TABLE_PREFIX."form_elements` 
+				     	 ".MF_TABLE_PREFIX."form_elements 
 				    where 
 				    	 form_id=? and 
 				    	 element_type != 'section' and 
@@ -3106,7 +3108,7 @@ EOT;
 		}
 		
     	//get entry timestamp
-		$query = "select date_created,ip_address from `".MF_TABLE_PREFIX."form_{$form_id}` where id=?";
+		$query = "select date_created,ip_address from ".MF_TABLE_PREFIX."form_{$form_id} where id=?";
 		$params = array($entry_id);
 		
 		$sth = mf_do_query($query,$params,$dbh);
@@ -3116,7 +3118,7 @@ EOT;
 		$ip_address   = $row['ip_address'];
     	    	
     	//get form name
-		$query 	= "select form_name	from `".MF_TABLE_PREFIX."forms` where form_id=?";
+		$query 	= "select form_name	from ".MF_TABLE_PREFIX."forms where form_id=?";
 		$params = array($form_id);
 		
 		$sth = mf_do_query($query,$params,$dbh);

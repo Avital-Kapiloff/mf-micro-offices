@@ -59,7 +59,7 @@
 					 esr_content,
 					 esr_plain_text
 			     from 
-			     	 `".MF_TABLE_PREFIX."forms` 
+			     	 ".MF_TABLE_PREFIX."forms
 			    where 
 			    	 form_id=?";
 	$params = array($form_id);

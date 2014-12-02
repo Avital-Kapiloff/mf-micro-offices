@@ -71,15 +71,15 @@
 		mf_ap_forms_update($form_id,$form_input,$dbh);
 		
 		//create new table for this form
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."form_{$form_id}` (
-  													`id` int(11) NOT NULL auto_increment,
-  													`date_created` datetime NOT NULL default '0000-00-00 00:00:00',
-  													`date_updated` datetime default NULL,
-  													`ip_address` varchar(15) default NULL,
-  													`status` int(4) unsigned NOT NULL DEFAULT '1',
-  													`resume_key` varchar(10) default NULL,
-  													PRIMARY KEY (`id`)
-  													) DEFAULT CHARACTER SET utf8;";
+		$query = "CREATE TABLE [".MF_TABLE_PREFIX."form_{$form_id}] (
+  													[id] int NOT NULL IDENTITY(1,1),
+  													[date_created] datetime NOT NULL default '0000-00-00 00:00:00',
+  													[date_updated] datetime default NULL,
+  													[ip_address] varchar(15) default NULL,
+  													[status] int NOT NULL DEFAULT '1',
+  													[resume_key] varchar(10) default NULL,
+  													PRIMARY KEY ([id])
+  													);";
 		$params = array();
 		mf_do_query($query,$params,$dbh);
 		
@@ -180,7 +180,7 @@
 			}
 		}elseif($element_type == 'matrix'){
 			//if the parent_id of this matrix has 'element_status' 1, skip it
-			$query  = "select element_status from `".MF_TABLE_PREFIX."form_elements` where form_id = ? and element_id = ?";
+			$query  = "select element_status from [".MF_TABLE_PREFIX."form_elements] where form_id = ? and element_id = ?";
 			$params_mp = array($form_id,$element_matrix_parent_id);
 			
 			$sth_mp = mf_do_query($query,$params_mp,$dbh);
@@ -221,7 +221,9 @@
 			if(!empty($element_choice_has_other)){
 				//add the 'other' field into the table, but check first, just in case the field already exist
 				if(!mf_mysql_column_exist(MF_TABLE_PREFIX."form_{$form_id}","element_{$element_id}_other",$dbh)){
-					$query = "ALTER TABLE `".MF_TABLE_PREFIX."form_{$form_id}` ADD COLUMN `element_{$element_id}_other` text NULL COMMENT 'Choice - Other';";
+					$query = "ALTER TABLE [".MF_TABLE_PREFIX."form_{$form_id}] ADD [element_{$element_id}_other] nvarchar(1000) NULL;";
+					mf_do_query($query,array(),$dbh);
+					$query = "exec sp_addextendedproperty  'MS_Description', 'Choice - Other','schema', 'dbo', 'table', '". MF_TABLE_PREFIX."form_{$form_id}', 'column', 'element_{$element_id}_other'";
 					mf_do_query($query,array(),$dbh);
 				}
 			}
@@ -229,11 +231,11 @@
 	}
 
 	//update ap_form_elements set status to 1
-	$query = "update `".MF_TABLE_PREFIX."form_elements` set `element_status` = 1 where form_id = ? and element_status=2";
+	$query = "update [".MF_TABLE_PREFIX."form_elements] set [element_status] = 1 where form_id = ? and element_status=2";
 	mf_do_query($query,array($form_id),$dbh);
 			
 	//update ap_element_options set status to 1
-	$query = "update `".MF_TABLE_PREFIX."element_options` set `live` = 1 where form_id = ? and live=2";
+	$query = "update [".MF_TABLE_PREFIX."element_options] set [live] = 1 where form_id = ? and live=2";
 	mf_do_query($query,array($form_id),$dbh);
 	
 	//update matrix 'constraint' with the child ids
@@ -241,7 +243,7 @@
 		foreach($matrix_child_array as $m_parent_id=>$m_child_id_array){
 			$m_child_id = implode(',',$m_child_id_array);
 			
-			$query = "update `".MF_TABLE_PREFIX."form_elements` set `element_constraint` = ? where form_id = ? and element_id = ?";
+			$query = "update [".MF_TABLE_PREFIX."form_elements] set [element_constraint] = ? where form_id = ? and element_id = ?";
 			$params = array($m_child_id,$form_id,$m_parent_id);
 			mf_do_query($query,$params,$dbh);
 		}
@@ -271,7 +273,7 @@
 			
 			if(in_array($element_type,array('radio','checkbox','select'))){
 				//set the live property of the options within ap_element_options to 0
-				$query = "update `".MF_TABLE_PREFIX."element_options` set `live`=0 where form_id = ? and element_id = ?";
+				$query = "update [".MF_TABLE_PREFIX."element_options] set [live]=0 where form_id = ? and element_id = ?";
 				$params = array($form_id,$element_id);
 				mf_do_query($query,$params,$dbh);
 				
@@ -280,8 +282,8 @@
 				foreach($element_options as $option_id=>$value){
 						if(empty($value['is_db_live'])){ //this is new choice
 							$query = "INSERT INTO 
-												`".MF_TABLE_PREFIX."element_options` 
-												(`form_id`,`element_id`,`option_id`,`position`,`option`,`option_is_default`,`live`) 
+												[".MF_TABLE_PREFIX."element_options] 
+												([form_id],[element_id],[option_id],[position],[option],[option_is_default],[live]) 
 									   VALUES (?,?,?,?,?,?,'1');"; 
 							$params = array($form_id,$element_id,$option_id,$value['position'],$value['option'],$value['is_default']);
 							mf_do_query($query,$params,$dbh);
@@ -292,11 +294,11 @@
 							}
 						}else{ //update existing choice
 							$query = "UPDATE 
-											`".MF_TABLE_PREFIX."element_options` 
+											[".MF_TABLE_PREFIX."element_options] 
 										 SET 
-										 	`live`=1,`option` = ?,`option_is_default` = ?,`position` = ? 
+										 	[live]=1,[option] = ?,[option_is_default] = ?,[position] = ? 
 									   WHERE 
-									   		form_id = ? and element_id = ? and `option_id` = ?";
+									   		form_id = ? and element_id = ? and [option_id] = ?";
 							$params = array($value['option'],$value['is_default'],$value['position'],$form_id,$element_id,$option_id);
 							mf_do_query($query,$params,$dbh);
 						}
@@ -312,11 +314,11 @@
 				$matrix_all_row_ids_placeholder = implode(',',array_pad(array(),count($matrix_all_row_ids),'?'));
 				
 				//first 'delete' all matrix rows and columns by setting the live property to 0
-				$query = "update `".MF_TABLE_PREFIX."element_options` set `live`=0 where form_id = ? and element_id in({$matrix_all_row_ids_placeholder})";
+				$query = "update [".MF_TABLE_PREFIX."element_options] set [live]=0 where form_id = ? and element_id in({$matrix_all_row_ids_placeholder})";
 				$params = array_merge((array)$form_id,$matrix_all_row_ids);
 				mf_do_query($query,$params,$dbh);
 						
-				$query = "update `".MF_TABLE_PREFIX."form_elements` set `element_status`=0 where form_id = ? and element_id in({$matrix_all_row_ids_placeholder})";
+				$query = "update [".MF_TABLE_PREFIX."form_elements] set [element_status]=0 where form_id = ? and element_id in({$matrix_all_row_ids_placeholder})";
 				$params = array_merge((array)$form_id,$matrix_all_row_ids);
 				mf_do_query($query,$params,$dbh);
 				
@@ -324,7 +326,7 @@
 				$first_row_matrix_data = array();
 				$first_row_matrix_data = $element_options[$element_properties['id']];
 				
-				$query = "update `".MF_TABLE_PREFIX."form_elements` set `element_status`=1 where form_id='{$form_id}' and element_id='{$element_properties['id']}'";
+				$query = "update [".MF_TABLE_PREFIX."form_elements] set [element_status]=1 where form_id='{$form_id}' and element_id='{$element_properties['id']}'";
 				$params = array($form_id,$element_properties['id']);
 				mf_do_query($query,$params,$dbh);
 				
@@ -337,8 +339,8 @@
 						//insert into ap_element_options table, for all rows
 						foreach ($matrix_all_row_ids as $m_row_element_id){
 							$query = "INSERT INTO 
-												`".MF_TABLE_PREFIX."element_options` 
-												(`form_id`,`element_id`,`option_id`,`position`,`option`,`option_is_default`,`live`) 
+												[".MF_TABLE_PREFIX."element_options] 
+												([form_id],[element_id],[option_id],[position],[option],[option_is_default],[live]) 
 									   	  VALUES 
 									   	  		(?,?,?,?,?,'0','1')"; 
 							$params = array($form_id,$m_row_element_id,$c_option_id,$value['position'],$value['column_title']);
@@ -351,11 +353,11 @@
 						}
 					}else{ //this is old column simply update the table
 						$query = "UPDATE 
-										`".MF_TABLE_PREFIX."element_options`
+										[".MF_TABLE_PREFIX."element_options]
 								     SET
-								     	`live`=1,`position` = ?, `option` = ?
+								     	[live]=1,[position] = ?, [option] = ?
 								   WHERE
-								   		form_id = ? and element_id = ? and `option_id` = ?";
+								   		form_id = ? and element_id = ? and [option_id] = ?";
 						$params = array($value['position'],$value['column_title'],$form_id,$element_properties['id'],$c_option_id);
 						mf_do_query($query,$params,$dbh);
 					}
@@ -373,12 +375,12 @@
 					
 					if(empty($value['is_db_live'])){ //this is new row
 						//update the status on ap_form_elements table
-						$query = "update `".MF_TABLE_PREFIX."form_elements` set `element_status`=1 where form_id = ? and element_id = ?";
+						$query = "update [".MF_TABLE_PREFIX."form_elements] set [element_status]=1 where form_id = ? and element_id = ?";
 						$params = array($form_id,$m_element_id);
 						mf_do_query($query,$params,$dbh);
 						
 						//update the status on ap_element_options table
-						$query = "update `".MF_TABLE_PREFIX."element_options` set `live`=1 where form_id = ? and element_id = ?";
+						$query = "update [".MF_TABLE_PREFIX."element_options] set [live]=1 where form_id = ? and element_id = ?";
 						$params = array($form_id,$m_element_id);
 						mf_do_query($query,$params,$dbh);
 						
@@ -392,18 +394,18 @@
 							}
 						}
 					}else{ //this is an existing row, just update
-						$query = "update `".MF_TABLE_PREFIX."form_elements` set `element_status`=1 where form_id = ? and element_id = ?";
+						$query = "update [".MF_TABLE_PREFIX."form_elements] set [element_status]=1 where form_id = ? and element_id = ?";
 						$params = array($form_id,$m_element_id);
 						mf_do_query($query,$params,$dbh);
 						
 						foreach ($matrix_column_data as $c_option_id=>$value){
 							if(!empty($value['is_db_live'])){ 
 									$query = "UPDATE 
-													`".MF_TABLE_PREFIX."element_options`
+													[".MF_TABLE_PREFIX."element_options]
 											     SET
-											     	`live`=1,`position` = ?,`option` = ?
+											     	[live]=1,[position] = ?,[option] = ?
 											   WHERE
-											   		form_id = ? and element_id = ? and `option_id` = ?";
+											   		form_id = ? and element_id = ? and [option_id] = ?";
 									$params = array($value['position'],$value['column_title'],$form_id,$m_element_id,$c_option_id);
 									mf_do_query($query,$params,$dbh);
 							}
@@ -427,29 +429,29 @@
 					$value = null;
 				}
 				
-				$update_values .= "`element_{$key}`= :element_{$key},";
+				$update_values .= "[element_{$key}]= :element_{$key},";
 				$params[':element_'.$key] = $value;
 			}
 			$update_values = rtrim($update_values,',');
-			
-			$query = "UPDATE `".MF_TABLE_PREFIX."form_elements` set 
+
+			$query = "UPDATE [".MF_TABLE_PREFIX."form_elements] set 
 										$update_values
 								  where 
 							  	  		form_id = :form_id and element_id = :w_element_id";
-										
+
 			$params[':form_id'] = $form_id;
-			$params[':w_element_id'] = $element_properties['id'];
+			$params[':w_element_id'] = (int)$element_properties['id'];
 			
 			mf_do_query($query,$params,$dbh);
-			
+
 			//if this is matrix field, the element title need to be updated again from the options, the position as well
 			if($element_properties['type'] == 'matrix'){
 				
 				$query = "UPDATE 
-								`".MF_TABLE_PREFIX."form_elements` 
+								[".MF_TABLE_PREFIX."form_elements] 
 							 SET 
-								`element_title` = :element_title,
-								`element_position` = :element_position		
+								[element_title] = :element_title,
+								[element_position] = :element_position		
 						   WHERE 
 								form_id = :form_id and element_id = :element_id";
 
@@ -461,7 +463,6 @@
 					$params[':element_position']	= $value['position'];
 					$params[':form_id']				= $form_id;
 					$params[':element_id']			= $m_element_id;
-					
 					mf_do_query($query,$params,$dbh);	
 				} //end foreach element_options
 			}
@@ -473,7 +474,9 @@
 				if(!empty($element_properties['choice_has_other'])){
 					//add the 'other' field into the table, but check first, just in case the field already exist
 					if(!mf_mysql_column_exist(MF_TABLE_PREFIX."form_{$form_id}","element_{$element_id}_other",$dbh)){
-						$query = "ALTER TABLE `".MF_TABLE_PREFIX."form_{$form_id}` ADD COLUMN `element_{$element_id}_other` text NULL COMMENT 'Choice - Other';";
+						$query = "ALTER TABLE [".MF_TABLE_PREFIX."form_{$form_id}] ADD [element_{$element_id}_other] nvarchar(1000) NULL;";
+						mf_do_query($query,array(),$dbh);
+						$query = "exec sp_addextendedproperty  'MS_Description', 'Choice - Other','schema', 'dbo', 'table', '". MF_TABLE_PREFIX."form_{$form_id}', 'column', 'element_{$element_id}_other'";
 						mf_do_query($query,array(),$dbh);
 					}
 				}
@@ -487,7 +490,7 @@
 			foreach($matrix_child_array as $m_parent_id=>$m_child_id_array){
 				ksort($m_child_id_array); //sort the matrix child based on position
 				$m_child_id = implode(',',$m_child_id_array);
-				$query = "update `".MF_TABLE_PREFIX."form_elements` set `element_constraint` = ? where form_id = ? and element_id = ?";
+				$query = "update [".MF_TABLE_PREFIX."form_elements] set [element_constraint] = ? where form_id = ? and element_id = ?";
 				$params = array($m_child_id,$form_id,$m_parent_id);
 				mf_do_query($query,$params,$dbh);	
 			}
@@ -506,7 +509,7 @@
 					element_id, 
 					element_constraint 
 				FROM 
-					`".MF_TABLE_PREFIX."form_elements` 
+					[".MF_TABLE_PREFIX."form_elements] 
 			   WHERE 
 			   		form_id = ? and 
 			   		element_type='matrix' and 
@@ -537,10 +540,11 @@
 		}
 	}
 
+
 	//update position into ap_form_elements table
 	foreach ($element_final_position as $position=>$element_id){
-		$query = "update `".MF_TABLE_PREFIX."form_elements` set element_position = ? where form_id = ? and element_id = ?";
-		$params = array($position,$form_id,$element_id);
+		$query = "update [".MF_TABLE_PREFIX."form_elements] set element_position = ? where form_id = ? and element_id = ?";
+		$params = array($position,$form_id, (int)$element_id);
 		mf_do_query($query,$params,$dbh);
 	}
 	
@@ -639,15 +643,31 @@
 	// 3) the 'save and resume' option of the form is enabled
 	
 	//delete review table if exists
-	$query = "DROP TABLE IF EXISTS `".MF_TABLE_PREFIX."form_{$form_id}_review`";
+	$query = "IF OBJECT_ID('".MF_TABLE_PREFIX."form_{$form_id}_review', 'U') IS NOT NULL DROP TABLE [".MF_TABLE_PREFIX."form_{$form_id}_review]";
 	mf_do_query($query,array(),$dbh);
 	
 	//create review table
 	if(!empty($form_properties['review']) || !empty($last_pagebreak_properties) || !empty($form_properties['resume_enable'])){
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."form_{$form_id}_review` like `".MF_TABLE_PREFIX."form_{$form_id}`";
+		$query = "SELECT * INTO ".MF_TABLE_PREFIX."form_{$form_id}_review FROM ".MF_TABLE_PREFIX."form_{$form_id} where 1=0;";
 		mf_do_query($query,array(),$dbh);
+
+		$query = "DECLARE @sqlCommand nvarchar(max)
+			SET @sqlCommand =  (select STUFF ((
+			 SELECT	
+			    'ALTER TABLE ".MF_TABLE_PREFIX."form_".$form_id."_review' + 
+			    ' ADD CONSTRAINT DF_".MF_TABLE_PREFIX."form_".$form_id."_' + c.name + '_review DEFAULT(' + definition 
+			    + ') FOR ' + c.name + ' '
+			FROM sys.default_constraints dc
+			INNER JOIN sys.columns c ON dc.parent_object_id = c.object_id AND dc.parent_column_id = c.column_id
+			where OBJECT_NAME(parent_object_id) = '".MF_TABLE_PREFIX."form_".$form_id."'
+			FOR XML PATH('')) ,1,0,''))
+
+			EXEC (@sqlCommand);";
+			
+		$params = array();
+		mf_do_query($query,$params,$dbh);
 		
-		$query = "ALTER TABLE `".MF_TABLE_PREFIX."form_{$form_id}_review` ADD COLUMN `session_id` varchar(100) NULL";
+		$query = "ALTER TABLE [".MF_TABLE_PREFIX."form_{$form_id}_review] ADD [session_id] varchar(100) NULL";
 		mf_do_query($query,array(),$dbh);
 	}
 
@@ -719,48 +739,104 @@
 		$comment = @$comment_desc[$type];
 			
 		if(('text' == $type) || ('phone' == $type) || ('simple_phone' == $type) || ('url' == $type) || ('email' == $type) || ('file' == $type)){
-			$query = "ALTER TABLE `".MF_TABLE_PREFIX."form_{$form_id}` ADD COLUMN `element_{$element_id}` text NULL COMMENT '{$comment}';";
+			$query = "ALTER TABLE [".MF_TABLE_PREFIX."form_{$form_id}] ADD [element_{$element_id}] nvarchar(1024) NULL;";
+			mf_do_query($query,array(),$dbh);
+			$query = "exec sp_addextendedproperty  'MS_Description', '{$comment}','schema', 'dbo', 'table', '". MF_TABLE_PREFIX."form_{$form_id}', 'column', 'element_{$element_id}'";
 			mf_do_query($query,array(),$dbh);
 		}elseif ('textarea' == $type || 'signature' == $type){
-			$query = "ALTER TABLE `".MF_TABLE_PREFIX."form_{$form_id}` ADD COLUMN `element_{$element_id}` mediumtext NULL COMMENT '{$comment}';";
+			$query = "ALTER TABLE [".MF_TABLE_PREFIX."form_{$form_id}] ADD [element_{$element_id}] varchar(max) NULL;";
+			mf_do_query($query,array(),$dbh);
+			$query = "exec sp_addextendedproperty  'MS_Description', '{$comment}','schema', 'dbo', 'table', '". MF_TABLE_PREFIX."form_{$form_id}', 'column', 'element_{$element_id}'";
 			mf_do_query($query,array(),$dbh);
 		}elseif (('radio' == $type) || ('select' == $type)){
-			$query = "ALTER TABLE `".MF_TABLE_PREFIX."form_{$form_id}` ADD COLUMN `element_{$element_id}` int(4) unsigned NOT NULL DEFAULT '0' COMMENT '{$comment}';";
+			$query = "ALTER TABLE [".MF_TABLE_PREFIX."form_{$form_id}] ADD [element_{$element_id}] int NOT NULL DEFAULT '0';";
+			mf_do_query($query,array(),$dbh);
+			$query = "exec sp_addextendedproperty  'MS_Description', '{$comment}','schema', 'dbo', 'table', '". MF_TABLE_PREFIX."form_{$form_id}', 'column', 'element_{$element_id}'";
 			mf_do_query($query,array(),$dbh);
 		}elseif ('time' == $type){
-			$query = "ALTER TABLE `".MF_TABLE_PREFIX."form_{$form_id}` ADD COLUMN `element_{$element_id}` time NULL COMMENT '{$comment}';";
+			$query = "ALTER TABLE [".MF_TABLE_PREFIX."form_{$form_id}] ADD [element_{$element_id}] time NULL;";
+			mf_do_query($query,array(),$dbh);
+			$query = "exec sp_addextendedproperty  'MS_Description', '{$comment}','schema', 'dbo', 'table', '". MF_TABLE_PREFIX."form_{$form_id}', 'column', 'element_{$element_id}'";
 			mf_do_query($query,array(),$dbh);
 		}elseif (('date' == $type) || ('europe_date' == $type)){
-			$query = "ALTER TABLE `".MF_TABLE_PREFIX."form_{$form_id}` ADD COLUMN `element_{$element_id}` date NULL COMMENT '{$comment}';";
+			$query = "ALTER TABLE [".MF_TABLE_PREFIX."form_{$form_id}] ADD [element_{$element_id}] date NULL;";
+			mf_do_query($query,array(),$dbh);
+			$query = "exec sp_addextendedproperty  'MS_Description', '{$comment}','schema', 'dbo', 'table', '". MF_TABLE_PREFIX."form_{$form_id}', 'column', 'element_{$element_id}'";
 			mf_do_query($query,array(),$dbh);
 		}elseif ('money' == $type){
-			$query = "ALTER TABLE `".MF_TABLE_PREFIX."form_{$form_id}` ADD COLUMN `element_{$element_id}` decimal(62,2) NULL COMMENT '{$comment}';";
+			$query = "ALTER TABLE [".MF_TABLE_PREFIX."form_{$form_id}] ADD [element_{$element_id}] decimal(38,2) NULL;";
+			mf_do_query($query,array(),$dbh);
+			$query = "exec sp_addextendedproperty  'MS_Description', '{$comment}','schema', 'dbo', 'table', '". MF_TABLE_PREFIX."form_{$form_id}', 'column', 'element_{$element_id}'";
 			mf_do_query($query,array(),$dbh);
 		}elseif ('number' == $type){
-			$query = "ALTER TABLE `".MF_TABLE_PREFIX."form_{$form_id}` ADD COLUMN `element_{$element_id}` double NULL COMMENT '{$comment}';";
+			$query = "ALTER TABLE [".MF_TABLE_PREFIX."form_{$form_id}] ADD [element_{$element_id}] float(53) NULL;";
+			mf_do_query($query,array(),$dbh);
+			$query = "exec sp_addextendedproperty  'MS_Description', '{$comment}','schema', 'dbo', 'table', '". MF_TABLE_PREFIX."form_{$form_id}', 'column', 'element_{$element_id}'";
 			mf_do_query($query,array(),$dbh);
 		}elseif ('simple_name' == $type){
 			//add two field, first and last name
-			$query = "ALTER TABLE `".MF_TABLE_PREFIX."form_{$form_id}` ADD COLUMN `element_{$element_id}_1` text NULL COMMENT '{$comment} - First', ADD COLUMN `element_{$element_id}_2` text NULL COMMENT '{$comment} - Last';";
+			$query = "ALTER TABLE [".MF_TABLE_PREFIX."form_{$form_id}] ADD [element_{$element_id}_1] nvarchar(225) NULL, [element_{$element_id}_2] nvarchar(255) NULL;";
+			mf_do_query($query,array(),$dbh);
+			$query = "exec sp_addextendedproperty  'MS_Description', '{$comment} - First','schema', 'dbo', 'table', '". MF_TABLE_PREFIX."form_{$form_id}', 'column', 'element_{$element_id}_1'";
+			mf_do_query($query,array(),$dbh);
+			$query = "exec sp_addextendedproperty  'MS_Description', '{$comment} - Last','schema', 'dbo', 'table', '". MF_TABLE_PREFIX."form_{$form_id}', 'column', 'element_{$element_id}_2'";
 			mf_do_query($query,array(),$dbh);
 		}elseif ('simple_name_wmiddle' == $type){
 			//add three fields, first, middle and last name
-			$query = "ALTER TABLE `".MF_TABLE_PREFIX."form_{$form_id}` ADD COLUMN `element_{$element_id}_1` text NULL COMMENT '{$comment} - First', ADD COLUMN `element_{$element_id}_2` text NULL COMMENT '{$comment} - Middle', ADD COLUMN `element_{$element_id}_3` text NULL COMMENT '{$comment} - Last';";
+			$query = "ALTER TABLE [".MF_TABLE_PREFIX."form_{$form_id}] ADD [element_{$element_id}_1] nvarchar(225) NULL, [element_{$element_id}_2] nvarchar(225) NULL, [element_{$element_id}_3] nvarchar(225) NULL;";
+			mf_do_query($query,array(),$dbh);
+			$query = "exec sp_addextendedproperty  'MS_Description', '{$comment} - First','schema', 'dbo', 'table', '". MF_TABLE_PREFIX."form_{$form_id}', 'column', 'element_{$element_id}_1'";
+			mf_do_query($query,array(),$dbh);
+			$query = "exec sp_addextendedproperty  'MS_Description', '{$comment} - Middle','schema', 'dbo', 'table', '". MF_TABLE_PREFIX."form_{$form_id}', 'column', 'element_{$element_id}_2'";
+			mf_do_query($query,array(),$dbh);
+			$query = "exec sp_addextendedproperty  'MS_Description', '{$comment} - Last','schema', 'dbo', 'table', '". MF_TABLE_PREFIX."form_{$form_id}', 'column', 'element_{$element_id}_3'";
 			mf_do_query($query,array(),$dbh);
 		}elseif ('name' == $type){
 			//add four field, title, first, last, suffix 
-			$query = "ALTER TABLE `".MF_TABLE_PREFIX."form_{$form_id}` ADD COLUMN `element_{$element_id}_1` text NULL COMMENT '{$comment} - Title', ADD COLUMN `element_{$element_id}_2` text NULL COMMENT '{$comment} - First', ADD COLUMN `element_{$element_id}_3` text NULL COMMENT '{$comment} - Last', ADD COLUMN `element_{$element_id}_4` text NULL COMMENT '{$comment} - Suffix';";
+			$query = "ALTER TABLE [".MF_TABLE_PREFIX."form_{$form_id}] ADD [element_{$element_id}_1] nvarchar(225) NULL, [element_{$element_id}_2] nvarchar(225) NULL, [element_{$element_id}_3] nvarchar(225) NULL, [element_{$element_id}_4] nvarchar(225) NULL;";
+			mf_do_query($query,array(),$dbh);
+			$query = "exec sp_addextendedproperty  'MS_Description', '{$comment} - Title','schema', 'dbo', 'table', '". MF_TABLE_PREFIX."form_{$form_id}', 'column', 'element_{$element_id}_1'";
+			mf_do_query($query,array(),$dbh);
+			$query = "exec sp_addextendedproperty  'MS_Description', '{$comment} - First','schema', 'dbo', 'table', '". MF_TABLE_PREFIX."form_{$form_id}', 'column', 'element_{$element_id}_2'";
+			mf_do_query($query,array(),$dbh);
+			$query = "exec sp_addextendedproperty  'MS_Description', '{$comment} - Last','schema', 'dbo', 'table', '". MF_TABLE_PREFIX."form_{$form_id}', 'column', 'element_{$element_id}_3'";
+			mf_do_query($query,array(),$dbh);
+			$query = "exec sp_addextendedproperty  'MS_Description', '{$comment} - Suffix','schema', 'dbo', 'table', '". MF_TABLE_PREFIX."form_{$form_id}', 'column', 'element_{$element_id}_4'";
 			mf_do_query($query,array(),$dbh);
 		}elseif ('name_wmiddle' == $type){
 			//add five fields, title, first, middle, last, suffix 
-			$query = "ALTER TABLE `".MF_TABLE_PREFIX."form_{$form_id}` ADD COLUMN `element_{$element_id}_1` text NULL COMMENT '{$comment} - Title', ADD COLUMN `element_{$element_id}_2` text NULL COMMENT '{$comment} - First', ADD COLUMN `element_{$element_id}_3` text NULL COMMENT '{$comment} - Middle', ADD COLUMN `element_{$element_id}_4` text NULL COMMENT '{$comment} - Last', ADD COLUMN `element_{$element_id}_5` text NULL COMMENT '{$comment} - Suffix';";
+			$query = "ALTER TABLE [".MF_TABLE_PREFIX."form_{$form_id}] ADD [element_{$element_id}_1] nvarchar(225) NULL, [element_{$element_id}_2] nvarchar(225) NULL, [element_{$element_id}_3] nvarchar(225) NULL, [element_{$element_id}_4] nvarchar(225) NULL, [element_{$element_id}_5] nvarchar(225) NULL;";
+			mf_do_query($query,array(),$dbh);
+			$query = "exec sp_addextendedproperty  'MS_Description', '{$comment} - Title','schema', 'dbo', 'table', '". MF_TABLE_PREFIX."form_{$form_id}', 'column', 'element_{$element_id}_1'";
+			mf_do_query($query,array(),$dbh);
+			$query = "exec sp_addextendedproperty  'MS_Description', '{$comment} - First','schema', 'dbo', 'table', '". MF_TABLE_PREFIX."form_{$form_id}', 'column', 'element_{$element_id}_2'";
+			mf_do_query($query,array(),$dbh);
+			$query = "exec sp_addextendedproperty  'MS_Description', '{$comment} - Middle','schema', 'dbo', 'table', '". MF_TABLE_PREFIX."form_{$form_id}', 'column', 'element_{$element_id}_3'";
+			mf_do_query($query,array(),$dbh);
+			$query = "exec sp_addextendedproperty  'MS_Description', '{$comment} - Last','schema', 'dbo', 'table', '". MF_TABLE_PREFIX."form_{$form_id}', 'column', 'element_{$element_id}_4'";
+			mf_do_query($query,array(),$dbh);
+			$query = "exec sp_addextendedproperty  'MS_Description', '{$comment} - Suffix','schema', 'dbo', 'table', '". MF_TABLE_PREFIX."form_{$form_id}', 'column', 'element_{$element_id}_5'";
 			mf_do_query($query,array(),$dbh);
 		}elseif ('address' == $type){
 			//add six field
-			$query = "ALTER TABLE `".MF_TABLE_PREFIX."form_{$form_id}` ADD COLUMN `element_{$element_id}_1` text NULL COMMENT '{$comment} - Street', ADD COLUMN `element_{$element_id}_2` text NULL COMMENT '{$comment} - Line 2', ADD COLUMN `element_{$element_id}_3` text NULL COMMENT '{$comment} - City', ADD COLUMN `element_{$element_id}_4` text NULL COMMENT '{$comment} - State/Province/Region', ADD COLUMN `element_{$element_id}_5` text NULL COMMENT '{$comment} - Zip/Postal Code', ADD COLUMN `element_{$element_id}_6` text NULL COMMENT '{$comment} - Country';";
+			$query = "ALTER TABLE [".MF_TABLE_PREFIX."form_{$form_id}] ADD [element_{$element_id}_1] nvarchar(225) NULL, [element_{$element_id}_2] nvarchar(225) NULL, [element_{$element_id}_3] nvarchar(225) NULL, [element_{$element_id}_4] nvarchar(225) NULL, [element_{$element_id}_5] nvarchar(225) NULL, [element_{$element_id}_6] nvarchar(225) NULL;";
+			mf_do_query($query,array(),$dbh);
+			$query = "exec sp_addextendedproperty  'MS_Description', '{$comment} - Street','schema', 'dbo', 'table', '". MF_TABLE_PREFIX."form_{$form_id}', 'column', 'element_{$element_id}_1'";
+			mf_do_query($query,array(),$dbh);
+			$query = "exec sp_addextendedproperty  'MS_Description', '{$comment} - Line 2','schema', 'dbo', 'table', '". MF_TABLE_PREFIX."form_{$form_id}', 'column', 'element_{$element_id}_2'";
+			mf_do_query($query,array(),$dbh);
+			$query = "exec sp_addextendedproperty  'MS_Description', '{$comment} - City','schema', 'dbo', 'table', '". MF_TABLE_PREFIX."form_{$form_id}', 'column', 'element_{$element_id}_3'";
+			mf_do_query($query,array(),$dbh);
+			$query = "exec sp_addextendedproperty  'MS_Description', '{$comment} - State/Province/Region','schema', 'dbo', 'table', '". MF_TABLE_PREFIX."form_{$form_id}', 'column', 'element_{$element_id}_4'";
+			mf_do_query($query,array(),$dbh);
+			$query = "exec sp_addextendedproperty  'MS_Description', '{$comment} - Zip/Postal Code','schema', 'dbo', 'table', '". MF_TABLE_PREFIX."form_{$form_id}', 'column', 'element_{$element_id}_5'";
+			mf_do_query($query,array(),$dbh);
+			$query = "exec sp_addextendedproperty  'MS_Description', '{$comment} - Country','schema', 'dbo', 'table', '". MF_TABLE_PREFIX."form_{$form_id}', 'column', 'element_{$element_id}_6'";
 			mf_do_query($query,array(),$dbh);
 		}elseif ('checkbox' == $type){
-			$query = "ALTER TABLE `".MF_TABLE_PREFIX."form_{$form_id}` ADD COLUMN `element_{$element_id}_{$option_id}` int(4) unsigned NOT NULL DEFAULT '0' COMMENT '{$comment} - {$option_id}';";
+			$query = "ALTER TABLE [".MF_TABLE_PREFIX."form_{$form_id}] ADD [element_{$element_id}_{$option_id}] int NOT NULL DEFAULT '0';";
+			mf_do_query($query,array(),$dbh);
+			$query = "exec sp_addextendedproperty  'MS_Description', '{$comment} - {$option_id}','schema', 'dbo', 'table', '". MF_TABLE_PREFIX."form_{$form_id}', 'column', 'element_{$element_id}_{$option_id}'";
 			mf_do_query($query,array(),$dbh);
 		}
 			

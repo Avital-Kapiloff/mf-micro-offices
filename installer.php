@@ -15,7 +15,8 @@
 	require('includes/db-core.php');
 	require('lib/password-hash.php');
 	require('includes/setup-functions.php');
-
+	require('includes/SQL-functions.php');
+	
 	//1. Check PHP version
 	if(version_compare(PHP_VERSION,"5.2.0",">=")){
 		$is_php_version_passed = true;
@@ -27,21 +28,21 @@
 	if($is_php_version_passed){
 		//2. Check connection to Database
 		try {
-			  $dbh = new PDO('mysql:host='.MF_DB_HOST.';dbname='.MF_DB_NAME, MF_DB_USER, MF_DB_PASSWORD,
-			  				 array(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true)
-			  				 );
+			  $dbh = new PDO('sqlsrv:Server='.MF_DB_HOST.';Database='.MF_DB_NAME, MF_DB_USER, MF_DB_PASSWORD);
+			  
 			  $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-			  $dbh->query("SET NAMES utf8");
+			  $dbh->setAttribute(PDO::SQLSRV_ATTR_ENCODING, PDO::SQLSRV_ENCODING_UTF8);
 		} catch(PDOException $e) {
 			  $error_connecting =  "Error connecting to the database: ".$e->getMessage();
 			  $pre_install_error = $error_connecting;
 		}
 
-		//3. Check MySQL version
+		//3. Check SQL version > 2008
 		$params = array();
 		if(empty($error_connecting)){
-			$query = "select version() mysql_version_number";
+			$query = "SELECT CONVERT(VARCHAR, SERVERPROPERTY('productversion')) [mssql_version_number]";
 			$sth = $dbh->prepare($query);
+
 			try{
 				$sth->execute($params);
 			}catch(PDOException $e) {
@@ -49,10 +50,10 @@
 			}
 			
 			$row = $sth->fetch(PDO::FETCH_ASSOC);
-			$current_mysql_version = $row['mysql_version_number'];
-
-			if(version_compare($current_mysql_version,"4.1.0","<")){
-				$error_mysql_version = "Your current MySQL version ({$current_mysql_version}) is less than the minimum requirement (4.1.0)";
+			$current_mssql_version = $row['mssql_version_number'];
+		
+			if(version_compare($current_mssql_version,"10.50.1600.1","<")){
+				$error_mysql_version = "Your current MSSQL version ({$current_mssql_version}) is less than the minimum requirement (9.00.2047)";
 				$pre_install_error = $error_mysql_version;
 			}
 
@@ -241,6 +242,8 @@
 
 			//30. Create ap_grid_columns table
 			$post_install_error .= create_ap_grid_columns_table($dbh);
+
+			$post_install_error .= create_SQLFunction_SubstringIndex($dbh);
 
 			//check for errors ------------------------
 			if(empty($post_install_error)){

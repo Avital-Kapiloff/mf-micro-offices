@@ -103,7 +103,7 @@
 	//get the list of all fields within the form (without any child elements)
 	$query = "select 
 					element_id,
-					if(element_type = 'matrix',element_guidelines,element_title) element_title,
+					case when element_type = 'matrix' then element_guidelines else element_title end as element_title,
 					element_type,
 					element_page_number,
 					element_position
@@ -234,7 +234,7 @@
 					A.element_id,
 					A.rule_show_hide,
 					A.rule_all_any,
-					if(B.element_type = 'matrix',B.element_guidelines,B.element_title) element_title,
+					case when B.element_type = 'matrix' then B.element_guidelines else B.element_title end as element_title,
 					B.element_position + 1 as element_position,
 					B.element_page_number 
 				FROM 
@@ -452,7 +452,7 @@
 					element_id,
 					element_title 
 				from 
-					`".MF_TABLE_PREFIX."form_elements` 
+					[".MF_TABLE_PREFIX."form_elements] 
 			   where 
 			   		form_id=? and element_type='email' and element_is_private=0 and element_status=1
 			order by 
@@ -485,7 +485,7 @@
 					element_id,
 					element_title 
 				from 
-					`".MF_TABLE_PREFIX."form_elements` 
+					[".MF_TABLE_PREFIX."form_elements] 
 			   where 
 			   		form_id=? and element_is_private=0 and element_status=1
 			   		and element_type in('text','simple_name','simple_name_wmiddle','name','name_wmiddle')
@@ -540,7 +540,7 @@
 					 element_title,
 					 element_type 
 			     from
-			     	 `".MF_TABLE_PREFIX."form_elements` 
+			     	 [".MF_TABLE_PREFIX."form_elements] 
 			    where 
 			    	 form_id=? and 
 			    	 element_type != 'section' and 

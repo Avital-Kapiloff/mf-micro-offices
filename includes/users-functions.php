@@ -24,18 +24,18 @@
 			$sort_order	  = 'desc';
 		}
 
-
 		//set column properties for basic fields
+		$column_name_lookup['user_id']	        = 'ID#';
 		$column_name_lookup['user_fullname']	= 'Name';
 		$column_name_lookup['user_email']		= 'Email';
 		$column_name_lookup['priv_administer']	= 'Admin Privileges';
 		$column_name_lookup['status']			= 'Status';
 		
+		$column_type_lookup['user_id']	        = 'number';
 		$column_type_lookup['user_fullname']	= 'text';
 		$column_type_lookup['user_email']		= 'text';
 		$column_type_lookup['priv_administer'] 	= 'admin';
 		$column_type_lookup['status']			= 'status';
-		
 		
 		$column_prefs = array('user_fullname','user_email','priv_administer','status');
 		
@@ -52,7 +52,7 @@
 		}
 
 		//get the entries from ap_form_x table and store it into array
-		$column_prefs_joined = '`'.implode("`,`",$column_prefs).'`';
+		$column_prefs_joined = '['.implode("],[",$column_prefs).']';
 		
 		//check for filter data and build the filter query
 		if(!empty($filter_data)){
@@ -74,11 +74,15 @@
 
 				$temp = explode('_', $element_name);
 				$element_id = $temp[1];
-				
-				
+
 				if($filter_condition == 'is'){
-						$where_operand = '=';
-						$where_keyword = "'{$filter_keyword}'";
+						if(in_array($filter_element_type, array('number','money','money_dollar')) && (empty(trim($filter_keyword, " ")) || !is_numeric($filter_keyword))){
+							$where_operand = '=';
+							$where_keyword = "'0'";
+						}else{
+							$where_operand = '=';
+							$where_keyword = "'{$filter_keyword}'";
+						}
 				}else if($filter_condition == 'is_not'){
 						$where_operand = '<>';
 						$where_keyword = "'{$filter_keyword}'";
@@ -95,11 +99,21 @@
 						$where_operand = 'NOT LIKE';
 						$where_keyword = "'%{$filter_keyword}%'";
 				}else if($filter_condition == 'less_than' || $filter_condition == 'is_before'){
+					if(in_array($filter_element_type, array('number','money','money_dollar')) && (empty(trim($filter_keyword, " ")) || !is_numeric($filter_keyword))){
+						$where_operand = '<';
+						$where_keyword = "'0'";
+					}else{
 						$where_operand = '<';
 						$where_keyword = "'{$filter_keyword}'";
+					}
 				}else if($filter_condition == 'greater_than' || $filter_condition == 'is_after'){
+					if(in_array($filter_element_type, array('number','money','money_dollar')) && (empty(trim($filter_keyword, " ")) || !is_numeric($filter_keyword))){
+						$where_operand = '>';
+						$where_keyword = "'0'";
+					}else{
 						$where_operand = '>';
 						$where_keyword = "'{$filter_keyword}'";
+					}
 				}else if($filter_condition == 'is_admin'){
 						$where_operand = '=';
 						$where_keyword = "'1'";
@@ -121,22 +135,22 @@
 			$where_clause = implode($condition_type, $where_clause_array);
 			
 			if(empty($where_clause)){
-				$where_clause = "WHERE `status` > 0";
+				$where_clause = "WHERE status > 0";
 			}else{
-				$where_clause = "WHERE ({$where_clause}) AND `status` > 0";
+				$where_clause = "WHERE ({$where_clause}) AND status > 0";
 			}
 			
 						
 		}else{
-			$where_clause = "WHERE `status` > 0";
+			$where_clause = "WHERE status > 0";
 		}
 
 
 		/** pagination **/
 		//identify how many database rows are available
 		$query = "select count(*) total_row from (select 
-						`user_id`,
-						`user_id` as `row_num`,
+						user_id,
+						user_id as row_num,
 						{$column_prefs_joined} 
 				    from 
 				    	".MF_TABLE_PREFIX."users A 
@@ -160,27 +174,28 @@
 		elseif ($pageno > $lastpage){
 			$pageno = $lastpage;
 		}
-							
-		//construct the LIMIT clause for the sql SELECT statement
-		if(!empty($numrows)){
-			$limit = 'LIMIT ' .($pageno - 1) * $rows_per_page .',' .$rows_per_page;
-		}
-		/** end pagination **/
 
-		$query = "select 
-						`user_id`,
-						`user_id` as `row_num`,
-						`user_fullname`,
-						`user_email`,
-						if(`priv_administer`=1,'Administrator','') `priv_administer`,
-						if(`status`=1,'Active','Suspended') `status`
-				    from 
-				    	".MF_TABLE_PREFIX."users A 
-				    	{$where_clause} 
-				order by 
-						`{$sort_element}` {$sort_order}
-						{$limit}";
-		
+		if(!empty($numrows)){
+			$limit = 'WHERE RowNumber BETWEEN ' . (($pageno - 1) * $rows_per_page + 1) .' AND ' . (($pageno - 1) * $rows_per_page + $rows_per_page);
+		}
+
+		/** end pagination **/
+		$query = "select * 
+					FROM ( 
+						select 
+							user_id,
+							user_id as row_num,
+							user_fullname,
+							user_email,
+							case when priv_administer=1 then 'Administrator' else '' end as priv_administer,
+							case when status=1 then 'Active' else 'Suspended' end as status,
+							ROW_NUMBER() OVER (ORDER BY {$sort_element} {$sort_order}) AS 'RowNumber'
+					    from 
+					    	".MF_TABLE_PREFIX."users 
+					    	{$where_clause} 
+				) A {$limit}
+				order by {$sort_element} {$sort_order}";
+
 		$params = array();
 		$sth = mf_do_query($query,$params,$dbh);
 		$i=0;
@@ -415,11 +430,13 @@
 	function mf_get_filtered_users_ids($dbh,$filter_data,$exclude_admin=true){
 
 		//set column properties for basic fields
+		$column_name_lookup['user_id']	        = 'ID#';
 		$column_name_lookup['user_fullname']	= 'Name';
 		$column_name_lookup['user_email']		= 'Email';
 		$column_name_lookup['priv_administer']	= 'Admin Privileges';
 		$column_name_lookup['status']			= 'Status';
 		
+		$column_type_lookup['user_id']	        = 'number';
 		$column_type_lookup['user_fullname']	= 'text';
 		$column_type_lookup['user_email']		= 'text';
 		$column_type_lookup['priv_administer'] 	= 'admin';
@@ -441,7 +458,7 @@
 		}
 
 		//get the entries from ap_form_x table and store it into array
-		$column_prefs_joined = '`'.implode("`,`",$column_prefs).'`';
+		$column_prefs_joined = ''.implode(",",$column_prefs).'';
 		
 		//check for filter data and build the filter query
 		if(!empty($filter_data)){
@@ -466,8 +483,15 @@
 				
 				
 				if($filter_condition == 'is'){
-						$where_operand = '=';
-						$where_keyword = "'{$filter_keyword}'";
+
+						if(in_array($filter_element_type, array('number','money','money_dollar')) && (empty(trim($filter_keyword, " ")) || !is_numeric($filter_keyword))){
+							$where_operand = '=';
+							$where_keyword = "'0'";
+						}else{
+							$where_operand = '=';
+							$where_keyword = "'{$filter_keyword}'";
+						}
+						
 				}else if($filter_condition == 'is_not'){
 						$where_operand = '<>';
 						$where_keyword = "'{$filter_keyword}'";
@@ -510,24 +534,24 @@
 			$where_clause = implode($condition_type, $where_clause_array);
 			
 			if(empty($where_clause)){
-				$where_clause = "WHERE `status` > 0";
+				$where_clause = "WHERE status > 0";
 			}else{
-				$where_clause = "WHERE ({$where_clause}) AND `status` > 0";
+				$where_clause = "WHERE ({$where_clause}) AND status > 0";
 			}
 			
 						
 		}else{
-			$where_clause = "WHERE `status` > 0";
+			$where_clause = "WHERE status > 0";
 		}
 
 
 		$query = "select 
-						`user_id`,
-						`user_id` as `row_num`,
-						`user_fullname`,
-						`user_email`,
-						if(`priv_administer`=1,'Administrator','') `priv_administer`,
-						if(`status`=1,'Active','Suspended') `status`
+						user_id,
+						user_id as row_num,
+						user_fullname,
+						user_email,
+						case when priv_administer=1 then 'Administrator' else '' end as priv_administer,
+						case when status=1 then 'Active' else 'Suspended' end as status
 				    from 
 				    	".MF_TABLE_PREFIX."users A 
 				    	{$where_clause} ";
@@ -554,11 +578,11 @@
 	function mf_get_user_permissions($dbh,$form_id,$user_id){
 
 		$query = "SELECT 
-						`edit_form`,`edit_entries`,`view_entries` 
+						edit_form,edit_entries,view_entries 
 					FROM 
-						`".MF_TABLE_PREFIX."permissions`
+						".MF_TABLE_PREFIX."permissions
 				   WHERE
-				   		`user_id` = ? and `form_id` = ?";
+				   		user_id = ? and form_id = ?";
 		$params = array($user_id,$form_id);
 		$sth = mf_do_query($query,$params,$dbh);
 		$row = mf_do_fetch_result($sth);
@@ -584,11 +608,11 @@
 	function mf_get_user_permissions_all($dbh,$user_id){
 
 		$query = "SELECT 
-						`edit_form`,`edit_entries`,`view_entries`,`form_id` 
+						edit_form,edit_entries,view_entries,form_id 
 					FROM 
-						`".MF_TABLE_PREFIX."permissions`
+						".MF_TABLE_PREFIX."permissions
 				   WHERE
-				   		`user_id` = ?";
+				   		user_id = ?";
 		$params = array($user_id);
 		$sth = mf_do_query($query,$params,$dbh);
 		while($row = mf_do_fetch_result($sth)){

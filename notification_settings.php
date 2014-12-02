@@ -266,7 +266,7 @@ EOT;
 					element_id,
 					element_title 
 				from 
-					`".MF_TABLE_PREFIX."form_elements` 
+					[".MF_TABLE_PREFIX."form_elements] 
 			   where 
 			   		form_id=? and element_type='email' and element_is_private=0 and element_status=1
 			order by 
@@ -290,7 +290,7 @@ EOT;
 					element_id,
 					element_title 
 				from 
-					`".MF_TABLE_PREFIX."form_elements` 
+					[".MF_TABLE_PREFIX."form_elements] 
 			   where 
 			   		form_id=? and element_is_private=0 and element_status=1
 			   		and element_type in('text','simple_name','simple_name_wmiddle','name','name_wmiddle')
@@ -439,7 +439,7 @@ EOT;
 					 element_title,
 					 element_type 
 			     from
-			     	 `".MF_TABLE_PREFIX."form_elements` 
+			     	 [".MF_TABLE_PREFIX."form_elements] 
 			    where 
 			    	 form_id=? and 
 			    	 element_type != 'section' and 

@@ -35,7 +35,7 @@
 	$report_access_key = $form_id.'x'.substr(strtolower(md5(uniqid(rand(), true))),0,10);
 	
 	//insert into ap_reports table
-	$query = "insert into `".MF_TABLE_PREFIX."reports`(form_id,report_access_key) values(?,?)";
+	$query = "insert into [".MF_TABLE_PREFIX."reports](form_id,report_access_key) values(?,?)";
 	$params = array($form_id,$report_access_key);
 	mf_do_query($query,$params,$dbh);
 

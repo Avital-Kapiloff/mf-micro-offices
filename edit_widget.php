@@ -68,8 +68,8 @@
 					chart_date_period_value,
 					chart_date_period_unit,
 					chart_date_axis_baseunit,
-					date_format(chart_date_range_start,'%c/%e/%Y') chart_date_range_start,
-					date_format(chart_date_range_end,'%c/%e/%Y') chart_date_range_end,
+					CONVERT(VARCHAR(8),chart_date_range_start,101) chart_date_range_start,
+					CONVERT(VARCHAR(8),chart_date_range_end,101) chart_date_range_end,
 					chart_grid_page_size,
 					chart_grid_max_length   
 			    from 

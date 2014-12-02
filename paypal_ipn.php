@@ -105,7 +105,7 @@
 		$entry_id 		 = $exploded[1];
 		$entry_timestamp = $exploded[2];
 
-		$query = "select count(`id`) record_exist from ".MF_TABLE_PREFIX."form_{$form_id} where unix_timestamp(date_created) = ? and `id` = ? and `status` = 1";
+		$query = "select count([id]) record_exist from ".MF_TABLE_PREFIX."form_{$form_id} where DATEDIFF(SECOND,{d '1970-01-01'}, date_created) = ? and [id] = ? and [status] = 1";
 		$params = array($entry_timestamp,$entry_id);
 
 		$sth = mf_do_query($query,$params,$dbh);
@@ -116,7 +116,7 @@
 		}
 
 		$query 	= "select 
-						 ifnull(payment_paypal_email,'') payment_paypal_email,
+						 isnull(payment_paypal_email,'') payment_paypal_email,
 						 payment_currency,
 						 payment_price_type,
 						 payment_price_amount,
@@ -128,7 +128,7 @@
 						 payment_discount_element_id,
 						 payment_delay_notifications
 				     from 
-				     	 `".MF_TABLE_PREFIX."forms` 
+				     	 [".MF_TABLE_PREFIX."forms] 
 				    where 
 				    	 form_id=?";
 		
@@ -156,7 +156,7 @@
 
 		//if the discount element for the current entry_id having any value, we can be certain that the discount code has been validated and applicable
 		if(!empty($payment_enable_discount)){
-			$query = "select element_{$payment_discount_element_id} coupon_element from ".MF_TABLE_PREFIX."form_{$form_id} where `id` = ? and `status` = 1";
+			$query = "select element_{$payment_discount_element_id} coupon_element from ".MF_TABLE_PREFIX."form_{$form_id} where [id] = ? and [status] = 1";
 			$params = array($entry_id);
 			
 			$sth = mf_do_query($query,$params,$dbh);
@@ -221,7 +221,7 @@
 			}
 
 			//otherwise update/insert into ap_form_payments table with the completed status
-			$query = "select count(afp_id) record_exist from ".MF_TABLE_PREFIX."form_payments where form_id = ? and record_id = ? and `status` = 1";
+			$query = "select count(afp_id) record_exist from ".MF_TABLE_PREFIX."form_payments where form_id = ? and record_id = ? and [status] = 1";
 			$params = array($form_id,$entry_id);
 			$sth = mf_do_query($query,$params,$dbh);
 			$row = mf_do_fetch_result($sth);
@@ -234,7 +234,7 @@
 				}
 
 				//do update to ap_form_payments table
-				$query = "update ".MF_TABLE_PREFIX."form_payments set payment_status = ? where form_id = ? and record_id = ? and `status` = 1";
+				$query = "update ".MF_TABLE_PREFIX."form_payments set payment_status = ? where form_id = ? and record_id = ? and [status] = 1";
 				$params = array($payment_status,$form_id,$entry_id);
 				mf_do_query($query,$params,$dbh);
 
@@ -249,19 +249,19 @@
 				}
 				//do insert to ap_form_payments table
 				//insert into ap_form_payments table
-				$query = "INSERT INTO `".MF_TABLE_PREFIX."form_payments`(
-										`form_id`, 
-										`record_id`, 
-										`payment_id`, 
-										`date_created`, 
-										`payment_date`, 
-										`payment_status`, 
-										`payment_fullname`, 
-										`payment_amount`, 
-										`payment_currency`, 
-										`payment_test_mode`,
-										`payment_merchant_type`, 
-										`status`
+				$query = "INSERT INTO [".MF_TABLE_PREFIX."form_payments](
+										[form_id], 
+										[record_id], 
+										[payment_id], 
+										[date_created], 
+										[payment_date], 
+										[payment_status], 
+										[payment_fullname], 
+										[payment_amount], 
+										[payment_currency], 
+										[payment_test_mode],
+										[payment_merchant_type], 
+										[status]
 										) 
 								VALUES (
 										:form_id, 

@@ -53,23 +53,23 @@
 			if($action == 'delete'){
 				if(MF_CONF_TRUE_DELETE == true){
 					//empty the table
-					$query = "delete from `".MF_TABLE_PREFIX."users` where `user_id` <> 1";
+					$query = "delete from ".MF_TABLE_PREFIX."users where user_id <> 1";
 					$params = array($new_user_status);
 					mf_do_query($query,$params,$dbh);
 
 					//empty the table
-					$query = "delete from `".MF_TABLE_PREFIX."permissions` where `user_id` <> 1";
+					$query = "delete from ".MF_TABLE_PREFIX."permissions where user_id <> 1";
 					$params = array($new_user_status);
 					mf_do_query($query,$params,$dbh);
 				}else{
 					//simply set the status of the record
-					$query = "update `".MF_TABLE_PREFIX."users` set `status`=? where `user_id` <> 1";
+					$query = "update ".MF_TABLE_PREFIX."users set [status]=? where user_id <> 1";
 					$params = array($new_user_status);
 					mf_do_query($query,$params,$dbh);
 				}
 			}else if($action == 'suspend'){
 				//simply set the status of the record
-				$query = "update `".MF_TABLE_PREFIX."users` set `status`=? where `status`=1 and `user_id` <> 1";
+				$query = "update ".MF_TABLE_PREFIX."users set [status]=? where [status]=1 and user_id <> 1";
 				$params = array($new_user_status);
 				mf_do_query($query,$params,$dbh);
 			}
@@ -91,23 +91,23 @@
 				if($action == 'delete'){
 					if(MF_CONF_TRUE_DELETE == true){
 						//delete the records from a_form_x table
-						$query = "delete from `".MF_TABLE_PREFIX."users` where `user_id` in('{$target_user_id_joined}')";
+						$query = "delete from ".MF_TABLE_PREFIX."users where user_id in('{$target_user_id_joined}')";
 						$params = array();
 						mf_do_query($query,$params,$dbh);
 
 						//delete records from ap_permissions table
-						$query = "delete from `".MF_TABLE_PREFIX."permissions` where `user_id` in('{$target_user_id_joined}')";
+						$query = "delete from ".MF_TABLE_PREFIX."permissions where user_id in('{$target_user_id_joined}')";
 						$params = array();
 						mf_do_query($query,$params,$dbh);
 					}else{
 						//simply set the status of the record
-						$query = "update `".MF_TABLE_PREFIX."users` set `status`=? where `user_id` in('{$target_user_id_joined}')";
+						$query = "update ".MF_TABLE_PREFIX."users set [status]=? where user_id in('{$target_user_id_joined}')";
 						$params = array($new_user_status);
 						mf_do_query($query,$params,$dbh);
 					}
 				}else if($action == 'suspend'){
 					//simply set the status of the record
-					$query = "update `".MF_TABLE_PREFIX."users` set `status`=? where `user_id` in('{$target_user_id_joined}')";
+					$query = "update ".MF_TABLE_PREFIX."users set [status]=? where user_id in('{$target_user_id_joined}')";
 					$params = array($new_user_status);
 					mf_do_query($query,$params,$dbh);
 				}
@@ -170,28 +170,28 @@
 				if($action == 'delete'){
 					if(MF_CONF_TRUE_DELETE == true){
 						//delete the records from a_form_x table
-						$query = "delete from `".MF_TABLE_PREFIX."users` where `user_id` in('{$target_user_id_joined}')";
+						$query = "delete from ".MF_TABLE_PREFIX."users where user_id in('{$target_user_id_joined}')";
 						$params = array();
 						mf_do_query($query,$params,$dbh);
 
 						//delete records from ap_permissions table
-						$query = "delete from `".MF_TABLE_PREFIX."permissions` where `user_id` in('{$target_user_id_joined}')";
+						$query = "delete from ".MF_TABLE_PREFIX."permissions where user_id in('{$target_user_id_joined}')";
 						$params = array();
 						mf_do_query($query,$params,$dbh);
 					}else{
 						//simply set the status of the record
-						$query = "update `".MF_TABLE_PREFIX."users` set `status`=? where `user_id` in('{$target_user_id_joined}')";
+						$query = "update ".MF_TABLE_PREFIX."users set [status]=? where user_id in('{$target_user_id_joined}')";
 						$params = array($new_user_status);
 						mf_do_query($query,$params,$dbh);
 					}
 				}else if($action == 'suspend'){
 					//simply set the status of the record
-					$query = "update `".MF_TABLE_PREFIX."users` set `status`=? where `user_id` in('{$target_user_id_joined}')";
+					$query = "update ".MF_TABLE_PREFIX."users set [status]=? where user_id in('{$target_user_id_joined}')";
 					$params = array($new_user_status);
 					mf_do_query($query,$params,$dbh);
 				}else if($action == 'unsuspend'){
 					//simply set the status of the record
-					$query = "update `".MF_TABLE_PREFIX."users` set `status`=? where `user_id` in('{$target_user_id_joined}') and `status`=2";
+					$query = "update ".MF_TABLE_PREFIX."users set [status]=? where user_id in('{$target_user_id_joined}') and [status]=2";
 					$params = array($new_user_status);
 					mf_do_query($query,$params,$dbh);
 				}

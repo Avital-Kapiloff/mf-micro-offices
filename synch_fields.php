@@ -57,8 +57,8 @@
 				
 				//insert the new options
 				$query = "INSERT INTO 
-									`".MF_TABLE_PREFIX."element_options` 
-									(`form_id`,`element_id`,`option_id`,`position`,`option`,`option_is_default`,`live`) 
+									[".MF_TABLE_PREFIX."element_options] 
+									([form_id],[element_id],[option_id],[position],[option],[option_is_default],[live]) 
 							  VALUES 
 							  		(:form_id,:element_id,:option_id,:position,:option,:is_default,'2');"; 
 				
@@ -94,8 +94,8 @@
 					
 					//insert the new options		
 					$query = "INSERT INTO 
-										`".MF_TABLE_PREFIX."element_options` 
-										(`form_id`,`element_id`,`option_id`,`position`,`option`,`option_is_default`,`live`) 
+										[".MF_TABLE_PREFIX."element_options] 
+										([form_id],[element_id],[option_id],[position],[option],[option_is_default],[live]) 
 								  VALUES 
 								   		(:form_id,:element_id,:option_id,:position,:option,'0','2');";
 					 
@@ -119,12 +119,12 @@
 			
 			//dynamically create the sql update string, based on the input given
 			foreach ($element_properties as $key=>$value){
-				$update_values .= "`element_{$key}`= :element_{$key},";
+				$update_values .= "[element_{$key}]= :element_{$key},";
 				$params[':element_'.$key] = $value;
 			}
 			$update_values = rtrim($update_values,',');
 			
-			$query = "UPDATE `".MF_TABLE_PREFIX."form_elements` set 
+			$query = "UPDATE [".MF_TABLE_PREFIX."form_elements] set 
 										$update_values
 								  where 
 							  	  		form_id = :form_id and element_id = :w_element_id";
@@ -140,10 +140,10 @@
 			if($element_properties['type'] == 'matrix'){
 				
 				$query = "UPDATE 
-								`".MF_TABLE_PREFIX."form_elements` 
+								[".MF_TABLE_PREFIX."form_elements] 
 							 SET 
-								`element_title` = :element_title,
-								`element_position` = :element_position		
+								[element_title] = :element_title,
+								[element_position] = :element_position		
 						   WHERE 
 								form_id = :form_id and element_id = :element_id";
 				

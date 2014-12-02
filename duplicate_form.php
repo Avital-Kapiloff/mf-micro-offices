@@ -27,7 +27,7 @@
 	}
 	
 	//get the new form name
-	$query 	= "select form_name from `".MF_TABLE_PREFIX."forms` where form_id=?";
+	$query 	= "select form_name from ".MF_TABLE_PREFIX."forms where form_id=?";
 	$params = array($form_id);
 	
 	$sth = mf_do_query($query,$params,$dbh);
@@ -37,7 +37,7 @@
 	$form_name .= " Copy";
 	
 	//get the new form_id
-	$query = "select max(form_id)+1 new_form_id from `".MF_TABLE_PREFIX."forms`";
+	$query = "select max(form_id)+1 new_form_id from ".MF_TABLE_PREFIX."forms";
 	$params = array();
 	
 	$sth = mf_do_query($query,$params,$dbh);
@@ -46,12 +46,14 @@
 	$new_form_id += rand(100,1000);
 	
 	//get the columns of ap_forms table
-	$query = "show columns from ".MF_TABLE_PREFIX."forms";
+	$query = "select Column_name as [Field]  from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='".MF_TABLE_PREFIX."forms'";
 	$params = array();
 	
 	$columns = array();
 	$sth = mf_do_query($query,$params,$dbh);
+
 	while($row = mf_do_fetch_result($sth)){
+		// var_dump($row);
 		if($row['Field'] == 'form_id' || $row['Field'] == 'form_name'){
 			continue; //MySQL 4.1 doesn't support WHERE on show columns, hence we need this
 		}
@@ -62,25 +64,41 @@
 	
 	//insert the new record into ap_forms table
 	$query = "insert into 
-							`".MF_TABLE_PREFIX."forms`(form_id,form_name,{$columns_joined}) 
+							".MF_TABLE_PREFIX."forms(form_id,form_name,{$columns_joined}) 
 					   select 
 							? , ? ,{$columns_joined} 
 						from 
-							`".MF_TABLE_PREFIX."forms` 
+							".MF_TABLE_PREFIX."forms 
 						where 
 							form_id = ?";
 	$params = array($new_form_id,$form_name,$form_id);
 	mf_do_query($query,$params,$dbh);
 	
 	//create the new table
-	$query = "create table `".MF_TABLE_PREFIX."form_{$new_form_id}` like `".MF_TABLE_PREFIX."form_{$form_id}`";
+	$query = "SELECT * INTO ".MF_TABLE_PREFIX."form_{$new_form_id} FROM ".MF_TABLE_PREFIX."form_{$form_id} where 1=0;";
 	$params = array();
 	mf_do_query($query,$params,$dbh);
-	
+
+
+	$query = "DECLARE @sqlCommand nvarchar(max)
+			SET @sqlCommand =  (select STUFF ((
+			 SELECT	
+			    'ALTER TABLE ".MF_TABLE_PREFIX."form_".$new_form_id."' + 
+			    ' ADD CONSTRAINT DF_".MF_TABLE_PREFIX."form_".$new_form_id."_' + c.name + ' DEFAULT(' + definition 
+			    + ') FOR ' + c.name + ' '
+			FROM sys.default_constraints dc
+			INNER JOIN sys.columns c ON dc.parent_object_id = c.object_id AND dc.parent_column_id = c.column_id
+			where OBJECT_NAME(parent_object_id) = '".MF_TABLE_PREFIX."form_".$form_id."'
+			FOR XML PATH('')) ,1,0,''))
+
+			EXEC (@sqlCommand);";
+	$params = array();
+	mf_do_query($query,$params,$dbh);
+
 	//copy ap_form_elements table
 	
 	//get the columns of ap_form_elements table
-	$query = "show columns from ".MF_TABLE_PREFIX."form_elements";
+	$query = "select Column_name as [Field]  from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='".MF_TABLE_PREFIX."form_elements'";
 	$params = array();
 	
 	$columns = array();
@@ -96,11 +114,11 @@
 	
 	//insert the new record into ap_form_elements table
 	$query = "insert into 
-							`".MF_TABLE_PREFIX."form_elements`(form_id, {$columns_joined}) 
+							".MF_TABLE_PREFIX."form_elements(form_id, {$columns_joined}) 
 					   select 
 							? , {$columns_joined} 
 						from 
-							`".MF_TABLE_PREFIX."form_elements` 
+							".MF_TABLE_PREFIX."form_elements 
 						where 
 							form_id = ?";
 	$params = array($new_form_id,$form_id);
@@ -109,7 +127,7 @@
 	//copy ap_element_options table
 	
 	//get the columns of ap_element_options table
-	$query = "show columns from ".MF_TABLE_PREFIX."element_options";
+	$query = "select Column_name as [Field]  from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='".MF_TABLE_PREFIX."element_options'";
 	$params = array();
 	
 	$columns = array();
@@ -118,18 +136,18 @@
 		if($row['Field'] == 'form_id' || $row['Field'] == 'aeo_id'){
 			continue; //MySQL 4.1 doesn't support WHERE on show columns, hence we need this
 		}
-		$columns[] = $row['Field'];
+		$columns[] = "[".$row['Field']."]";
 	}
 	
-	$columns_joined = implode("`,`",$columns);
+	$columns_joined = implode(",",$columns);
 	
 	//insert the new record into ap_element_options table
 	$query = "insert into 
-							`".MF_TABLE_PREFIX."element_options`(form_id, `{$columns_joined}`) 
+							".MF_TABLE_PREFIX."element_options(form_id, {$columns_joined}) 
 					   select 
-							? , `{$columns_joined}` 
+							? , {$columns_joined} 
 						from 
-							`".MF_TABLE_PREFIX."element_options` 
+							".MF_TABLE_PREFIX."element_options 
 						where 
 							form_id = ?";
 	$params = array($new_form_id,$form_id);
@@ -140,7 +158,7 @@
 	//copy ap_element_prices table
 	
 	//get the columns of ap_element_prices table
-	$query = "show columns from ".MF_TABLE_PREFIX."element_prices";
+	$query = "select Column_name as [Field]  from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='".MF_TABLE_PREFIX."element_prices'";
 	$params = array();
 	
 	$columns = array();
@@ -152,15 +170,15 @@
 		$columns[] = $row['Field'];
 	}
 	
-	$columns_joined = implode("`,`",$columns);
+	$columns_joined = implode(",",$columns);
 	
 	//insert the new record into ap_element_prices table
 	$query = "insert into 
-							`".MF_TABLE_PREFIX."element_prices`(form_id, `{$columns_joined}`) 
+							".MF_TABLE_PREFIX."element_prices(form_id, {$columns_joined}) 
 					   select 
-							? , `{$columns_joined}` 
+							? , {$columns_joined} 
 						from 
-							`".MF_TABLE_PREFIX."element_prices` 
+							".MF_TABLE_PREFIX."element_prices 
 						where 
 							form_id = ?";
 	$params = array($new_form_id,$form_id);
@@ -170,7 +188,7 @@
 	//copy ap_field_logic_elements table
 	
 	//get the columns of ap_logic_elements table
-	$query = "show columns from ".MF_TABLE_PREFIX."field_logic_elements";
+	$query = "select Column_name as [Field]  from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='".MF_TABLE_PREFIX."field_logic_elements'";
 	$params = array();
 	
 	$columns = array();
@@ -182,15 +200,15 @@
 		$columns[] = $row['Field'];
 	}
 	
-	$columns_joined = implode("`,`",$columns);
+	$columns_joined = implode(",",$columns);
 	
 	//insert the new record into ap_field_logic_elements table
 	$query = "insert into 
-							`".MF_TABLE_PREFIX."field_logic_elements`(form_id, `{$columns_joined}`) 
+							".MF_TABLE_PREFIX."field_logic_elements(form_id, {$columns_joined}) 
 					   select 
-							? , `{$columns_joined}` 
+							? , {$columns_joined} 
 						from 
-							`".MF_TABLE_PREFIX."field_logic_elements` 
+							".MF_TABLE_PREFIX."field_logic_elements 
 						where 
 							form_id = ?";
 	$params = array($new_form_id,$form_id);
@@ -199,7 +217,7 @@
 	//copy ap_field_logic_conditions table
 	
 	//get the columns of ap_field_logic_conditions table
-	$query = "show columns from ".MF_TABLE_PREFIX."field_logic_conditions";
+	$query = "select Column_name as [Field]  from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='".MF_TABLE_PREFIX."field_logic_conditions'";
 	$params = array();
 	
 	$columns = array();
@@ -211,15 +229,15 @@
 		$columns[] = $row['Field'];
 	}
 	
-	$columns_joined = implode("`,`",$columns);
+	$columns_joined = implode(",",$columns);
 	
 	//insert the new record into ap_field_logic_conditions table
 	$query = "insert into 
-							`".MF_TABLE_PREFIX."field_logic_conditions`(form_id, `{$columns_joined}`) 
+							".MF_TABLE_PREFIX."field_logic_conditions(form_id, {$columns_joined}) 
 					   select 
-							? , `{$columns_joined}` 
+							? , {$columns_joined} 
 						from 
-							`".MF_TABLE_PREFIX."field_logic_conditions` 
+							".MF_TABLE_PREFIX."field_logic_conditions 
 						where 
 							form_id = ?
 				    order by 
@@ -230,7 +248,7 @@
 	//copy ap_page_logic table
 	
 	//get the columns of ap_page_logic table
-	$query = "show columns from ".MF_TABLE_PREFIX."page_logic";
+	$query = "select Column_name as [Field]  from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='".MF_TABLE_PREFIX."page_logic'";
 	$params = array();
 	
 	$columns = array();
@@ -242,15 +260,15 @@
 		$columns[] = $row['Field'];
 	}
 	
-	$columns_joined = implode("`,`",$columns);
+	$columns_joined = implode(",",$columns);
 	
 	//insert the new record into ap_page_logic table
 	$query = "insert into 
-							`".MF_TABLE_PREFIX."page_logic`(form_id, `{$columns_joined}`) 
+							".MF_TABLE_PREFIX."page_logic(form_id, {$columns_joined}) 
 					   select 
-							? , `{$columns_joined}` 
+							? , {$columns_joined} 
 						from 
-							`".MF_TABLE_PREFIX."page_logic` 
+							".MF_TABLE_PREFIX."page_logic 
 						where 
 							form_id = ?";
 	$params = array($new_form_id,$form_id);
@@ -259,7 +277,7 @@
 	//copy ap_page_logic_conditions table
 	
 	//get the columns of ap_page_logic_conditions table
-	$query = "show columns from ".MF_TABLE_PREFIX."page_logic_conditions";
+	$query = "select Column_name as [Field]  from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='".MF_TABLE_PREFIX."page_logic_conditions'";
 	$params = array();
 	
 	$columns = array();
@@ -271,15 +289,15 @@
 		$columns[] = $row['Field'];
 	}
 	
-	$columns_joined = implode("`,`",$columns);
+	$columns_joined = implode(",",$columns);
 	
 	//insert the new record into ap_page_logic_conditions table
 	$query = "insert into 
-							`".MF_TABLE_PREFIX."page_logic_conditions`(form_id, `{$columns_joined}`) 
+							".MF_TABLE_PREFIX."page_logic_conditions(form_id, {$columns_joined}) 
 					   select 
-							? , `{$columns_joined}` 
+							? , {$columns_joined} 
 						from 
-							`".MF_TABLE_PREFIX."page_logic_conditions` 
+							".MF_TABLE_PREFIX."page_logic_conditions 
 						where 
 							form_id = ? order by apc_id asc";
 	$params = array($new_form_id,$form_id);
@@ -289,7 +307,7 @@
 	//copy ap_field_logic_conditions table
 	
 	//get the columns of ap_field_logic_conditions table
-	$query = "show columns from ".MF_TABLE_PREFIX."field_logic_conditions";
+	$query = "select Column_name as [Field]  from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='".MF_TABLE_PREFIX."field_logic_conditions'";
 	$params = array();
 	
 	$columns = array();
@@ -301,15 +319,15 @@
 		$columns[] = $row['Field'];
 	}
 	
-	$columns_joined = implode("`,`",$columns);
+	$columns_joined = implode(",",$columns);
 	
 	//insert the new record into ap_field_logic_conditions table
 	$query = "insert into 
-							`".MF_TABLE_PREFIX."field_logic_conditions`(form_id, `{$columns_joined}`) 
+							".MF_TABLE_PREFIX."field_logic_conditions(form_id, {$columns_joined}) 
 					   select 
-							? , `{$columns_joined}` 
+							? , {$columns_joined} 
 						from 
-							`".MF_TABLE_PREFIX."field_logic_conditions` 
+							".MF_TABLE_PREFIX."field_logic_conditions 
 						where 
 							form_id = ?
 				    order by 
@@ -320,7 +338,7 @@
 	//copy ap_email_logic table
 	
 	//get the columns of ap_email_logic table
-	$query = "show columns from ".MF_TABLE_PREFIX."email_logic";
+	$query = "select Column_name as [Field]  from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='".MF_TABLE_PREFIX."email_logic'";
 	$params = array();
 	
 	$columns = array();
@@ -332,15 +350,15 @@
 		$columns[] = $row['Field'];
 	}
 	
-	$columns_joined = implode("`,`",$columns);
+	$columns_joined = implode(",",$columns);
 	
 	//insert the new record into ap_page_logic table
 	$query = "insert into 
-							`".MF_TABLE_PREFIX."email_logic`(form_id, `{$columns_joined}`) 
+							".MF_TABLE_PREFIX."email_logic(form_id, {$columns_joined}) 
 					   select 
-							? , `{$columns_joined}` 
+							? , {$columns_joined} 
 						from 
-							`".MF_TABLE_PREFIX."email_logic` 
+							".MF_TABLE_PREFIX."email_logic 
 						where 
 							form_id = ?";
 	$params = array($new_form_id,$form_id);
@@ -349,7 +367,7 @@
 	//copy ap_email_logic_conditions table
 	
 	//get the columns of ap_email_logic_conditions table
-	$query = "show columns from ".MF_TABLE_PREFIX."email_logic_conditions";
+	$query = "select Column_name as [Field]  from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='".MF_TABLE_PREFIX."email_logic_conditions'";
 	$params = array();
 	
 	$columns = array();
@@ -361,15 +379,15 @@
 		$columns[] = $row['Field'];
 	}
 	
-	$columns_joined = implode("`,`",$columns);
+	$columns_joined = implode(",",$columns);
 	
 	//insert the new record into ap_email_logic_conditions table
 	$query = "insert into 
-							`".MF_TABLE_PREFIX."email_logic_conditions`(form_id, `{$columns_joined}`) 
+							".MF_TABLE_PREFIX."email_logic_conditions(form_id, {$columns_joined}) 
 					   select 
-							? , `{$columns_joined}` 
+							? , {$columns_joined} 
 						from 
-							`".MF_TABLE_PREFIX."email_logic_conditions` 
+							".MF_TABLE_PREFIX."email_logic_conditions 
 						where 
 							form_id = ? order by aec_id asc";
 	$params = array($new_form_id,$form_id);
@@ -378,7 +396,7 @@
 	//copy ap_webhook_options table
 	
 	//get the columns of ap_webhook_options table
-	$query = "show columns from ".MF_TABLE_PREFIX."webhook_options";
+	$query = "select Column_name as [Field]  from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='".MF_TABLE_PREFIX."webhook_options'";
 	$params = array();
 	
 	$columns = array();
@@ -390,15 +408,15 @@
 		$columns[] = $row['Field'];
 	}
 	
-	$columns_joined = implode("`,`",$columns);
+	$columns_joined = implode(",",$columns);
 	
 	//insert the new record into ap_webhook_options table
 	$query = "insert into 
-							`".MF_TABLE_PREFIX."webhook_options`(form_id, `{$columns_joined}`) 
+							".MF_TABLE_PREFIX."webhook_options(form_id, {$columns_joined}) 
 					   select 
-							? , `{$columns_joined}` 
+							? , {$columns_joined} 
 						from 
-							`".MF_TABLE_PREFIX."webhook_options` 
+							".MF_TABLE_PREFIX."webhook_options 
 						where 
 							form_id = ? order by awo_id asc";
 	$params = array($new_form_id,$form_id);
@@ -407,7 +425,7 @@
 	//copy ap_webhook_parameters table
 	
 	//get the columns of ap_webhook_parameters table
-	$query = "show columns from ".MF_TABLE_PREFIX."webhook_parameters";
+	$query = "select Column_name as [Field]  from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='".MF_TABLE_PREFIX."webhook_parameters'";
 	$params = array();
 	
 	$columns = array();
@@ -419,15 +437,15 @@
 		$columns[] = $row['Field'];
 	}
 	
-	$columns_joined = implode("`,`",$columns);
+	$columns_joined = implode(",",$columns);
 	
 	//insert the new record into ap_webhook_parameters table
 	$query = "insert into 
-							`".MF_TABLE_PREFIX."webhook_parameters`(form_id, `{$columns_joined}`) 
+							".MF_TABLE_PREFIX."webhook_parameters(form_id, {$columns_joined}) 
 					   select 
-							? , `{$columns_joined}` 
+							? , {$columns_joined} 
 						from 
-							`".MF_TABLE_PREFIX."webhook_parameters` 
+							".MF_TABLE_PREFIX."webhook_parameters 
 						where 
 							form_id = ? order by awp_id asc";
 	$params = array($new_form_id,$form_id);
@@ -438,14 +456,14 @@
 	//insert new report_access_key into ap_reports
 	$new_report_access_key = $new_form_id.'x'.substr(strtolower(md5(uniqid(rand(), true))),0,10);
 
-	$query = "insert into `".MF_TABLE_PREFIX."reports`(form_id, report_access_key) values(?,?)";
+	$query = "insert into ".MF_TABLE_PREFIX."reports(form_id, report_access_key) values(?,?)";
 	$params = array($new_form_id,$new_report_access_key);
 	mf_do_query($query,$params,$dbh);
 
 	//copy ap_report_elements table
 	
 	//get the columns of ap_report_elements table
-	$query = "show columns from ".MF_TABLE_PREFIX."report_elements";
+	$query = "select Column_name as [Field]  from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='".MF_TABLE_PREFIX."report_elements'";
 	$params = array();
 	
 	$columns = array();
@@ -457,15 +475,15 @@
 		$columns[] = $row['Field'];
 	}
 	
-	$columns_joined = implode("`,`",$columns);
+	$columns_joined = implode(",",$columns);
 	
 	//insert the new record into ap_report_elements table
 	$query = "insert into 
-							`".MF_TABLE_PREFIX."report_elements`(form_id, `{$columns_joined}`) 
+							".MF_TABLE_PREFIX."report_elements(form_id, {$columns_joined}) 
 					   select 
-							? , `{$columns_joined}` 
+							? , {$columns_joined} 
 						from 
-							`".MF_TABLE_PREFIX."report_elements` 
+							".MF_TABLE_PREFIX."report_elements 
 						where 
 							form_id = ?";
 	$params = array($new_form_id,$form_id);
@@ -495,7 +513,7 @@
 	//copy ap_report_filters table
 	
 	//get the columns of ap_report_filters table
-	$query = "show columns from ".MF_TABLE_PREFIX."report_filters";
+	$query = "select Column_name as [Field]  from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='".MF_TABLE_PREFIX."report_filters'";
 	$params = array();
 	
 	$columns = array();
@@ -507,15 +525,15 @@
 		$columns[] = $row['Field'];
 	}
 	
-	$columns_joined = implode("`,`",$columns);
+	$columns_joined = implode(",",$columns);
 	
 	//insert the new record into ap_report_filters table
 	$query = "insert into 
-							`".MF_TABLE_PREFIX."report_filters`(form_id, `{$columns_joined}`) 
+							".MF_TABLE_PREFIX."report_filters(form_id, {$columns_joined}) 
 					   select 
-							? , `{$columns_joined}` 
+							? , {$columns_joined} 
 						from 
-							`".MF_TABLE_PREFIX."report_filters` 
+							".MF_TABLE_PREFIX."report_filters 
 						where 
 							form_id = ? order by arf_id asc";
 	$params = array($new_form_id,$form_id);
@@ -524,7 +542,7 @@
 	//copy ap_grid_columns table
 	
 	//get the columns of ap_grid_columns table
-	$query = "show columns from ".MF_TABLE_PREFIX."grid_columns";
+	$query = "select Column_name as [Field]  from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='".MF_TABLE_PREFIX."grid_columns'";
 	$params = array();
 	
 	$columns = array();
@@ -536,15 +554,15 @@
 		$columns[] = $row['Field'];
 	}
 	
-	$columns_joined = implode("`,`",$columns);
+	$columns_joined = implode(",",$columns);
 	
 	//insert the new record into ap_report_filters table
 	$query = "insert into 
-							`".MF_TABLE_PREFIX."grid_columns`(form_id, `{$columns_joined}`) 
+							".MF_TABLE_PREFIX."grid_columns(form_id, {$columns_joined}) 
 					   select 
-							? , `{$columns_joined}` 
+							? , {$columns_joined} 
 						from 
-							`".MF_TABLE_PREFIX."grid_columns` 
+							".MF_TABLE_PREFIX."grid_columns 
 						where 
 							form_id = ? order by agc_id asc";
 	$params = array($new_form_id,$form_id);
@@ -553,13 +571,29 @@
 	//copy review table, if there is any
 	$review_table_exist = true;
 	try {
-		  $dbh->query("select count(*) from `".MF_TABLE_PREFIX."form_{$form_id}_review`");
+		  $dbh->query("select count(*) from ".MF_TABLE_PREFIX."form_{$form_id}_review");
 	} catch(PDOException $e) {
 		  $review_table_exist  = false;
 	}
 	
 	if($review_table_exist){
-		$query = "CREATE TABLE `".MF_TABLE_PREFIX."form_{$new_form_id}_review` like `".MF_TABLE_PREFIX."form_{$form_id}_review`";
+		$query = $query = "SELECT * INTO ".MF_TABLE_PREFIX."form_{$new_form_id}_review FROM ".MF_TABLE_PREFIX."form_{$form_id}_review where 1=0;";
+		mf_do_query($query,$params,$dbh);
+
+		$query = "DECLARE @sqlCommand nvarchar(max)
+			SET @sqlCommand =  (select STUFF ((
+			 SELECT	
+			    'ALTER TABLE ".MF_TABLE_PREFIX."form_".$new_form_id."_review' + 
+			    ' ADD CONSTRAINT DF_".MF_TABLE_PREFIX."form_".$new_form_id."_' + c.name + '_review DEFAULT(' + definition 
+			    + ') FOR ' + c.name + ' '
+			FROM sys.default_constraints dc
+			INNER JOIN sys.columns c ON dc.parent_object_id = c.object_id AND dc.parent_column_id = c.column_id
+			where OBJECT_NAME(parent_object_id) = '".MF_TABLE_PREFIX."form_".$form_id."_review'
+			FOR XML PATH('')) ,1,0,''))
+
+			EXEC (@sqlCommand);";
+			
+		$params = array();
 		mf_do_query($query,$params,$dbh);
 	}
 	
